@@ -60,7 +60,7 @@ class AdminController extends Controller
             //get the user
             if(Auth::check()){
                 User::where('email',Auth::user()->email)->update(['is_role_set'=> '1']);
-                return redirect('user/account')->with('success_message', "User Logged in Successfully");
+                return redirect('user/account')->with('success_message', "Role added successfully");
             }
             else{
                 $getUser = User::where('email',$request->email)->update(['is_role_set'=> '1']);
@@ -69,7 +69,7 @@ class AdminController extends Controller
                     'password' => $request->password 
                 ]);
             }
-            return redirect('user/account')->with('success_message', "User Logged in Successfully");
+            return redirect('user/account')->with('success_message', "Role added successfully");
         }
         if ($request->button == 'vendor'){
             //get the user
@@ -172,7 +172,12 @@ class AdminController extends Controller
                         }
                     }
                     else{
-                         return redirect()->back()->with(['success_message'=>'User Logged In Successfully','show_modal'=> 1,'data'=>Auth::user(),'vendor'=>0]);
+                            if(Auth::attempt([ 
+                                'email'    =>  $data['email'],   
+                                'password' => $data['password']  
+                            ])){
+                            return redirect()->route('index')->with(['success_message'=>'User Logged In Successfully','show_modal'=> 1,'data'=>Auth::user(),'vendor'=>0]);
+                        }
                     }
                 }
                 else{

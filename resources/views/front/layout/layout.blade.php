@@ -150,6 +150,7 @@
             ga('send', 'pageview')
         </script>
         <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+        <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
         <!-- Modernizr-JS -->
         <script type="text/javascript" src="{{ url('front/js/vendor/modernizr-custom.min.js') }}"></script>
         <!-- NProgress -->

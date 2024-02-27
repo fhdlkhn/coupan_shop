@@ -197,17 +197,17 @@ Route::get('orders/invoice/download/{id}', 'App\Http\Controllers\Admin\OrderCont
 
 // Second: FRONT section routes:
 Route::namespace('App\Http\Controllers\Front')->group(function() {
-    Route::get('/', 'IndexController@index');
+    Route::get('/', 'IndexController@index')->name('index');
     Route::get('auth/google', 'VendorController@redirectToGoogle');
     Route::get('auth/google/callback', 'VendorController@handleGoogleCallback');
     Route::get('auth/facebook', 'VendorController@redirectToFacebook');
     Route::get('auth/facebook/callback', 'VendorController@handleFacebookCallback');
     Route::get('login', function () {
         return view('front.layout.login');
-    });
+    })->name('user.login');
     Route::get('register', function () {
         return view('front.layout.register');
-    });
+    })->name('user.regiter');
 
     // Dynamic Routes for the `url` column in the `categories` table using a foreach loop    // Listing/Categories Routes
     // Important Note: When you run this Laravel project for the first time and if you're running  the "php artisan migrate" command for the first time, before that you must comment out the $catUrls variable and the following foreach loop in web.php file (routes file), because when we run that artisan command, by then the `categories` table has not been created yet, and this causes an error, so make sure to comment out this code in web.php file before running the "php artisan migrate" command for the first time.

@@ -49,7 +49,7 @@ $sections = \App\Models\Section::sections();
                     }, 5000);
                 </script>
                 @endif
-            <ul class="primary-nav g-nav">
+            <!-- <ul class="primary-nav g-nav">
                 <li>
                     <a href="tel:+201255845857">
                         <i class="fas fa-phone u-c-brand u-s-m-r-9"></i>
@@ -62,9 +62,9 @@ $sections = \App\Models\Section::sections();
                         E-mail: info@bod-exchange.com
                     </a>
                 </li>
-            </ul>
+            </ul> -->
         </nav>
-            <nav>
+            <!-- <nav>
                 <ul class="secondary-nav g-nav">
                     <li>
 
@@ -91,16 +91,6 @@ $sections = \App\Models\Section::sections();
                                 <i class="far fa-check-circle u-s-m-r-9"></i>
                                 Checkout</a>
                             </li>
-                            
-                            
-                               <!-- <li>
-                                 <a href="#exampleModalCenter" data-toggle="modal">
-                                <i class="far fa-check-circle u-s-m-r-9"></i>
-                                role pop up</a>
-                            </li> -->
-
-
-
                             {{-- If the user is authenticated/logged in, show 'My Account' and 'Logout', if not, show 'Customer Login' and 'Vendor Login' --}} 
                             @if (\Illuminate\Support\Facades\Auth::check() || \Illuminate\Support\Facades\Auth::guard('admin')->check()) 
                                 @if(Auth::user() && \App\Models\OrdersProduct::where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
@@ -133,12 +123,6 @@ $sections = \App\Models\Section::sections();
                                     </a>
                                 </li>
                             @else
-                                <!-- <li>
-                                    <a href="{{ url('user/login-register') }}"> 
-                                        <i class="fas fa-sign-in-alt u-s-m-r-9"></i>
-                                        Customer Login
-                                    </a>
-                                </li> -->
                                 <li>
                                     <a href="#loginModal2" data-bs-toggle="modal">
                                         <i class="fas fa-sign-in-alt u-s-m-r-9"></i>
@@ -174,7 +158,7 @@ $sections = \App\Models\Section::sections();
                         </li>
                     @endif
                 </ul>
-            </nav>
+            </nav> -->
         </div>
     </div>
       <div class="sb-header sb-header-1 viewport-lg" style="margin-top: 0px;">
@@ -202,27 +186,7 @@ $sections = \App\Models\Section::sections();
                 <div class="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-pm">
                     <div class="sign-in-up">
                         <ul class="list-sign-in ">
-<!-- <li class="login-me"><a href="{{ url('vendor/login-register') }}"><i class="fa fa-user color-point" aria-hidden="true"></i> Login</a></li>
-                                      <li class="register-me"><a href="{{ url('vendor/login-register') }}"><i class="fa fa-user-plus color-point" aria-hidden="true"></i>Register</a></li> -->
-                               
-   <!-- @if (\Illuminate\Support\Facades\Auth::check())
-    <li class="ad-post-btn">
-        <a href="{{ url('admin/dashboard') }}" class="btn btn-theme text-white">
-            Dashboard
-        </a>
-    </li>
-@else
-    <li class="ad-post-btn">
-        <a href="#loginModal2" data-toggle="modal" class="btn btn-theme text-white">
-            Login
-        </a>
-    </li>
-    <li class="ad-post-btn">
-        <a href="#registerModal2" data-toggle="modal" class="btn btn-theme text-white">
-            Register
-        </a>
-    </li>
-@endif -->
+
 
 
 
@@ -277,97 +241,147 @@ $sections = \App\Models\Section::sections();
                                     <span class="iconify" data-icon="ic:baseline-discord"></span>
                                 </span>
                             </a>
-                          
-                            <div class="ly-loged-in-drop-down">
-                                <div class="selected">
-                                    <a href="#">
-                                        <div class="img-box">
-                                         <img src="{{ asset('images/client-1.png') }}" alt="location-img">
-                                        </div>
-                                        <div class="meta-box">
-                                            <h6>Asep Asomething</h6>
-                                            <small>asepasomething@gmail.com</small>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="options">
-                                    <ol class="list">
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>
-                                                    Booking
-                                                </span>
-                                                <span class="badge active">2</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></g></svg>
-                                                    My listing
-                                                </span>
-                                                <span class="badge">0</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m8.962 18.91l.464-.588zM12 5.5l-.54.52a.75.75 0 0 0 1.08 0zm3.038 13.41l.465.59zm-5.612-.588C7.91 17.127 6.253 15.96 4.938 14.48C3.65 13.028 2.75 11.335 2.75 9.137h-1.5c0 2.666 1.11 4.7 2.567 6.339c1.43 1.61 3.254 2.9 4.68 4.024zM2.75 9.137c0-2.15 1.215-3.954 2.874-4.713c1.612-.737 3.778-.541 5.836 1.597l1.08-1.04C10.1 2.444 7.264 2.025 5 3.06C2.786 4.073 1.25 6.425 1.25 9.137zM8.497 19.5c.513.404 1.063.834 1.62 1.16c.557.325 1.193.59 1.883.59v-1.5c-.31 0-.674-.12-1.126-.385c-.453-.264-.922-.628-1.448-1.043zm7.006 0c1.426-1.125 3.25-2.413 4.68-4.024c1.457-1.64 2.567-3.673 2.567-6.339h-1.5c0 2.198-.9 3.891-2.188 5.343c-1.315 1.48-2.972 2.647-4.488 3.842zM22.75 9.137c0-2.712-1.535-5.064-3.75-6.077c-2.264-1.035-5.098-.616-7.54 1.92l1.08 1.04c2.058-2.137 4.224-2.333 5.836-1.596c1.659.759 2.874 2.562 2.874 4.713zm-8.176 9.185c-.526.415-.995.779-1.448 1.043c-.452.264-.816.385-1.126.385v1.5c.69 0 1.326-.265 1.883-.59c.558-.326 1.107-.756 1.62-1.16z"/></svg>
-                                                    Wishlist
-                                                </span>
-                                                <span class="badge active">4</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v-.5m4 .5v-.5M8 11v-.5m-4.536 6.328C2 15.657 2 14.771 2 11c0-3.771 0-5.657 1.464-6.828C4.93 3 7.286 3 12 3c4.714 0 7.071 0 8.535 1.172C22 5.343 22 7.229 22 11c0 3.771 0 4.657-1.465 5.828C19.072 18 16.714 18 12 18c-2.51 0-3.8 1.738-6 3v-3.212c-1.094-.163-1.899-.45-2.536-.96"/></svg>
-                                                    Message
-                                                </span>
-                                                <span class="badge active">6</span>
-                                            </a>
-                                        </li>
-                                    </ol>
-                                    <div class="list-divider"></div>
-                                    <ol class="list extra-links">
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M5 6.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5m-4.5 7h9v-.542A4.51 4.51 0 0 0 4.796 8.5A4.51 4.51 0 0 0 .5 12.958zm8.5-7a2.5 2.5 0 0 0 0-5m2.5 12h2v-.542A4.51 4.51 0 0 0 10 8.61"/></svg>
-                                                    Host your home
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v2m0 16v-8m0-8h12l-2 4l2 4H8m0-8v8"/></svg>
-                                                    Host an experience
-                                                </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <span class="value">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></g></svg>
-                                                    Help
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ol>
-                                    <div class="user-profile-info">
-                                        <div class="img-box">
-                                            <a href="#"><img src="imgs/user-5.png" alt="user-img"></a>
-                                        </div>
-                                        <div class="meta-box">
-                                            <a href="#"><h6>Asep Asomething</h6></a>
-                                            <small>asepasomething@gmail.com</small>
-                                        </div>
+                            @if(!(\Illuminate\Support\Facades\Auth::check()))
+                            <a href="{{route('user.login')}}" class="ly-login">
+                                <span>
+                                <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_325_2916)"><path d="M10.2517 0.699463C7.06445 0.699463 4.47145 3.2925 4.47145 6.47968C4.47145 8.45385 5.46654 10.1998 6.98126 11.243C5.56707 11.731 4.27086 12.5371 3.1819 13.6261C1.29343 15.5146 0.253418 18.0253 0.253418 20.696H1.81564C1.81564 16.0443 5.60002 12.2599 10.2517 12.2599C13.4389 12.2599 16.0319 9.6669 16.0319 6.47968C16.0319 3.29246 13.4389 0.699463 10.2517 0.699463ZM10.2517 10.6977C7.92586 10.6977 6.03368 8.80553 6.03368 6.47972C6.03368 4.15391 7.92586 2.26169 10.2517 2.26169C12.5775 2.26169 14.4697 4.15387 14.4697 6.47972C14.4697 8.80557 12.5775 10.6977 10.2517 10.6977Z" fill="white"></path><path d="M17.0104 15.8591V12.5784H15.4482V15.8591H12.1675V17.4213H15.4482V20.702H17.0104V17.4213H20.2911V15.8591H17.0104Z" fill="white"></path></g><defs><clipPath id="clip0_325_2916"><rect width="20.0356" height="20.0356" fill="white" transform="translate(0.253418 0.679932)"></rect></clipPath></defs></svg> 
+                                Log in
+                                </span>
+                            </a>
+                            @endif
+
+                            @if(\Illuminate\Support\Facades\Auth::check())
+                                <div class="ly-loged-in-drop-down">
+                                    <div class="selected">
+                                        <a href="#">
+                                            <div class="img-box">
+                                            <img src="{{ \Illuminate\Support\Facades\Auth::guard('admin')->check() ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
+                                            </div>
+                                            <div class="meta-box">
+                                                @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
+                                                <h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->name}}</h6>
+                                                <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->email}}</small>
+                                                @else
+                                                <h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
+                                                <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>
+                                                @endif
+                                            </div>
+                                        </a>
                                     </div>
-                                    <button class="logout-btn">Log Out</button>
+                                    <div class="options">
+                                        <ol class="list">
+                                            <li>
+                                                <a href="#">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>
+                                                        Wallet
+                                                    </span>
+                                                    @if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
+                                                        @if(Auth::user() && \App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
+                                                            <?php $amount = \App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->first()['amount']; ?>
+                                                            <span>{{$amount == null ? 0 : $amount}}$</span>
+                                                        @endif
+                                                    @elseif(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user())
+                                                        @if(Auth::user() && \App\Models\UserWallet::where('is_vendor','0')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
+                                                            <?php $amount = \App\Models\UserWallet::where('is_vendor','0')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->first()['amount']; ?>
+                                                            <span>{{$amount == null ? 0 : $amount}}$</span>
+                                                        @endif
+                                                    @endif
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url('user/orders') }}">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>
+                                                        Orders
+                                                    </span>
+                                                    <!-- <span class="badge active">2</span> -->
+                                                </a>
+                                            </li>
+                                            @if(Auth::user() && \App\Models\OrdersProduct::where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
+                                            <li>
+                                                <a href="{{ route('user.ordered.listings') }}">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></g></svg>
+                                                        My listings
+                                                    </span>
+                                                    <span class="badge">{{\App\Models\OrdersProduct::where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->count()}}</span>
+                                                </a>
+                                            </li>
+                                            @endif
+                                            <li>
+                                                <a href="{{ url('cart') }}">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m8.962 18.91l.464-.588zM12 5.5l-.54.52a.75.75 0 0 0 1.08 0zm3.038 13.41l.465.59zm-5.612-.588C7.91 17.127 6.253 15.96 4.938 14.48C3.65 13.028 2.75 11.335 2.75 9.137h-1.5c0 2.666 1.11 4.7 2.567 6.339c1.43 1.61 3.254 2.9 4.68 4.024zM2.75 9.137c0-2.15 1.215-3.954 2.874-4.713c1.612-.737 3.778-.541 5.836 1.597l1.08-1.04C10.1 2.444 7.264 2.025 5 3.06C2.786 4.073 1.25 6.425 1.25 9.137zM8.497 19.5c.513.404 1.063.834 1.62 1.16c.557.325 1.193.59 1.883.59v-1.5c-.31 0-.674-.12-1.126-.385c-.453-.264-.922-.628-1.448-1.043zm7.006 0c1.426-1.125 3.25-2.413 4.68-4.024c1.457-1.64 2.567-3.673 2.567-6.339h-1.5c0 2.198-.9 3.891-2.188 5.343c-1.315 1.48-2.972 2.647-4.488 3.842zM22.75 9.137c0-2.712-1.535-5.064-3.75-6.077c-2.264-1.035-5.098-.616-7.54 1.92l1.08 1.04c2.058-2.137 4.224-2.333 5.836-1.596c1.659.759 2.874 2.562 2.874 4.713zm-8.176 9.185c-.526.415-.995.779-1.448 1.043c-.452.264-.816.385-1.126.385v1.5c.69 0 1.326-.265 1.883-.59c.558-.326 1.107-.756 1.62-1.16z"/></svg>
+                                                        My Cart
+                                                    </span>
+                                                    <span class="badge active">4</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url('checkout') }}">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m8.962 18.91l.464-.588zM12 5.5l-.54.52a.75.75 0 0 0 1.08 0zm3.038 13.41l.465.59zm-5.612-.588C7.91 17.127 6.253 15.96 4.938 14.48C3.65 13.028 2.75 11.335 2.75 9.137h-1.5c0 2.666 1.11 4.7 2.567 6.339c1.43 1.61 3.254 2.9 4.68 4.024zM2.75 9.137c0-2.15 1.215-3.954 2.874-4.713c1.612-.737 3.778-.541 5.836 1.597l1.08-1.04C10.1 2.444 7.264 2.025 5 3.06C2.786 4.073 1.25 6.425 1.25 9.137zM8.497 19.5c.513.404 1.063.834 1.62 1.16c.557.325 1.193.59 1.883.59v-1.5c-.31 0-.674-.12-1.126-.385c-.453-.264-.922-.628-1.448-1.043zm7.006 0c1.426-1.125 3.25-2.413 4.68-4.024c1.457-1.64 2.567-3.673 2.567-6.339h-1.5c0 2.198-.9 3.891-2.188 5.343c-1.315 1.48-2.972 2.647-4.488 3.842zM22.75 9.137c0-2.712-1.535-5.064-3.75-6.077c-2.264-1.035-5.098-.616-7.54 1.92l1.08 1.04c2.058-2.137 4.224-2.333 5.836-1.596c1.659.759 2.874 2.562 2.874 4.713zm-8.176 9.185c-.526.415-.995.779-1.448 1.043c-.452.264-.816.385-1.126.385v1.5c.69 0 1.326-.265 1.883-.59c.558-.326 1.107-.756 1.62-1.16z"/></svg>
+                                                        Checkout
+                                                    </span>
+                                                    <span class="badge active">4</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url('user/account') }}">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v-.5m4 .5v-.5M8 11v-.5m-4.536 6.328C2 15.657 2 14.771 2 11c0-3.771 0-5.657 1.464-6.828C4.93 3 7.286 3 12 3c4.714 0 7.071 0 8.535 1.172C22 5.343 22 7.229 22 11c0 3.771 0 4.657-1.465 5.828C19.072 18 16.714 18 12 18c-2.51 0-3.8 1.738-6 3v-3.212c-1.094-.163-1.899-.45-2.536-.96"/></svg>
+                                                        My Account
+                                                    </span>
+                                                    <!-- <span class="badge active">6</span> -->
+                                                </a>
+                                            </li>
+                                        </ol>
+                                        <!-- <div class="list-divider"></div>
+                                        <ol class="list extra-links">
+                                            <li>
+                                                <a href="#">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M5 6.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5m-4.5 7h9v-.542A4.51 4.51 0 0 0 4.796 8.5A4.51 4.51 0 0 0 .5 12.958zm8.5-7a2.5 2.5 0 0 0 0-5m2.5 12h2v-.542A4.51 4.51 0 0 0 10 8.61"/></svg>
+                                                        Host your home
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v2m0 16v-8m0-8h12l-2 4l2 4H8m0-8v8"/></svg>
+                                                        Host an experience
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="value">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></g></svg>
+                                                        Help
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ol> -->
+                                        <div class="user-profile-info">
+                                            <div class="img-box">
+                                                <a href="#"><img src="{{ \Illuminate\Support\Facades\Auth::guard('admin')->check() ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
+                                            </div>
+                                            <div class="meta-box">
+                                                 @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
+                                                    <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->name}}</h6></a>
+                                                    <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->email}}</small>
+                                                @else
+                                                    <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
+                                                    <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <a href="{{ url('user/logout') }}"><button class="logout-btn">Log Out</button></a>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </li>
                     </ul>
                 </nav>
@@ -380,7 +394,7 @@ $sections = \App\Models\Section::sections();
 
 
 
-	<div id="loginModal2" class="modal-style-2 dark modal ">
+	<!-- <div id="loginModal2" class="modal-style-2 dark modal ">
 		<div class="modal-dialog modal-login">
 			<div class="modal-content">
 				<div class="modal-header p-0">				
@@ -388,7 +402,6 @@ $sections = \App\Models\Section::sections();
 	                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
 				<div class="modal-body">
-					<!-- dont forget to add action and action method  -->
 					    <form  method="post" class="mt-3"> {{-- the same HTML Form as the one in the Admin Panel in admin/login.blade.php --}}
                             @csrf 
 						<div class="form-group">
@@ -411,9 +424,6 @@ $sections = \App\Models\Section::sections();
                                     <span class="custom-control-label">&nbsp;Remember Me</span>
                                 </label>
                             </div>
-                            <!--<div class="col text-right hint-text pt-0">-->
-                            <!--    <a href="" class="text-danger">Forgot Password?</a>-->
-                            <!--</div>-->
                         </div>
 						<div class="form-group text-center mt-2 mb-0">
 							<button type="button" class="btn btn-primary btn-sm" onclick="userLogin()">Login</button>
@@ -430,10 +440,10 @@ $sections = \App\Models\Section::sections();
 				<div class="modal-footer">Don't have an account? <a href="#registerModal2" data-dismiss="modal" data-toggle="modal"> Register</a></div>
 			</div>
 		</div>
-	</div>  
+	</div>   -->
 	
 	
-	<div id="registerModal2" class="modal-style-2 dark modal ">
+	<!-- <div id="registerModal2" class="modal-style-2 dark modal ">
 		<div class="modal-dialog modal-login">
 			<div class="modal-content">
 				<div class="modal-header p-0">				
@@ -476,7 +486,6 @@ $sections = \App\Models\Section::sections();
 					</form>
 
 				</div>
-				<!-- social icons -->
 				<p class="hint-text">or register with</p>
 				<div class="social-login text-center mb-2">
 					<a class=" btn-facebook  text-uppercase" href="{{ url('auth/facebook') }}"><i class="fab fa-facebook-f mr-2 ml-2"></i> </a>
@@ -486,16 +495,17 @@ $sections = \App\Models\Section::sections();
 				<div class="modal-footer">Already have an account? <a href="#loginModal2" data-bs-dismiss="modal" data-bs-toggle="modal"> Login</a></div>
 			</div>
 		</div>
-	</div> 
+	</div>  -->
 
     @if(Auth::check() && Auth::user()->is_role_set == '0')
     <?php $checkRole = 1;
     $pass = session('data');?>
+     @include('front.layout.user_type')
     @else
     <?php $checkRole = 0;
     $pass = null?>
     @endif
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -530,7 +540,7 @@ $sections = \App\Models\Section::sections();
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
 </header>
 <!-- Header /- -->

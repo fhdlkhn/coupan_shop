@@ -1,19 +1,16 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html class="no-js" lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{asset('front/css/bootstrap.min.css')}}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet"> 
-    <link rel="stylesheet" href="css/sbmenu.css">
-    <link rel="stylesheet" href="css/owl.carousel.css">
-    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="{{asset('front/css/sbmenu.css')}}">
+    <link rel="stylesheet" href="{{asset('front/css/owl.carousel.css')}}">
+    <link rel="stylesheet" href="{{asset('front/css/theme.css')}}">
     <title>Register Page</title>
 </head>
-<body> -->
-    @extends('front.layout.layout')
-    @section('content')
-
+<body>
     <!-- ly-register-section-start -->
     <section class="ly-register-section" >
         <div class="container-fluid">
@@ -78,7 +75,7 @@
                                                 </div>
                                                 <button class="ly-button-3 register-btn">Register</button>
                                                 <div class="login-box">
-                                                    <p>Already have an account?<a href="#">Log in</a></p>
+                                                    <p>Already have an account?<a href="{{route('user.login')}}">Log in</a></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -96,12 +93,12 @@
     </section>
     <!-- ly-register-section-end -->
 
-    <!-- <script src="js/jquery-3.6.0.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/sbmenu.js"></script>
-    <script src="js/owl.carousel.js"></script>
+    <script src="{{asset('front/js/jquery-3.6.0.js')}}"></script>
+    <script src="{{asset('front/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('front/js/sbmenu.js')}}"></script>
+    <script src="{{asset('front/js/owl.carousel.js')}}"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <script src="js/custom.js"></script> -->
+    <script src="{{asset('front/js/custom.js')}}"></script>
     <script type="text/javascript">
         function changePassword(){
             var getPass = document.getElementById('register_pass');
@@ -132,4 +129,5 @@
             }
         }
     </script>
-        @endsection
+ </body>
+ </html>

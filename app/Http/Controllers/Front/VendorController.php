@@ -256,7 +256,8 @@ class VendorController extends Controller
             else{
                 $message = 'Thanks for registering. Please log in into your account.';
             }
-            return redirect()->back()->with('success_message', $message)->with('data',$request->password);
+            return redirect()->route('index')->with(['success_message'=>'User Registered Successfully. Please select a role to proceed!','show_modal'=> 1,'data'=>Auth::user(),'vendor'=>0]);
+            // return redirect()->back()->with('success_message', $message)->with('data',$request->password);
         }
     }
 
