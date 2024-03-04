@@ -4,9 +4,6 @@ $sections = \App\Models\Section::sections();
 // dd($sections);
 
 ?>
-
-
-
 <!-- Header -->
 <header>
     <!-- Top-Header -->
@@ -337,33 +334,6 @@ $sections = \App\Models\Section::sections();
                                                 </a>
                                             </li>
                                         </ol>
-                                        <!-- <div class="list-divider"></div>
-                                        <ol class="list extra-links">
-                                            <li>
-                                                <a href="#">
-                                                    <span class="value">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M5 6.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5m-4.5 7h9v-.542A4.51 4.51 0 0 0 4.796 8.5A4.51 4.51 0 0 0 .5 12.958zm8.5-7a2.5 2.5 0 0 0 0-5m2.5 12h2v-.542A4.51 4.51 0 0 0 10 8.61"/></svg>
-                                                        Host your home
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <span class="value">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v2m0 16v-8m0-8h12l-2 4l2 4H8m0-8v8"/></svg>
-                                                        Host an experience
-                                                    </span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <span class="value">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></g></svg>
-                                                        Help
-                                                    </span>
-                                                </a>
-                                            </li>
-                                        </ol> -->
                                         <div class="user-profile-info">
                                             <div class="img-box">
                                                 <a href="#"><img src="{{ \Illuminate\Support\Facades\Auth::guard('admin')->check() ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
@@ -389,115 +359,7 @@ $sections = \App\Models\Section::sections();
         </div>
     </div>
 
-
-
-
-
-
-	<!-- <div id="loginModal2" class="modal-style-2 dark modal ">
-		<div class="modal-dialog modal-login">
-			<div class="modal-content">
-				<div class="modal-header p-0">				
-					<h4 class="modal-title">Login</h4>
-	                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">
-					    <form  method="post" class="mt-3"> {{-- the same HTML Form as the one in the Admin Panel in admin/login.blade.php --}}
-                            @csrf 
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-user"></i></span>
-							
-								  <input type="email" name="email" id="vendor-email" class="form-control" placeholder="Enter your Email" required="required" autocomplete="off">
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon" onclick="loginEye()"><i id="loginEye"class="fa fa-eye-slash"></i></span>
-								<input type="password" class="form-control" name="password" placeholder="Enter password" required="required" autocomplete="off" id="vendor-password">
-							</div>
-						</div>
-						<div class="row pl-1 pr-1">
-                            <div class="col text-left">
-                                <label class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="item_checkbox" name="item_checkbox" value="option1">
-                                    <span class="custom-control-label">&nbsp;Remember Me</span>
-                                </label>
-                            </div>
-                        </div>
-						<div class="form-group text-center mt-2 mb-0">
-							<button type="button" class="btn btn-primary btn-sm" onclick="userLogin()">Login</button>
-							
-						</div>
-						<p class="hint-text mt-0">or login with</p>
-						<div class="social-login text-center">
-							<a class=" btn-facebook  text-uppercase" href="{{ url('auth/facebook') }}"><i class="fab fa-facebook-f mr-2 ml-2"></i> </a>
-							<a class=" btn-facebook  text-uppercase" href="{{ url('auth/google') }}"><i class="fab fa-google mr-2 ml-2"></i></a>
-							<a class=" btn-facebook  text-uppercase" href="redirect/twitter"><i class="fab fa-twitter mr-2 ml-2"></i></a>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">Don't have an account? <a href="#registerModal2" data-dismiss="modal" data-toggle="modal"> Register</a></div>
-			</div>
-		</div>
-	</div>   -->
-	
-	
-	<!-- <div id="registerModal2" class="modal-style-2 dark modal ">
-		<div class="modal-dialog modal-login">
-			<div class="modal-content">
-				<div class="modal-header p-0">				
-					<h4 class="modal-title">Register</h4>
-	                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">
-					     <form id="vendorForm" action="{{ url('/vendor/register') }}" method="post" class="mt-3">
-                            @csrf
-
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-user"></i></span>
-								<input type="text" class="form-control" id="vendorname" name="name" placeholder="Enter your name" required="required" autocomplete="off">
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-								<input type="text" class="form-control" name="email" placeholder="Enter email address" required="required" id="vendoremail" autocomplete="off">
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon" onclick="changePassword1()"><i id="eyeIcon1" class="fa fa-eye-slash"></i></span>
-								<input type="password" class="form-control" name="password" id="vendorpassword" placeholder="Enter password" required="required" autocomplete="off">
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-addon" onclick="changePassword()"><i id="eyeIcon" class="fa fa-eye-slash"></i></span>
-								<input type="password" id="register_pass"class="form-control" name="password_confirmation" placeholder="Retype password" required="required" autocomplete="off">
-							</div>
-						</div>
-
-						<div class="form-group text-center">
-							<button id="signup-button" type="submit" class="btn btn-primary btn-sm">Register</button>
-							
-						</div>
-					</form>
-
-				</div>
-				<p class="hint-text">or register with</p>
-				<div class="social-login text-center mb-2">
-					<a class=" btn-facebook  text-uppercase" href="{{ url('auth/facebook') }}"><i class="fab fa-facebook-f mr-2 ml-2"></i> </a>
-					<a class=" btn-facebook  text-uppercase" href="{{ url('auth/google') }}"><i class="fab fa-google mr-2 ml-2"></i></a>
-				
-				</div>
-				<div class="modal-footer">Already have an account? <a href="#loginModal2" data-bs-dismiss="modal" data-bs-toggle="modal"> Login</a></div>
-			</div>
-		</div>
-	</div>  -->
-
-    @if(Auth::check() && Auth::user()->is_role_set == '0')
+    @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->is_role_set == '0')
     <?php $checkRole = 1;
     $pass = session('data');?>
      @include('front.layout.user_type')
@@ -505,46 +367,14 @@ $sections = \App\Models\Section::sections();
     <?php $checkRole = 0;
     $pass = null?>
     @endif
-        <!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Want to proceed as</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                    
-                        <div class="sign-in-up">
-                            <ul class="list-sign-in ">                  
-                                <li class="ad-post-btn">
-                                <form action="{{route('save.role')}}" method="post" class="mt-3">
-                                @csrf 
-                                    <input type="hidden" name="email" id="passed_email">
-                                    <input type="hidden" name="password" value = "{{$pass}}"id="passed_password">
-                                    <button class="btn btn-theme login-me-vendor" name="button" value="vendor" type="submit"> Business Trader </button>
-                                </form>
-                                </li>
-                                <li class="ad-post-btn">
-                                <form action="{{route('save.role')}}" method="post" class="mt-3">
-                                @csrf 
-                                    <input type="hidden" name="email" id="passed_email2">
-                                    <input type="hidden" name="password" id="passed_password2">
-                                    <button class="btn btn-theme text-white login-me-buyer" name="button" value="buyer" type="submit"> Buyer/Reseller </button>
-                                </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </form>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
 </header>
-<!-- Header /- -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript">
+    $(document).bind('click', function(e) {
+    var $clicked = $(e.target);
+    if (! $clicked.parents().hasClass("ly-loged-in-drop-down"))
+        $(".ly-loged-in-drop-down .options").hide();
+});
     function changePassword(){
         var getPass = document.getElementById('register_pass');
         var eyeIcon = document.getElementById('eyeIcon');

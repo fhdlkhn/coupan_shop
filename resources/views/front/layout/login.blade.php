@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en-US">
 <head>
+    <link href="favicon.png" rel="shortcut icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{asset('front/css/bootstrap.min.css')}}">
@@ -53,7 +54,7 @@
                         <div class="row">
                             <div class="col-lg-5">
                                 <div class="main-img-box">
-                                    <img src="{{asset('front/images/banner_images/login-main-img.png')}}" alt="main-img">
+                                    <img src="{{asset('front/images/banner_images/login.png')}}" alt="main-img">
                                 </div>
                             </div>
                             <div class="col-lg-7">
