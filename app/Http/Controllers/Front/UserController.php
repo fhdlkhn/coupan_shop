@@ -74,7 +74,7 @@ class UserController extends Controller
                 });
 
                 // Redirect user back with a success message
-                $redirectTo = url('user/login-register'); // redirect user to the front/users/login_register.blade.php    // Check that route in web.php
+                $redirectTo = url('login'); // redirect user to the front/users/login_register.blade.php    // Check that route in web.php
 
                 // Here, we return a JSON response because the request is ORIGINALLY submitting an HTML <form> data using an AJAX request
                 return response()->json([ // JSON Responses: https://laravel.com/docs/9.x/responses#json-responses
@@ -202,7 +202,7 @@ class UserController extends Controller
             $userDetails = User::where('email', $email)->first();
             if ($userDetails->status == 1) { // if the user's account is already activated
                 // Redirect the user to the User Login/Register page with an 'error' message
-                return redirect('user/login-register')->with('error_message', 'Your account is already activated. You can login now.');
+                return redirect('login')->with('error_message', 'Your account is already activated. You can login now.');
             } else { // if the user's account is not yet activated, activate it (update `status` to 1) and send a 'Welcome' Email
                 User::where('email', $email)->update([
                     'status' => 1
@@ -224,7 +224,7 @@ class UserController extends Controller
                 // Note: Here, we have TWO options, either redirect user with a success message or Log the user In IMMDEIATELY, AUTOMATICALLY and DIRECTLY
 
                 // Redirect the user to the User Login/Register page with a 'success' message
-                return redirect('user/login-register')->with('success_message', 'Your account is activated. You can login now.');
+                return redirect('login')->with('success_message', 'Your account is activated. You can login now.');
             }
 
         } else { // if the user's email doesn't exist (hacking or cyber attack!!)

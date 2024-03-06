@@ -208,7 +208,7 @@ class VendorController extends Controller
                 });
 
                 // Redirect user back with a success message
-                $redirectTo = url('user/login-register'); // redirect user to the front/users/login_register.blade.php    // Check that route in web.php
+                $redirectTo = url('login'); // redirect user to the front/users/login_register.blade.php    // Check that route in web.php
 
                 // Here, we return a JSON response because the request is ORIGINALLY submitting an HTML <form> data using an AJAX request
                 // return response()->json([ // JSON Responses: https://laravel.com/docs/9.x/responses#json-responses
@@ -276,7 +276,7 @@ class VendorController extends Controller
 
                 // Redirect vendor to vendor Login/Register page with an 'error' message
                 $message = 'Your Vendor Account is already confirmed. You can login';
-                return redirect('vendor/login-register')->with('error_message', $message);
+                return redirect('login')->with('error_message', $message);
 
             } else { // (!! DATABASE TRANSACTION !!) if the vendor account is not confirmed, then confirm it (by updating the `confirm` column to 'Yes' in BOTH `vendors` and `admins` tables) (!! DATABASE TRANSACTION !!)
                 // Note: Vendor CONFIRMATION occurs automatically through vendor clicking on the confirmation link sent in the email, but vendor ACTIVATION (active/inactive/disabled) occurs manually where 'superadmin' or 'admin' activates the `status` from the Admin Panel in 'Admin Management' tab, then clicks Status. Also, Vendor CONFIRMATION is related to the `confirm` columns in BOTH `admins` and `vendors` tables, but vendor ACTIVATION (active/inactive/disabled) is related to the `status` columns in BOTH `admins` and `vendors` tables!
@@ -302,7 +302,7 @@ class VendorController extends Controller
 
                 // Redirect vendor to vendor Login/Register page with a 'success' message
                 $message = 'Your Vendor Email account is confirmed. You can login and add your personal, business and bank details to activate your Vendor Account to add products';
-                return redirect('vendor/login-register')->with('success_message', $message);
+                return redirect('login')->with('success_message', $message);
             }
         } else { // if the vendor email doesn't exist (hacking or cyber attack!!)
             abort(404);

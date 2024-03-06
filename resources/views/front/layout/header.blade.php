@@ -201,7 +201,7 @@ $sections = \App\Models\Section::sections();
             <!-- sb header -->
             <div class="sb-header-container">
                 <!--Logo-->
-                <div class="logo" data-mobile-logo="imgs/Logo.png" data-sticky-logo="imgs/Logo.png"> <a href="index.html"><img src="{{ asset('logo.png')}}" alt=""></a></div>
+                <div class="logo" data-mobile-logo="imgs/Logo.png" data-sticky-logo="imgs/Logo.png"> <a href="{{route('index')}}"><img src="{{ asset('logo.png')}}" alt=""></a></div>
                 <!-- Burger menu -->
                 <div class="burger-menu">
                     <div class="line-menu line-half first-line"></div>

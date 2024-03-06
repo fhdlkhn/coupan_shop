@@ -869,13 +869,13 @@ class ProductsController extends Controller
 
 
 
-    // Checkout page (using match() method for the 'GET' request for rendering the front/products/checkout.blade.php page or the 'POST' request for the HTML Form submission in the same page) (for submitting the user's Delivery Address and Payment Method))    
     public function checkout(Request $request) {
-        // Fetch all of the world countries from the database table `countries`
         $countries = Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
-        
-        // Get the Cart Items of a cerain user (using their `user_id` if they're authenticated/logged in or their `session_id` if they're not authenticated/not logged in (guest))    
         $getCartItems = Cart::getCartItems();
+        $getCartItems = Cart::getCartItems();
+
+        // If the Cart is empty (If there're no Cart Items), don't allow opening/accessing the Checkout page (checkout.blade.php)    
+        $getCartItems = Cart::getCartItems();   
 
         // If the Cart is empty (If there're no Cart Items), don't allow opening/accessing the Checkout page (checkout.blade.php)    
         if (count($getCartItems) == 0) {
@@ -897,162 +897,71 @@ class ProductsController extends Controller
             $product_weight = $item['product']['product_weight'];
             $total_weight = $total_weight + $product_weight;
         }
-
-
-        $deliveryAddresses = DeliveryAddress::deliveryAddresses(); // the delivery addresses of the currently authenticated/logged in user
-
-
-        // Calculating the Shipping Charges of every one of the user's Delivery Addresses (depending on the 'country' of the Delivery Address)    
+        $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
         foreach ($deliveryAddresses as $key => $value) {
             $shippingCharges = ShippingCharge::getShippingCharges($total_weight, $value['country']);
-
-            // Append/Add the Shipping Charge of every Delivery Address (depending on the 'country' of the Delivery Addresss) to the $deliveryAddresses array
             $deliveryAddresses[$key]['shipping_charges'] = $shippingCharges;
 
-            // Checking PIN code availability of BOTH COD and Prepaid PIN codes in BOTH `cod_pincodes` and `prepaid_pincodes` tables    
-            // Check if the COD PIN code of that Delivery Address of the user exists in `cod_pincodes` table    
-            $deliveryAddresses[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $value['pincode'])->count(); // Note that    $value['pincode']    denotes the `pincode` of the `delivery_addresses` table
-
-            // Check if the Prepaid PIN code of that Delivery Address of the user exists in `prepaid_pincodes` table    
-            $deliveryAddresses[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $value['pincode'])->count(); // Note that    $value['pincode']    denotes the `pincode` of the `delivery_addresses` table
+            $deliveryAddresses[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $value['pincode'])->count();   
+            $deliveryAddresses[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $value['pincode'])->count(); 
         }
 
 
         
         if ($request->isMethod('post')) { // if the <form> in front/products/checkout.blade.php is submitted (the HTML Form that the user submits to submit their Delivery Address and Payment Method)
             $data = $request->all();
-
-            // Website Security
-            // Note: We need to prevent orders (upon checkout and payment) of the 'disabled' products (`status` = 0), where the product ITSELF can be disabled in admin/products/products.blade.php (by checking the `products` database table) or a product's attribute (`stock`) can be disabled in 'admin/attributes/add_edit_attributes.blade.php' (by checking the `products_attributes` database table). We also prevent orders of the out of stock / sold-out products (by checking the `products_attributes` database table)
             foreach ($getCartItems as $item) {
-                // Prevent 'disabled' (`status` = 0) products from being ordered (if it's disabled in admin/products/products.blade.php) by checking the `products` database table
                 $product_status = Product::getProductStatus($item['product_id'],null);
                 if ($product_status == 0) { // if the product is disabled (`status` = 0)
                     $message = $item['product']['product_name'] . ' with ' . $item['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
                     return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
                 }
             }
-
-            // Preventing out of stock / sold out products from being ordered (by checking the `products_attributes` database table)
-            // $getProductStock = ProductsAttribute::getProductStock($item['product_id'], null); // A product (`product_id`) with a certain `size`
             $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
             if ($getProductStock == 0) { // if the product's `stock` is 0 zero
                 $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
                 return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
             }
-
-            // Preventing the products with 'disabled' Product Attributes (in admin/attributes/add_edit_attributes.blade.php) from being ordered (by checking the `products_attributes` database table)
-            // $getAttributeStatus = ProductsAttribute::getAttributeStatus($item['product_id']); // A product (`product_id`) with a certain `size`
-            // if ($getAttributeStatus == 0) { // if the product's `stock` is 0 zero
-            //     $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
-            //     return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
-            // }
-
-            // Note: We also prevent making orders of the products of the Categories that are disabled (`status` = 0) (whether the Category is a Child Category or a Parent Category (Root Category) is disabled) in admin/categories/categories.blade.php
             $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id'], null);
             if ($getCategoryStatus == 0) { // if the Category is disabled (`status` = 0)
                 $message = $item['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
                 return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
             }
-
-
-            // Validation:
-            // Delivery Address Validation
-            // if (empty($data['address_id'])) { // if the user doesn't select a Delivery Address
-            //     $message = 'Please select Delivery Address!';
-
-            //     return redirect()->back()->with('error_message', $message);
-            // }
-
-            // Payment Method Validation
-            // if (empty($data['payment_gateway'])) { // if the user doesn't select a Delivery Address
-            //     $message = 'Please select Payment Method!';
-
-            //     return redirect()->back()->with('error_message', $message);
-            // }
-
-            // Agree to T&C (Accept Terms and Conditions) Validation
             if (empty($data['accept'])) { // if the user doesn't select a Delivery Address
                 $message = 'Please agree to T&C!';
 
                 return redirect()->back()->with('error_message', $message);
             }
-
-
-
-            // If user passes Validation, we start Placing Order:
-
-
-            // Note: For the Orders module, we created two database tables: orders and orders_products tables. The first one holds/stores the main information about the orders of a user (e.g. delivery address, coupon code, shipping, payment method, ...etc), and the second one holds/stores the detailed information about the order (the items/products that are bought by the order and product name, code, color, size, price, ...etc). There is a one-to-many relationship between the two tables where one order can have many order products.
-
-
-            // Now, we'll collect the necessary data to fill in the `orders` and `orders_products` database tables    
-
-            // Get the Delivery Address from    $data['address_id']
-            // $deliveryAddress = DeliveryAddress::where('id', $data['address_id'])->first()->toArray();
-            // dd($deliveryAddress);
-
-            
-            // If the selected `payment_gateway` is 'COD', set the `payment_method` as 'COD' too (and `order_status` is 'New'), otherwise it's always 'prepaid' (and `order_status` is 'Pending')
-            if ($data['payment_gateway'] == 'COD') {
+            // if ($data['payment_gateway'] == 'COD') {
                 $payment_method = 'COD';
                 $order_status   = 'New';
 
-            } else { // if the user selects any `payment_gateway` other than 'COD', this means that the `payment_method` is 'prepaid'  (and `order_status` is 'pending')
-                $payment_method = 'Prepaid';
-                $order_status   = 'Pending'; // And after payment confirmation, `order_status` becomes 'Payment Captured'. (We'll create the API that will convert this to either 'Payment Captured' or 'Canceled')
-            }
-
-
-            // Note: !!DATABASE TRANSACTION!! Firstly, we'll save the order in the `orders` table, then take the newly generated order `id` to use it to fill in the `order_id` column in the `orders_products` table, and fill in the `orders_products` table    
-            // Database Transactions: https://laravel.com/docs/9.x/database#database-transactions
+            // } else { 
+            //     $payment_method = 'Prepaid';
+            //     $order_status   = 'Pending';
+            // }
             DB::beginTransaction();
-
-            // Calculate Subtotal, Grand Total `grand_total` and Coupon Discount `coupon_amount` (to fill in the `orders` table)
-            // Calculate Grand Total `grand_total
-            // Get the Total Price (the 'Subtotal')
             $total_price = 0;
             foreach ($getCartItems as $item) {
-                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null); // from the `products_attributes` table, not the `products` table
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null);
                 $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']);
             }
-
-            // Calculate Shipping Charges `shipping_charges`
             $shipping_charges = 0;
-
-            // Get the Shipping Charge based on the chosen Delivery Address    
-            // $shipping_charges = ShippingCharge::getShippingCharges($total_weight, $deliveryAddress['country']);
-
-            // Grand Total (`grand_total`)
-            // $grand_total = $total_price + $shipping_charges - Session::get('couponAmount');
             $grand_total = $total_price ;
-
-            // Store the $grand_total in Session to be able to use it wherever we need it later on (for example, it'll be used in front/paypal/paypal.blade.php and front/iyzipay/iyzipay.blade.php)
-            Session::put('grand_total', $grand_total); // Storing Data: https://laravel.com/docs/10.x/session#storing-data
-
-
-            // INSERT the data we collected INTO the `orders` database table
-            $order = new Order; // Create a new Order.php model object (represents the `orders` table)
-
+            Session::put('grand_total', $grand_total);
+            $order = new Order; 
             // Assign the $order data to be INSERT-ed INTO the `orders` table
-            $order->user_id          = Auth::user()->id; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
-            // $order->name             = $deliveryAddress['name'];
-            // $order->address          = $deliveryAddress['address'];
-            // $order->city             = $deliveryAddress['city'];
-            // $order->state            = $deliveryAddress['state'];
-            // $order->country          = $deliveryAddress['country'];
-            // $order->pincode          = $deliveryAddress['pincode'];
-            // $order->mobile           = $deliveryAddress['mobile'];
-            $order->email            = Auth::user()->email; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+            $order->user_id          = Auth::user()->id; 
+            $order->email            = Auth::user()->email;
             $order->shipping_charges = NULL;
             $order->coupon_code      = NULL;   // it was set inside applyCoupon() method
             $order->coupon_amount    = NULL; // it was set inside applyCoupon() method
             $order->order_status     = $order_status;
             $order->payment_method   = $payment_method;
-            $order->payment_gateway  = $data['payment_gateway'];
+            $order->payment_gateway  = 'COD';
             $order->grand_total      = $grand_total;
 
-            $order->save(); // INSERT data INTO the `orders` table
+            $order->save();
 
             //insert data into wallet
             $getAdmin = Admin::where('type','superadmin')->first()['id'];
@@ -1069,34 +978,14 @@ class ProductsController extends Controller
                 $getwallet->user_id = $getAdmin;
             }
             $getwallet->save();
-            //update listing owner wallet
-
-            
-            
-            // Get the last generated `id` of the the last inserted order in the `orders` table (to be able to store it in the `order_id` column in the `orders_products` table)
             $order_id = $order->id;
-            
-
-            // INSERT/Fill in the data of the order in the `orders_products` table (after filling in the `orders` table)
             foreach ($getCartItems as $item) {
-                $cartItem = new OrdersProduct; // Create a new OrdersProduct.php model object (represents the `orders_products` table)
-
-                // Assign the order product/item data to be INSERT-ed INTO the `orders_products` table
+                $cartItem = new OrdersProduct;
                 $cartItem->order_id = $order_id;
-                $cartItem->user_id  = Auth::user()->id; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
-
-                // Get some product details of the Cart Items from the `products` table (to be able to fill in data in the `orders_products` table)
+                $cartItem->user_id  = Auth::user()->id;
                 $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $item['product_id'])->first()->toArray();
-
-                // Continue filling in data into the `orders_products` table
                 $cartItem->admin_id        = $getProductDetails['admin_id'];
                 $cartItem->vendor_id       = $getProductDetails['vendor_id'];
-
-                
-                // if ($getProductDetails['vendor_id'] > 0) { // if the order product's seller is a 'vendor'
-                //     $vendorCommission = Vendor::getVendorCommission($getProductDetails['vendor_id']);
-                //     $cartItem->commission  = $vendorCommission;
-                // }
 
                 $cartItem->product_id      = $item['product_id'];
                 $cartItem->product_code    = $getProductDetails['product_code'];
@@ -1122,10 +1011,9 @@ class ProductsController extends Controller
                 $cartItem->save(); // INSERT data INTO the `orders_products` table
 
 
-                // Inventory Management - Reduce inventory/stock when an order gets placed
-                // We wrote the Inventory/Stock Management script in TWO places: in the checkout() method in Front/ProductsController.php and in the success() method in Front/PaypalController.php
+                
                 $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // Get the `stock` of that product `product_id` with that specific `size` from `products_attributes` table
-                $newStock = $getProductStock - $item['quantity']; // The new product `stock` is the original stock reduced by the order `quantity`
+                $newStock = $getProductStock - $item['quantity'];
                 Product::where([ // Update the new `quantity` in the `products_attributes` table
                     'id' => $item['product_id'],
                 ])->update(['product_units' => $newStock]);
@@ -1174,18 +1062,10 @@ class ProductsController extends Controller
             Session::put('order_id', $order_id); // Storing Data: https://laravel.com/docs/9.x/session#storing-data
 
 
-            DB::commit(); // commit the Database Transaction
-
-
-            // echo 'Order placed successfully!';
-            // exit;
-
-
-            // Send placing an order confirmation email to the user    
-            // Note: We send placing an order confirmation email and SMS to the user right away (immediately) if the order is "COD", but if the order payment method is like PayPal or any other payment gateway, we send the order confirmation email and SMS after the user makes the payment
+            DB::commit(); 
             $orderDetails = Order::with('orders_products')->where('id', $order_id)->first()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
 
-            if ($data['payment_gateway'] == 'COD') { // if the `payment_gateway` selected by the user is 'COD' (in front/products/checkout.blade.php), we send the placing the order confirmation email and SMS immediately
+            if ($payment_method == 'COD') { // if the `payment_gateway` selected by the user is 'COD' (in front/products/checkout.blade.php), we send the placing the order confirmation email and SMS immediately
                 // Sending the Order confirmation email
                 $email = Auth::user()->email; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
 
@@ -1384,7 +1264,6 @@ class ProductsController extends Controller
         }
     }
     public function stripePost(Request $request){
-        // return "hello";
         
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
     
@@ -1394,10 +1273,243 @@ class ProductsController extends Controller
                 "source" => $request->stripeToken,
                 "description" => "Listing Amount" 
         ]);
-      
-        Session::flash('success', 'Payment successful!');
-              
-        return back();
+        
+        $countries = Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
+        $getCartItems = Cart::getCartItems();   
+        if (count($getCartItems) == 0) {
+            $message = 'Shopping Cart is empty! Please add listing to your Cart to checkout';
+
+            return redirect('cart')->with('error_message', $message); // redirect user to the cart.blade.php page, and show an error message in cart.blade.php
+        }
+
+
+        // Calculate the total price    
+        $total_price  = 0;
+        $total_weight = 0;
+
+        foreach ($getCartItems as $item) {
+            $attrPrice = Product::getDiscountAttributePrice($item['product_id'], null);
+            $total_price = $total_price + ($attrPrice['final_price'] * $item['quantity']);
+
+            
+            $product_weight = $item['product']['product_weight'];
+            $total_weight = $total_weight + $product_weight;
+        }
+        $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
+        foreach ($deliveryAddresses as $key => $value) {
+            $shippingCharges = ShippingCharge::getShippingCharges($total_weight, $value['country']);
+            $deliveryAddresses[$key]['shipping_charges'] = $shippingCharges;
+
+            $deliveryAddresses[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $value['pincode'])->count();   
+            $deliveryAddresses[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $value['pincode'])->count(); 
+        }
+
+
+        
+        if ($request->isMethod('post')) { // if the <form> in front/products/checkout.blade.php is submitted (the HTML Form that the user submits to submit their Delivery Address and Payment Method)
+            $data = $request->all();
+            foreach ($getCartItems as $item) {
+                $product_status = Product::getProductStatus($item['product_id'],null);
+                if ($product_status == 0) { // if the product is disabled (`status` = 0)
+                    $message = $item['product']['product_name'] . ' with ' . $item['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
+                    return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+                }
+            }
+            $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
+            if ($getProductStock == 0) { // if the product's `stock` is 0 zero
+                $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
+                return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+            }
+            $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id'], null);
+            if ($getCategoryStatus == 0) { // if the Category is disabled (`status` = 0)
+                $message = $item['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
+                return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+            }
+            if (empty($data['accept'])) { // if the user doesn't select a Delivery Address
+                $message = 'Please agree to T&C!';
+
+                return redirect()->back()->with('error_message', $message);
+            }
+            // if ($data['payment_gateway'] == 'COD') {
+                $payment_method = 'COD';
+                $order_status   = 'New';
+
+            // } else { 
+            //     $payment_method = 'Prepaid';
+            //     $order_status   = 'Pending';
+            // }
+            DB::beginTransaction();
+            $total_price = 0;
+            foreach ($getCartItems as $item) {
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null);
+                $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']);
+            }
+            $shipping_charges = 0;
+            $grand_total = $total_price ;
+            Session::put('grand_total', $grand_total);
+            $order = new Order; 
+            // Assign the $order data to be INSERT-ed INTO the `orders` table
+            $order->user_id          = Auth::user()->id; 
+            $order->email            = Auth::user()->email;
+            $order->shipping_charges = NULL;
+            $order->coupon_code      = NULL;   // it was set inside applyCoupon() method
+            $order->coupon_amount    = NULL; // it was set inside applyCoupon() method
+            $order->order_status     = $order_status;
+            $order->payment_method   = $payment_method;
+            $order->payment_gateway  = 'COD';
+            $order->grand_total      = $grand_total;
+
+            $order->save();
+
+            //insert data into wallet
+            $getAdmin = Admin::where('type','superadmin')->first()['id'];
+            if(UserWallet::where('user_id',$getAdmin)->where('is_vendor','1')->where('is_admin','1')->exists()){
+                $getwallet = UserWallet::where('user_id',$getAdmin)->first();
+                $updatedAmount = $grand_total + $getwallet->amount;
+                $getwallet->amount = $updatedAmount;
+            }
+            else{
+                $getwallet = new UserWallet();
+                $getwallet->amount = $grand_total;
+                $getwallet->is_vendor = '1';
+                $getwallet->is_admin = '1';
+                $getwallet->user_id = $getAdmin;
+            }
+            $getwallet->save();
+            $order_id = $order->id;
+            foreach ($getCartItems as $item) {
+                $cartItem = new OrdersProduct;
+                $cartItem->order_id = $order_id;
+                $cartItem->user_id  = Auth::user()->id;
+                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $item['product_id'])->first()->toArray();
+                $cartItem->admin_id        = $getProductDetails['admin_id'];
+                $cartItem->vendor_id       = $getProductDetails['vendor_id'];
+
+                $cartItem->product_id      = $item['product_id'];
+                $cartItem->product_code    = $getProductDetails['product_code'];
+                $cartItem->product_name    = $getProductDetails['product_name'];
+                $cartItem->product_color   = $getProductDetails['product_color'];
+                $cartItem->product_size    = $item['size'];
+
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null); // from the `products_attributes` table, not the `products` table
+                $cartItem->product_price   = $getDiscountAttributePrice['final_price'];
+
+
+                
+                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units'];
+                if ($item['quantity'] > $getProductStock) { // if the ordered quantity is greater than the existing stock, cancel the order/opertation
+                    $message = $getProductDetails['product_name'] . '  stock is not available/enough for your order. Please reduce its quantity and try again!';
+
+                    return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+                }
+
+
+                $cartItem->product_qty     = $item['quantity'];
+
+                $cartItem->save(); // INSERT data INTO the `orders_products` table
+
+
+                
+                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // Get the `stock` of that product `product_id` with that specific `size` from `products_attributes` table
+                $newStock = $getProductStock - $item['quantity'];
+                Product::where([ // Update the new `quantity` in the `products_attributes` table
+                    'id' => $item['product_id'],
+                ])->update(['product_units' => $newStock]);
+                //update respective user wallet
+
+                $getProduct = Product::where('id',$item['product_id'])->first();
+                if($getProduct->is_resell == '1'){
+                    //user account
+                    $getUserDetails = User::where('id',$getProduct->vendor_id)->first();
+                    $getAfterCommision = $getDiscountAttributePrice['final_price'] - (($getDiscountAttributePrice['final_price'] * 5) / 100);
+                    $updatedAmount = $getAfterCommision;
+                    if(UserWallet::where('user_id',$getUserDetails->id)->exists()){
+                        $getwallet = UserWallet::where('user_id',$getUserDetails->id)->first();
+                        $getwallet->amount = $updatedAmount + $getwallet->amount;;
+                    }
+                    else{
+                        $getwallet = new UserWallet();
+                        $getwallet->amount = $updatedAmount;
+                        $getwallet->is_vendor = '0';
+                        $getwallet->user_id = $getUserDetails->id;
+                    }
+                    $getwallet->save();
+                }
+                else{
+                    // vendor side
+                    $getUserDetails = $getProduct->vendor_id;
+                    $getAfterCommision = $getDiscountAttributePrice['final_price'] - (($getDiscountAttributePrice['final_price'] * 5) / 100);
+                    $updatedAmount = $getAfterCommision;
+                    if(UserWallet::where('user_id',$getUserDetails)->exists()){
+                        $getwallet = UserWallet::where('user_id',$getUserDetails)->first();
+                        $getwallet->amount = $updatedAmount + $getwallet->amount;;
+                    }
+                    else{
+                        $getwallet = new UserWallet();
+                        $getwallet->amount = $updatedAmount;
+                        $getwallet->is_vendor = '1';
+                        $getwallet->is_admin = '0';
+                        $getwallet->user_id = $getUserDetails;
+                    }
+                    $getwallet->save();
+                }
+            }
+
+
+            // Store the `order_id` in Session so that we can use it in front/products/thanks.blade.php, thanks() method, paypal() method in Front/PayPalController.php and pay() method in Front/IyzipayController.php
+            Session::put('order_id', $order_id); // Storing Data: https://laravel.com/docs/9.x/session#storing-data
+
+
+            DB::commit(); 
+            $orderDetails = Order::with('orders_products')->where('id', $order_id)->first()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
+
+            if ($payment_method == 'COD') { // if the `payment_gateway` selected by the user is 'COD' (in front/products/checkout.blade.php), we send the placing the order confirmation email and SMS immediately
+                // Sending the Order confirmation email
+                $email = Auth::user()->email; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+
+                // The email message data/variables that will be passed in to the email view
+                $messageData = [
+                    'email'        => $email,
+                    'name'         => Auth::user()->name, // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+                    'order_id'     => $order_id,
+                    'orderDetails' => $orderDetails
+                ];
+
+                \Illuminate\Support\Facades\Mail::send('emails.order', $messageData, function ($message) use ($email) { // Sending Mail: https://laravel.com/docs/9.x/mail#sending-mail    // 'emails.order' is the order.blade.php file inside the 'resources/views/emails' folder that will be sent as an email    // We pass in all the variables that order.blade.php will use    // https://www.php.net/manual/en/functions.anonymous.php
+                    $message->to($email)->subject('Order Placed - MultiVendorEcommerceApplication.com.eg');
+                });
+
+                /*
+                // Sending the Order confirmation SMS
+                // Send an SMS using an SMS API and cURL    
+                $message = 'Dear Customer, your order ' . $order_id . ' has been placed successfully with MultiVendorEcommerceApplication.com.eg. We will inform you once your order is shipped';
+                // $mobile = $data['mobile']; // the user's mobile that they entered while submitting the registration form
+                $mobile = Auth::user()->moblie; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+                \App\Models\Sms::sendSms($message, $mobile); // Send the SMS
+                */
+
+
+                // PayPal payment gateway integration in Laravel
+            } elseif ($data['payment_gateway'] == 'Paypal') {
+                // redirect the user to the PayPalController.php (after saving the order details in `orders` and `orders_products` tables)
+                return redirect('/paypal');
+
+                // iyzico Payment Gateway integration in/with Laravel    
+            } elseif ($data['payment_gateway'] == 'iyzipay') {
+                // redirect the user to the IyzipayController.php (after saving the order details in `orders` and `orders_products` tables)
+                return redirect('/iyzipay');
+
+            } else { // if the `payment_gateway` selected by the user is not 'COD', meaning it's like PayPal, Prepaid, ... (in front/products/checkout.blade.php), we send the placing the order confirmation email and SMS after the user makes the payment
+                echo 'Other Prepaid payment methods coming soon';
+            }
+
+
+            return redirect('thanks'); // redirect to front/products/thanks.blade.php page
+        }
+
+
+        return view('front.products.checkout')->with(compact('deliveryAddresses', 'countries', 'getCartItems', 'total_price'));
+    
     }
 
 

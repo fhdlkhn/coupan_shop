@@ -220,7 +220,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
 
     // Vendor Login/Register
-    Route::get('vendor/login-register', 'VendorController@loginRegister'); // render vendor login_register.blade.php page
+    // Route::get('vendor/login-register', 'VendorController@loginRegister'); // render vendor login_register.blade.php page
     // Route::get('/login', 'VendorController@genericLoginRegister')->name('generic.login');
    
          // render vendor login_register.blade.php page
@@ -256,7 +256,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
 
     // Render User Login/Register page (front/users/login_register.blade.php)
-    Route::get('user/login-register', ['as' => 'login', 'uses' => 'UserController@loginRegister']); // 'as' => 'login'    is Giving this route a name 'login' route in order for the 'auth' middleware ('auth' middleware is the Authenticate.php) to redirect to the right page
+    // Route::get('user/login-register', ['as' => 'login', 'uses' => 'UserController@loginRegister']); // 'as' => 'login'    is Giving this route a name 'login' route in order for the 'auth' middleware ('auth' middleware is the Authenticate.php) to redirect to the right page
 
     // User Registration (in front/users/login_register.blade.php) <form> submission using an AJAX request. Check front/js/custom.js
     Route::post('user/register', 'UserController@userRegister');
