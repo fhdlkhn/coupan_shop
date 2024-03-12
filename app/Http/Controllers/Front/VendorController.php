@@ -102,6 +102,7 @@ class VendorController extends Controller
     }
 
     public function vendorRegister(Request $request) {  
+        // return $request->all();
         if ($request->isMethod('post')) { 
             $data = $request->all();
             
@@ -110,7 +111,8 @@ class VendorController extends Controller
                 'name'          => 'required',
                 'email'         => 'required|email|unique:admins|unique:vendors|unique:users', 
                 'password'       => 'required',
-                'password_confirmation' => 'required_with:password|same:password'
+                'password_confirmation' => 'required_with:password|same:password',
+                'terms' => 'required'
                             
             ];
 
@@ -118,12 +120,14 @@ class VendorController extends Controller
                 'name.required'             => 'Name is required',
                 'email.required'            => 'Email is required',
                 'email.unique'              => 'Email alreay exists',
+                'terms.required'              => 'Terms and Condition Check is required',
             ];
 
             $validator = Validator::make($data, $rules, $customMessages); // Manually Creating Validators: https://laravel.com/docs/9.x/validation#manually-creating-validators
             if ($validator->fails()) { // Manually Creating Validators: https://laravel.com/docs/9.x/validation#manually-creating-validators
                 // return \Illuminate\Support\Facades\Redirect::back()->withErrors($validator);
                 // return $validator->messages();
+                // return redirect()->back()->with(['error'=>'User Registered Successfully. Please select a role to proceed!','show_modal'=> 1,'data'=>Auth::user(),'vendor'=>0]);
                 return redirect()->back()->with('error',$validator->errors()->first()); // Manually Creating Validators: https://laravel.com/docs/9.x/validation#manually-creating-validators
             }
 

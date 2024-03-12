@@ -16,6 +16,21 @@
     <section class="ly-register-section" >
         <div class="container-fluid">
             <div class="row">
+                @if (Session::has('error'))
+                <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 10px; right: 10px; width: 500px; z-index: 999;">
+                    <strong>Error:</strong>{{ Session::get('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <script>
+                    // Automatically close the error message after 5000 milliseconds (5 seconds)
+                    setTimeout(function () {
+                        document.getElementById('error-message').style.display = 'none';
+                    }, 5000);
+                </script>
+                @endif
                 <div class="col-lg-12">
                     <div class="content-wrapper">
                         <div class="row">
@@ -69,7 +84,7 @@
                                             <div class="col-lg-12">
                                                 <div class="term-condition">
                                                     <label class="check-container">
-                                                        <input type="checkbox" required>
+                                                        <input type="checkbox" name="terms">
                                                         <span class="checkmark"></span>
                                                     </label>
                                                     <p>I agreen to all the <a href="#">Term</a> & <a href="#">Privacy Policy</a></p>
