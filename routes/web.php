@@ -324,7 +324,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::get('user_ordered_listings', 'ProductsController@userOrderedListing')->name('user.ordered.listings');
         Route::get('listing_verification', 'ProductsController@listingVerification')->name('listing.verification');
         Route::post('check_verification', 'ProductsController@checkListingVerification')->name('check.listing.verification');
-        Route::get('edit/user_products/{id?}', 'ProductsController@userResellEdit')->name('edit.user.products');
+        Route::get('edit/user_products/{id?}/{order_id?}', 'ProductsController@userResellEdit')->name('edit.user.products');
         Route::post('update/user_products', 'ProductsController@updateResellProduct')->name('update.user.products');
         Route::get('user/resell_orders', 'ProductsController@orduserResellOrdersers')->name('user.resell.orders');
         Route::post('stripe', 'ProductsController@stripePost')->name('stripe.post');

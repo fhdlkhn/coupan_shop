@@ -84,8 +84,8 @@
                                             <div class="col-lg-12 password-field">
                                                 <label for="password" class="form-label">Password</label>
                                                 <input type="text" name="password" id="password" class="form-control" placeholder="Your Passowrd..." aria-label="password">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="currentColor"><path d="M12 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/><path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69c.12.362.12.752 0 1.113c-1.487 4.471-5.705 7.697-10.677 7.697c-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113M17.25 12a5.25 5.25 0 1 1-10.5 0a5.25 5.25 0 0 1 10.5 0" clip-rule="evenodd"/></g></svg>
-                                                <a href="#" class="blue-link">Blue</a>
+                                                <svg onclick="loginEye()" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" id="loginEye"><g fill="currentColor"><path d="M12 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6"/><path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69c.12.362.12.752 0 1.113c-1.487 4.471-5.705 7.697-10.677 7.697c-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113M17.25 12a5.25 5.25 0 1 1-10.5 0a5.25 5.25 0 0 1 10.5 0" clip-rule="evenodd"/></g></svg>
+                                                <!-- <a href="#" class="blue-link">Blue</a> -->
                                             </div>
                                             <div class="col-lg-12">
                                                 <button class="ly-button-3 register-btn">Log in</button>
@@ -114,5 +114,21 @@
     <script src="{{asset('front/js/owl.carousel.js')}}"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <script src="{{asset('front/js/custom.js')}}"></script>
+    <script type="text/javascript">
+        function loginEye(){
+        var getPass = document.getElementById('password');
+        var eyeIcon = document.getElementById('loginEye');
+        if(getPass.type == 'password'){
+            getPass.type = "text";
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+        else if(getPass.type == "text"){
+            getPass.type = 'password';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        }
+    }
+    </script>
     </body>
     </html>

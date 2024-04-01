@@ -8,7 +8,7 @@
                 <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Listings</h4>
+                            <h4 class="card-title">Listing</h4>
 
 
 
@@ -80,9 +80,9 @@
                                                     <!-- <a title="Add Attributes" href="{{ url('admin/add-edit-attributes/' . $product['id']) }}">
                                                         <i style="font-size: 25px" class="mdi mdi-plus-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                     </a> -->
-                                                    <a title="Add Multiple Images" href="{{ url('admin/add-images/' . $product['id']) }}">
+                                                    <!-- <a title="Add Multiple Images" href="{{ url('admin/add-images/' . $product['id']) }}">
                                                         <i style="font-size: 25px" class="mdi mdi-library-plus"></i> {{-- Icons from Skydash Admin Panel Template --}}
-                                                    </a>
+                                                    </a> -->
 
                                                     {{-- Confirm Deletion JS alert and Sweet Alert --}}
                                                     {{-- <a title="Listing" class="confirmDelete" href="{{ url('admin/delete-product/' . $product['id']) }}"> --}}

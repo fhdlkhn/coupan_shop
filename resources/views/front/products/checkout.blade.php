@@ -80,9 +80,9 @@
                                         </div>
                                         </div>
                                         
-                                        <div class="form-fields-box">
+                                        <div class="form-fields-box checkbox-field">
                                                     <input type="checkbox" class="check-box" id="accept" name="accept" value="Yes" title="Please agree to T&C">
-                                                    <label class="label-text no-color" for="accept">I’ve read and accept the
+                                                    <label for="accept">I’ve read and accept the
                                                         <a href="terms-and-conditions.html" class="u-c-brand">terms & conditions</a>
                                                     </label>
                                                 </div>
@@ -97,6 +97,9 @@
                             </div>
                             <div class="col-lg-5">
                                 <div class="ly-checkout-sidebar">
+                                    <div class="sidebar-img-box">
+                                        <img src="{{asset('admin/images/checkout-sidebar-img.png')}}" style="height:100%, width:100%; margin-bottom:10px;">
+                                    </div>
                                     <h3 class="sibebar-sub-title">Price details</h3>
                                     <div class="discount-code-box">
                                         <form name="checkoutForm" id="checkoutForm" action="{{ url('/checkout') }}" method="post">
@@ -143,97 +146,10 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <!-- <div class="u-s-m-b-13">
-                                                    <input type="checkbox" class="check-box" id="accept" name="accept" value="Yes" title="Please agree to T&C">
-                                                    <label class="label-text no-color" for="accept">I’ve read and accept the
-                                                        <a href="terms-and-conditions.html" class="u-c-brand">terms & conditions</a>
-                                                    </label>
-                                                </div>
-                                                <button type="submit" id="placeOrder" class="button button-outline-secondary">Place Order</button> {{-- Show our Preloader/Loader/Loading Page/Preloading Screen while the <form> is submitted using the    id="placeOrder"    HTML attribute. Check front/js/custom.js --}} -->
                                             </div>
                                         </form>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="ly-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="footer-logo-bar">
-                            <a href="#" class="footer-logo">
-                                <img src="imgs/Logo.png" alt="footer logo">
-                                Company name
-                            </a>
-                            <div class="meta-box">
-                                <span>Ready to get started?</span>
-                                <button class="ly-button-2">Get Started</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="footer-newsletter-box">
-                            <h5>Subscribe to our newsletter</h5>
-                            <form action="">
-                                <div class="input-group">
-                                    <input type="email" class="form-control" placeholder="Email address" aria-label="Email address" aria-describedby="button-addon2">
-                                    <button class="btn ly-button-2" type="button" id="button-addon2"><span class="iconify" data-icon="ic:twotone-chevron-right"></span></button>
-                                </div>                                  
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="footer-extra-links">
-                            <h6>Services</h6>
-                            <ul>
-                                <li>
-                                    <a href="#">Become a host</a>
-                                </li>
-                                <li>
-                                    <a href="#">Rent out</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="footer-extra-links">
-                            <h6>About</h6>
-                            <ul>
-                                <li>
-                                    <a href="#">Our Story</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-2">
-                        <div class="footer-extra-links">
-                            <h6>Help</h6>
-                            <ul>
-                                <li>
-                                    <a href="#">FAQs</a>
-                                </li>
-                                <li>
-                                    <a href="#">Support</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="footer-botm-links">
-                            <div class="extra-links">
-                                <a href="#">Terms & Conditions</a>
-                                <a href="#">Privacy Policy</a>
-                            </div>
-                            <div class="social-links">
-                                <a href="#"><span class="iconify" data-icon="ri:facebook-fill"></span></a>
-                                <a href="#"><span class="iconify" data-icon="simple-icons:twitter"></span></a>
-                                <a href="#"><span class="iconify" data-icon="akar-icons:instagram-fill"></span></a>
                             </div>
                         </div>
                     </div>

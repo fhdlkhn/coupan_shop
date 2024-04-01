@@ -46,7 +46,6 @@ class OrderController extends Controller
     public function addUserProducts(Request $req){
         //replicate the product with the different vendors detail
         $getOrder = OrdersProduct::where('id',$req->id)->first();
-        // return $getOrder;
         if($getOrder !=null){
         $getProduct = Product::where('id',$getOrder->product_id)->first();
         $getProduct->original_product_id = $getOrder->product_id;
@@ -57,7 +56,7 @@ class OrderController extends Controller
         $AddProductToUser = $getProduct->replicate();
         $AddProductToUser->save();
         if($AddProductToUser){
-            return redirect()->route('edit.user.products', ['id' => $AddProductToUser->id])->with('success_message', 'Product has been added');
+            return redirect()->route('edit.user.products', ['id' => $AddProductToUser->id,'order_id' => $getOrder->id])->with('success_message', 'Product has been added');
         }
 
     }

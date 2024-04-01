@@ -12,14 +12,14 @@ $sections = \App\Models\Section::sections();
         <nav>
         <div display="none" id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none; position: fixed; top: 10px; right: 10px; width: 500px; z-index: 999;">
             <strong>Error:</strong> <span id="error-text"></span>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
                 @if (Session::has('error'))
                 <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 10px; right: 10px; width: 500px; z-index: 999;">
                     <strong>Error:</strong>{{ Session::get('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -34,7 +34,7 @@ $sections = \App\Models\Section::sections();
                 @if (Session::has('success_message'))
                 <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 10px; right: 10px; width: 500px; z-index: 999;">
                     <strong>Success:</strong> {{ Session::get('success_message') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -238,7 +238,7 @@ $sections = \App\Models\Section::sections();
                                     <span class="iconify" data-icon="ic:baseline-discord"></span>
                                 </span>
                             </a>
-                            @if(!(\Illuminate\Support\Facades\Auth::check()))
+                            @if(!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check()))
                             <a href="{{route('user.login')}}" class="ly-login">
                                 <span>
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_325_2916)"><path d="M10.2517 0.699463C7.06445 0.699463 4.47145 3.2925 4.47145 6.47968C4.47145 8.45385 5.46654 10.1998 6.98126 11.243C5.56707 11.731 4.27086 12.5371 3.1819 13.6261C1.29343 15.5146 0.253418 18.0253 0.253418 20.696H1.81564C1.81564 16.0443 5.60002 12.2599 10.2517 12.2599C13.4389 12.2599 16.0319 9.6669 16.0319 6.47968C16.0319 3.29246 13.4389 0.699463 10.2517 0.699463ZM10.2517 10.6977C7.92586 10.6977 6.03368 8.80553 6.03368 6.47972C6.03368 4.15391 7.92586 2.26169 10.2517 2.26169C12.5775 2.26169 14.4697 4.15387 14.4697 6.47972C14.4697 8.80557 12.5775 10.6977 10.2517 10.6977Z" fill="white"></path><path d="M17.0104 15.8591V12.5784H15.4482V15.8591H12.1675V17.4213H15.4482V20.702H17.0104V17.4213H20.2911V15.8591H17.0104Z" fill="white"></path></g><defs><clipPath id="clip0_325_2916"><rect width="20.0356" height="20.0356" fill="white" transform="translate(0.253418 0.679932)"></rect></clipPath></defs></svg> 
@@ -247,17 +247,17 @@ $sections = \App\Models\Section::sections();
                             </a>
                             @endif
 
-                            @if(\Illuminate\Support\Facades\Auth::check())
+                            @if(\Illuminate\Support\Facades\Auth::check() || \Illuminate\Support\Facades\Auth::guard('admin')->check())
                                 <div class="ly-loged-in-drop-down">
                                     <div class="selected">
                                         <a href="#">
                                             <div class="img-box">
-                                            <img src="{{ \Illuminate\Support\Facades\Auth::guard('admin')->check() ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
+                                            <img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
                                             </div>
                                             <div class="meta-box">
-                                                @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
-                                                <h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->name}}</h6>
-                                                <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->email}}</small>
+                                                @if(\Illuminate\Support\Facades\Auth::guard('admin')->check())
+                                                <h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->name}}</h6>
+                                                <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small>
                                                 @else
                                                 <h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
                                                 <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>
@@ -267,15 +267,26 @@ $sections = \App\Models\Section::sections();
                                     </div>
                                     <div class="options">
                                         <ol class="list">
+                                            @if (\Illuminate\Support\Facades\Auth::guard('admin')->check())
+                                            <li>
+                                                <a href="{{ route('admin.dashboard') }}">
+                                                    <span class="value">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>                                                        Dashboard
+                                                    </span>
+                                                    <!-- <span class="badge active">4</span> -->
+                                                </a>
+                                            </li>
+                                            @endif
                                             <li>
                                                 <a href="#">
                                                     <span class="value">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>
                                                         Wallet
                                                     </span>
-                                                    @if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
-                                                        @if(Auth::user() && \App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
-                                                            <?php $amount = \App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->first()['amount']; ?>
+                                                    
+                                                    @if (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->type == 'vendor')
+                                                        @if(\App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::guard('admin')->user()->id)->exists())
+                                                            <?php $amount = \App\Models\UserWallet::where('is_vendor','1')->where('user_id',\Illuminate\Support\Facades\Auth::guard('admin')->user()->id)->first()['amount']; ?>
                                                             <span>{{$amount == null ? 0 : $amount}}$</span>
                                                         @endif
                                                     @elseif(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user())
@@ -306,6 +317,7 @@ $sections = \App\Models\Section::sections();
                                                 </a>
                                             </li>
                                             @endif
+                                            
                                             <li>
                                                 <a href="{{ url('cart') }}">
                                                     <span class="value">
@@ -336,12 +348,12 @@ $sections = \App\Models\Section::sections();
                                         </ol>
                                         <div class="user-profile-info">
                                             <div class="img-box">
-                                                <a href="#"><img src="{{ \Illuminate\Support\Facades\Auth::guard('admin')->check() ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
+                                                <a href="#"><img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
                                             </div>
                                             <div class="meta-box">
-                                                 @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::guard('admin') == 'vendor')
-                                                    <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->name}}</h6></a>
-                                                    <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->email}}</small>
+                                                 @if(\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->type == 'vendor')
+                                                    <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->name}}</h6></a>
+                                                    <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small>
                                                 @else
                                                     <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
                                                     <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>

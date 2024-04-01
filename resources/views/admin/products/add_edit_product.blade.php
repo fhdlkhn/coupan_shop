@@ -1,268 +1,205 @@
-@extends('admin.layout.layout')
-
-
-@section('content')
-    <div class="main-panel">
-        <div class="content-wrapper">
+@extends('front.layout.layout')
+  @section('content')
+    <!-- ly-page-top-section-start -->
+    <section class="ly-page-top-section change-bg company-work">
+        <div class="container">
             <div class="row">
-                <div class="col-md-12 grid-margin">
-                    <div class="row">
-                        <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                            <h4 class="card-title">Listings</h4>
-                        </div>
-                        <div class="col-12 col-xl-4">
-                            <div class="justify-content-end d-flex">
-                                <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
-                                    <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="mdi mdi-calendar"></i> Today (10 Jan 2021)
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
-                                        <a class="dropdown-item" href="#">January - March</a>
-                                        <a class="dropdown-item" href="#">March - June</a>
-                                        <a class="dropdown-item" href="#">June - August</a>
-                                        <a class="dropdown-item" href="#">August - November</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 grid-margin stretch-card">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">{{ $title }}</h4>
-
-
-                            {{-- Our Bootstrap error code in case of wrong current password or the new password and confirm password are not matching: --}}
-                            {{-- Determining If An Item Exists In The Session (using has() method): https://laravel.com/docs/9.x/session#determining-if-an-item-exists-in-the-session --}}
-                            @if (Session::has('error_message')) <!-- Check AdminController.php, updateAdminPassword() method -->
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Error:</strong> {{ Session::get('error_message') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-
-
-
-                            {{-- Displaying Laravel Validation Errors: https://laravel.com/docs/9.x/validation#quick-displaying-the-validation-errors --}}    
-                            @if ($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-
-
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-
-
-
-                            {{-- Displaying The Validation Errors: https://laravel.com/docs/9.x/validation#quick-displaying-the-validation-errors AND https://laravel.com/docs/9.x/blade#validation-errors --}}
-                            {{-- Determining If An Item Exists In The Session (using has() method): https://laravel.com/docs/9.x/session#determining-if-an-item-exists-in-the-session --}}
-                            {{-- Our Bootstrap success message in case of updating admin password is successful: --}}
-                            @if (Session::has('success_message')) <!-- Check AdminController.php, updateAdminPassword() method -->
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <strong>Success:</strong> {{ Session::get('success_message') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-                
-
-                            
-
-
-                            
-                            <form class="forms-sample"   @if (empty($product['id'])) action="{{ url('admin/add-edit-product') }}" @else action="{{ url('admin/add-edit-product/' . $product['id']) }}" @endif   method="post" enctype="multipart/form-data">  <!-- If the id is not passed in from the route, this measn 'Add a new Product', but if the id is passed in from the route, this means 'Edit the Product' --> <!-- Using the enctype="multipart/form-data" to allow uploading files (images) -->
-                                @csrf
-
-
-                                
-                                <div class="form-group">
-                                    <label for="category_id">Select Category</label>
-                                    {{-- <input type="text" class="form-control" id="category_id" placeholder="Enter Category Name" name="category_id" @if (!empty($product['name'])) value="{{ $product['category_id'] }}" @else value="{{ old('category_id') }}" @endif>  --}} {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                    <select name="category_id" id="category_id" class="form-control text-dark">
-                                        <option value="">Select Category</option>
-                                        @foreach ($categories as $section) {{-- $categories are ALL the `sections` with their related 'parent' categories (if any (if exist)) and their subcategories or `child` categories (if any (if exist)) --}} {{-- Check ProductsController.php --}}
-                                            <optgroup label="{{ $section['name'] }}"> {{-- sections --}}
-                                                @foreach ($section['categories'] as $category) {{-- parent categories --}} {{-- Check ProductsController.php --}}
-                                                    <option value="{{ $category['id'] }}" @if (!empty($product['category_id'] == $category['id'])) selected @endif>{{ $category['category_name'] }}</option> {{-- parent categories --}}
-                                                    @foreach ($category['sub_categories'] as $subcategory) {{-- subcategories or child categories --}} {{-- Check ProductsController.php --}}
-                                                        <option value="{{ $subcategory['id'] }}" @if (!empty($product['category_id'] == $subcategory['id'])) selected @endif>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> {{-- subcategories or child categories --}}
-                                                    @endforeach
-                                                @endforeach
-                                            </optgroup>
-                                        @endforeach
-                                        {{-- <option value="{{ $category['id'] }}" @if (!empty($product['category_id']) && $product['category_id'] == $category['id']) selected @endif >{{ $category['name'] }}</option> --}}
-                                    </select>
-                                </div>
-
-
-
-                                {{-- Including the related filters <select> box of a product DEPENDING ON THE SELECTED CATEGORY of the product --}} 
-                                <div class="loadFilters">
-                                    @include('admin.filters.category_filters')
-                                </div>
-
-
-
-                                <!-- <div class="form-group">
-                                    <label for="brand_id">Select Brand</label>
-                                    <select name="brand_id" id="brand_id" class="form-control text-dark">
-                                        <option value="">Select Brand</option>
-                                        @foreach ($brands as $brand)
-                                            <option value="{{ $brand['id'] }}" @if (!empty($product['brand_id'] == $brand['id'])) selected @endif>{{ $brand['name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> -->
-                                <div class="form-group">
-                                    <label for="product_name">Listing Name</label>
-                                    <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label for="product_code">Tax ID</label>
-                                    <input type="text" class="form-control" id="product_code" placeholder="Enter Code" name="product_code" @if (!empty($product['product_code'])) value="{{ $product['product_code'] }}" @else value="{{ old('product_code') }}" @endif>  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div> -->
-                                <!-- <div class="form-group">
-                                    <label for="product_color">Product Color</label>
-                                    <input type="text" class="form-control" id="product_color" placeholder="Enter Product Color" name="product_color" @if (!empty($product['product_color'])) value="{{ $product['product_color'] }}" @else value="{{ old('product_color') }}" @endif>  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div> -->
-                                <div class="form-group">
-                                    <label for="product_price">Listing Price</label>
-                                    <input type="text" class="form-control" id="product_price" placeholder="Enter Listing Price" name="product_price" @if (!empty($product['product_price'])) value="{{ $product['product_price'] }}" @else value="{{ old('product_price') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="product_type">Listing Type</label>
-                                    <input type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="product_units">No of Units of BOD</label>
-                                    <input type="text" class="form-control" id="product_units" placeholder="Enter Listing Units" name="product_units" @if (!empty($product['product_units'])) value="{{ $product['product_units'] }}" @else value="{{ old('product_units') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="product_discount">Annual Savings</label>
-                                    <input type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="gross_sale">What’s your annual savings?</label>
-                                    <input type="text" class="form-control" id="gross_sale" placeholder="Enter Monthly Savings" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
-                                    <!-- <select  id="gross_sale" class="form-control text-dark">
-                                        <option value="" disabled>Select</option>
-                                            <option value="100000">Less than $100,000</option>
-                                            <option value="1m">$100,000 - $1m</option>
-                                            <option value="100m">$1m - $100m</option>
-                                            <option value="100m">$100m - $900m</option>
-                                    </select> -->
-                                </div>
-                                <div class="form-group">
-                                    <label for="avg_customer">Membership Valid Through?</label>
-                                    <select name="avg_customer" id="avg_customer" class="form-control text-dark" onchange="disablePermanent(this.value)">
-                                        <option value="" selected disabled>Select Membership (Years)</option>
-                                        @for($i = 0; $i < 10; $i++)
-                                            <option value="{{$i + 1}}">{{$i + 1}}</option>
-                                        @endfor
-                                            <option value="permanent">Permanent</option>
-                                    </select>
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label for="product_weight">Product Weight (%)</label>
-                                    <input type="text" class="form-control" id="product_weight" placeholder="Enter Product Weight" name="product_weight" @if (!empty($product['product_weight'])) value="{{ $product['product_weight'] }}" @else value="{{ old('product_weight') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div> -->
-
-
-
-                                {{-- Managing Product Colors (in front/products/detail.blade.php) --}} 
-                                <!-- <div class="form-group">
-                                    <label for="group_code">Group Code</label>
-                                    <input type="text" class="form-control" id="group_code" placeholder="Enter Group Code" name="group_code"  @if (!empty($product['group_code'])) value="{{ $product['group_code'] }}" @else value="{{ old('group_code') }}" @endif> {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div> -->
-
-
-
-                                <div class="form-group">
-                                    <label for="product_image">Listing Image (Recommended Size: 1000x1000)</label> {{-- Important Note: There are going to be 3 three sizes for the product image: Admin will upload the image with the recommended size which 1000*1000 which is the 'large' size (will store it in 'large' folder), but then we're going to use 'Intervention' package to get another two sizes: 500*500 which is the 'medium' size (will store it in 'medium' folder) and 250*250 which is the 'small' size (will store it in 'small' folder) --}}
-                                    <input type="file" class="form-control" id="product_image" name="product_image">
-                                    {{-- Show the admin image if exists --}}
-
-
-
-
-                                    {{-- Show the product image, if any (if exits) --}}
-                                    @if (!empty($product['product_image']))
-                                        <a target="_blank" href="{{ url('front/images/product_images/large/' . $product['product_image']) }}">View Product Image</a>&nbsp;|&nbsp; {{-- Showing the 'large' image inside the 'large' folder --}}
-                                        <a href="JavaScript:void(0)" class="confirmDelete" module="product-image" moduleid="{{ $product['id'] }}">Delete Product Image</a> {{-- Delete the product image from BOTH SERVER (FILESYSTEM) & DATABASE --}}    {{-- Check admin/js/custom.js and web.php (routes) --}}
-                                    @endif
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label for="product_video">Product Video (Recommended Size: Less than 2 MB)</label> {{-- Important Note: Default php.ini file upload Maximum file size is 2MB (If you upload a file with a larger size, it won't be uploaded!). Check upload_max_filesize using phpinfo() method --}}
-                                    <input type="file" class="form-control" id="product_video" name="product_video">
-                                    {{-- Show the admin image if exists --}}
-
-
-
-
-                                    {{-- Show the product video, if any (if exits) --}}
-                                    @if (!empty($product['product_video']))
-                                        <a target="_blank" href="{{ url('front/videos/product_videos/' . $product['product_video']) }}">View Product Video</a>&nbsp;|&nbsp;
-                                        <a href="JavaScript:void(0)" class="confirmDelete" module="product-video" moduleid="{{ $product['id'] }}">Delete Product Video</a> {{-- Delete the product video from BOTH SERVER (FILESYSTEM) & DATABASE --}}    {{-- Check admin/js/custom.js and web.php (routes) --}}
-                                    @endif
-                                </div> -->
-                                <div class="form-group">
-                                    <label for="description">Listing Description</label>
-                                    <textarea name="description" id="description" class="form-control" rows="3">{{ $product['description'] }}</textarea>
-                                </div>
-                                <div class="form-group" id="validity">
-                                    <label for="validity">Validity</label>
-                                    <input type="date" class="form-control" id="validity" placeholder="Enter Product Discount"name="validity" @if (!empty($product['validity'])) value="{{ $product['validity'] }}" @else value="{{ old('validity') }}" @endif>
-                                    <!-- <select name="validity" id="validity" class="form-control text-dark">
-                                        <option value="" disabled>Select</option>
-                                            <option value="1">Lorem Ipsum</option>
-                                            <option value="2">Lorem Ipsum</option>
-                                            <option value="3">Lorem Ipsum</option>
-                                            <option value="4">Lorem Ipsum</option>
-                                    </select> -->
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label for="meta_title">Meta Title</label>
-                                    <input type="text" class="form-control" id="meta_title" placeholder="Enter Meta Title" name="meta_title"   @if (!empty($product['meta_title'])) value="{{ $product['meta_title'] }}" @else value="{{ old('meta_title') }}" @endif >  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="meta_description">Meta Description</label>
-                                    <input type="text" class="form-control" id="meta_description" placeholder="Enter Meta Description" name="meta_description"   @if (!empty($product['meta_description'])) value="{{ $product['meta_description'] }}" @else value="{{ old('meta_description') }}" @endif >  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div>
-                                <div class="form-group">
-                                    <label for="meta_keywords">Meta Keywords</label>
-                                    <input type="text" class="form-control" id="meta_keywords" placeholder="Enter Meta Keywords" name="meta_keywords"   @if (!empty($product['meta_keywords'])) value="{{ $product['meta_keywords'] }}" @else value="{{ old('meta_keywords') }}" @endif >  {{-- Repopulating Forms (using old() method): https://laravel.com/docs/9.x/validation#repopulating-forms --}}
-                                </div> -->
-                                <div class="form-group">
-                                    <label for="is_featured">Featured Item (Yes/No)</label>
-                                    <input type="checkbox" name="is_featured" id="is_featured" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label for="is_bestseller">Best Seller Item (Yes/No)</label> {{-- Note: Only 'superadmin' can mark a product as 'bestseller', but 'vendor' can't --}}
-                                    <input type="checkbox" name="is_bestseller" id="is_bestseller" value="Yes" @if (!empty($product['is_bestseller']) && $product['is_bestseller'] == 'Yes') checked @endif>
-                                </div> -->
-                                <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                <button type="reset"  class="btn btn-light">Cancel</button>
-                            </form>
-                        </div>
+                <div class="col-12">
+                    <div class="page-content-wrapper">
+                        <h1>Your listing</h1>
+                        <p>Join top online hosts who earn an average of £6,492 per year for each car they list
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- content-wrapper ends -->
-        @include('admin.layout.footer')
-        <!-- partial -->
-    </div>
+    </section>
+
+    <section class="snet-car-listing-section car-submit-steps ">
+        <div class="container">
+            <div class="row">
+                
+                <!-- @if (Session::has('error_message')) 
+
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error:</strong> {{ Session::get('error_message') }}
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif -->
+
+
+
+                {{-- Displaying Laravel Validation Errors: https://laravel.com/docs/9.x/validation#quick-displaying-the-validation-errors --}}    
+                <!-- @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif -->
+                <!-- @if (Session::has('success_message')) 
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success:</strong> {{ Session::get('success_message') }}
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif -->
+                <div class="col-lg-12">
+                    <form class="new_listing_submission" @if (empty($product['id'])) action="{{ url('admin/add-edit-product') }}" @else action="{{ url('admin/add-edit-product/' . $product['id']) }}" @endif id="new_listing_submission" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="snet-car-listing-wrapper listing-step-2">
+                     
+                      
+                        <div class="row" style="width:100%;">
+                            <div class="col-sm-8" style="float:left;">
+                                <h3> List your product </h3>
+                                <div class="snet-lisitng-cover-photos">
+                                  
+                                    <h5>Upload photo </h5>
+                                     <p>Drag or Choose your photo to upload</p>
+                                      <input type="file" name="product_image[]" id="images" multiple class="form-control">
+                                    <div id="dropzone_new" class="dropzone_new dz-clickable dz-started">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 2.79086 4.79086 1 7 1H15.3431C16.404 1 17.4214 1.42143 18.1716 2.17157L19.8284 3.82843C20.5786 4.57857 21 5.59599 21 6.65685V19C21 21.2091 19.2091 23 17 23H7C4.79086 23 3 21.2091 3 19V5ZM19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14V5C14 6.65685 15.3431 8 17 8H19ZM18.8891 6C18.7909 5.7176 18.6296 5.45808 18.4142 5.24264L16.7574 3.58579C16.5419 3.37035 16.2824 3.20914 16 3.11094V5C16 5.55228 16.4477 6 17 6H18.8891Z" fill="#777E91"/>
+                                            <path d="M11.6172 9.07588C11.4993 9.12468 11.3888 9.19702 11.2929 9.29289L8.29289 12.2929C7.90237 12.6834 7.90237 13.3166 8.29289 13.7071C8.68342 14.0976 9.31658 14.0976 9.70711 13.7071L11 12.4142V17C11 17.5523 11.4477 18 12 18C12.5523 18 13 17.5523 13 17V12.4142L14.2929 13.7071C14.6834 14.0976 15.3166 14.0976 15.7071 13.7071C16.0976 13.3166 16.0976 12.6834 15.7071 12.2929L12.7071 9.29289C12.4125 8.99825 11.9797 8.92591 11.6172 9.07588Z" fill="#777E91"/>
+                                            </svg>
+                                            <div class="form-group"><div id="image_preview" style="width:100%;"> </div>
+                                         <p>PNG, GIF, WEBP, MP4. Max 5Mb.</p>
+
+                                        </div>
+                                    
+                                    </div>
+
+                               </div>
+                                <div class="listing_details">
+                                    <h6>Listing Details</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="car_detail">
+                                                <label for="category_id">Select Category</label>
+                                                <select name="category_id" id="category_id" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                    <option value="">Select Category</option>
+                                                         @foreach ($categories as $section)
+                                                            <optgroup label="{{ $section['name'] }}"> 
+                                                                @foreach ($section['categories'] as $category) 
+                                                                    <option value="{{ $category['id'] }}" @if (!empty($product['category_id'] == $category['id'])) selected @endif>{{$category['category_name']}}</option>
+                                                                    @foreach ($category['sub_categories'] as $subcategory) 
+                                                                        <option value="{{ $subcategory['id'] }}" @if (!empty($product['category_id'] == $subcategory['id'])) selected @endif>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> 
+                                                                    @endforeach
+                                                                @endforeach
+                                                            </optgroup>
+                                                        @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="loadFilters">
+                                                @include('admin.filters.category_filters')
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="product_type">Tax id </label>
+                                                <input required type="number" class="form-control" id="product_code" placeholder="Enter Tax Id" name="product_code" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['product_code'])) value="{{ $product['product_code'] }}" @else value="{{ old('product_code') }}" @endif> 
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="product_type">Listing Type</label>
+                                                <input required type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> 
+                                            </div>
+                                            
+                                            <div class="car_detail">
+                                                <label for="gross_sale">What’s your annual savings?</label>
+                                                <input required type="text" class="form-control" id="gross_sale" placeholder="Enter Monthly Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
+                                            </div>
+                                            <div class="car_detail" >
+                                                <label for="avg_customer">Membership Valid Through?</label>
+                                                <select required name="avg_customer" id="avg_customer" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;" onchange="disablePermanent(this.value)">
+                                                    <option value="" selected disabled style="margin-bottom:-10px;">Select Membership (Years)</option>
+                                                    @for($i = 0; $i < 10; $i++)
+                                                        <option value="{{$i + 1}}">{{$i + 1}}</option>
+                                                    @endfor
+                                                        <option value="permanent">Permanent</option>
+                                                </select>
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="is_featured">Featured Item (Yes/No)</label>
+                                                <input  type="checkbox" name="is_featured" id="is_featured" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-6">
+
+                                            <div class="car_detail">
+                                                <label for="product_name">Listing Name</label>
+                                                <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="product_price">Listing Price</label>
+                                                <input type="text" class="form-control" id="product_price" placeholder="Enter Listing Price"  style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_price" @if (!empty($product['product_price'])) value="{{ $product['product_price'] }}" @else value="{{ old('product_price') }}" @endif> 
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="product_units">No of Units of BOD</label>
+                                                <input type="text" class="form-control" id="product_units" placeholder="Enter Listing Units" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_units" @if (!empty($product['product_units'])) value="{{ $product['product_units'] }}" @else value="{{ old('product_units') }}" @endif>
+                                            </div>
+
+                                            <div class="car_detail">
+                                                <label for="product_discount">Annual Savings</label>
+                                                <input type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
+                                            </div>
+                                           
+                                            <div class="car_detail" id="validity">
+                                                <label for="validity">Validity</label>
+                                                <input type="date" class="form-control"  placeholder="Enter Product Discount" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="validity" @if (!empty($product['validity'])) value="{{ $product['validity'] }}" @else value="{{ old('validity') }}" @endif>
+                                            </div>
+                                            
+
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="car_detail">
+                                                <label for="description">Listing Description</label>
+                                                <textarea required name="description" id="description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['description'] }}</textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+
+                            <div class="col-sm-4" style="float:right;">
+
+                                <div class="snet-listing-preview-box">
+                                    <h5>Preview</h5>
+                                    <div class="ly-car-card ly-car-card-grid">
+                                        <div class="car-img-box">
+                                            <a href="#"><img src="https://placehold.co/395x240?text=Preview+Image" alt="list-img"></a>
+                                            <span class="card-tag">superhost</span>
+                                        </div>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            
+                             <div class="col-lg-8 col-xl-8 col-sm-12" style="">
+                             <input type="submit" class="submit_product"></input>
+                             </div>
+                            
+                        </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </section>
     <script type="text/javascript">
         function disablePermanent(value){
             if(value == 'permanent'){
@@ -272,5 +209,79 @@
                 document.getElementById('validity').style.display = 'block';
             }
         }
+
+        $(document).ready(function() {
+
+        var fileArr = [];
+        $("#images").change(function(event) {
+            // check if fileArr length is greater than 0
+            if (fileArr.length > 0) fileArr = [];
+
+            $('#image_preview').html("");
+            var total_file = document.getElementById("images").files;
+            if (!total_file.length) return;
+            
+            // Flag to track if the first image is added
+            var firstImageAdded = false;
+
+            for (var i = 0; i < total_file.length; i++) {
+                if (total_file[i].size > 1048576) {
+                    return false;
+                } else {
+                    fileArr.push(total_file[i]);
+                    $('#image_preview').append("<div class='img-div' id='img-div"+i+"'><img src='"+URL.createObjectURL(total_file[i])+"' class='img-responsive image img-thumbnail' title='"+total_file[i].name+"'><div class='middle'><button id='action-icon' value='img-div"+i+"' class='btn btn-danger' role='"+total_file[i].name+"'><i class='fa fa-trash'></i></button></div></div>");
+                    
+                    // Display the first image in the specified div
+                    if (!firstImageAdded) {
+                        $('.col-sm-4 .car-img-box img').attr('src', URL.createObjectURL(total_file[i]));
+                        firstImageAdded = true;
+                    }
+                }
+            }
+        });
+
+        $('body').on('click', '#action-icon', function(evt) {
+            var divName = this.value;
+            var fileName = $(this).attr('role');
+            $(`#${divName}`).remove();
+
+            for (var i = 0; i < fileArr.length; i++) {
+                if (fileArr[i].name === fileName) {
+                    fileArr.splice(i, 1);
+                }
+            }
+            document.getElementById('images').files = FileListItem(fileArr);
+            evt.preventDefault();
+        });
+        
+        
+       $('.dropzone_new').on('click', function() {
+    $('#images').click();
+});
+
+        function FileListItem(file) {
+            file = [].slice.call(Array.isArray(file) ? file : arguments)
+            for (var c, b = c = file.length, d = !0; b-- && d;) d = file[b] instanceof File
+            if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
+            for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(file[c])
+            return b.files
+        }
+    });
+
+    </script>
+    <script type="text/javascript">
+        const imageUrls = {!! json_encode($getAllIMages) !!};
+        console.log(imageUrls);
+        const imagePreviewDiv = document.getElementById('image_preview');
+
+    imageUrls.forEach(filename => {
+        const imgElement = document.createElement('img');
+        imgElement.src = "{{ asset('front/images/product_images/small') }}" + '/' + filename;
+        imgElement.style.maxWidth = '100px'; 
+        imgElement.style.marginRight = '10px';
+
+        // Append img element to the image preview div
+        imagePreviewDiv.appendChild(imgElement);
+    });
     </script>
 @endsection

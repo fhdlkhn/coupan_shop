@@ -54,37 +54,53 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="car-price-box">
+                                                <!-- <div class="car-price-box" style="height:30px; width:55px;">
                                                     @if ($product['status'] == 1)
+                                                        <button type="button" style="border: none; background-color:#FAFAFA; color: green; text-align: center; text-decoration: none; font-size: 100%;">
+                                                            <a class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
+                                                                <i style="font-size: 25px" class="mdi mdi-bookmark-check" status="Active"></i> {{-- Icons from Skydash Admin Panel Template --}}
+                                                            </a>
+                                                            Edit
+                                                        </button>
+                                                        
+                                                    @else 
+                                                        <button type="button" style="border: none; background-color:#FAFAFA; color: green; text-align: center; text-decoration: none; font-size: 100%;">
+                                                            <a class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
+                                                                <i style="font-size: 25px" class="mdi mdi-bookmark-outline" status="Inactive"></i> {{-- Icons from Skydash Admin Panel Template --}}
+                                                            </a>
+                                                        Edit
+                                                        </button>
+                                                    @endif
+                                                </div> -->
+                                                <!-- <div class="car-price-box" style="height:30px; width:55px;">
+                                                    @if ($product['status'] == 1)
+                                                        <button type="button" style="border: none; background-color:#FAFAFA; margin-left:-2px; color: green; text-align: center; text-decoration: none; font-size: 100%;">
                                                         <a class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
                                                             <i style="font-size: 25px" class="mdi mdi-bookmark-check" status="Active"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                         </a>
-                                                    @else {{-- if the admin status is inactive --}}
+                                                        Price
+                                                        </button>
+                                                    @else 
+                                                       <button type="button" style="border: none; background-color:#FAFAFA; margin-left:-2px; color: green; text-align: center; text-decoration: none; font-size: 100%;">
                                                         <a class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
                                                             <i style="font-size: 25px" class="mdi mdi-bookmark-outline" status="Inactive"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                         </a>
+                                                        Price
+                                                        </button>
                                                     @endif
                                                     <a title="Edit Product" href="{{ route('edit.user.products' , ['id'=> $product['id']]) }}">
                                                         <i style="font-size: 25px" class="mdi mdi-pencil-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                     </a>
-                                                    <!-- <a title="Add Attributes" href="{{ url('admin/add-edit-attributes/' . $product['id']) }}">
-                                                        <i style="font-size: 25px" class="mdi mdi-plus-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
-                                                    </a> -->
                                                     <a title="Add Multiple Images" href="{{ url('admin/add-images/' . $product['id']) }}">
                                                         <i style="font-size: 25px" class="mdi mdi-library-plus"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                     </a>
-
-                                                    {{-- Confirm Deletion JS alert and Sweet Alert --}}
-                                                    {{-- <a title="Product" class="confirmDelete" href="{{ url('admin/delete-product/' . $product['id']) }}"> --}}
-                                                        {{-- <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i> --}} {{-- Icons from Skydash Admin Panel Template --}}
-                                                    {{-- </a> --}}
                                                     <a href="JavaScript:void(0)" class="confirmDelete" module="product" moduleid="{{ $product['id'] }}"> {{-- Check admin/js/custom.js and web.php (routes) --}}
                                                         <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                                     </a>
-                                                </div>
+                                                </div> -->
                                             </div>
                                             <div class="car-price-rating-box">
-                                                <h6 class="total-price">$1000 total</h6>
+                                                <h6 class="total-price">${{$product['product_price']}} total</h6>
                                                 <div class="rating-box">
                                                     <span class="iconify" data-icon="lets-icons:star-fill"></span>
                                                     <strong>4.9</strong>

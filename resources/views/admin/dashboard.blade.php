@@ -9,18 +9,12 @@
                 <div class="row">
                     <div class="col-12 col-xl-8 mb-4 mb-xl-0">
                         <h3 class="font-weight-bold">Welcome {{ Auth::guard('admin')->user()->name }}</h3>
-                        {{-- Accessing Specific Guard Instances: https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances --}}
-                        <!-- https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user -->
-                        <!-- https://laravel.com/docs/9.x/authentication#accessing-specific-guard-instances -->
-                        <!-- https://laravel.com/docs/9.x/eloquent#retrieving-models -->
                         <h6 class="font-weight-normal mb-0">All systems are running smoothly!</h6>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-
-
             <!-- <div class="col-md-6 grid-margin transparent">
 
 
@@ -101,113 +95,80 @@
                         </div>
                     </div>
                 </div> -->
-            <section class="py-5 py-md-6">
+            <div class="col-md-12 grid-margin">
+            <section >
                 <div class="container">
 
                     <h4 class="section_heading">Your Listings</h4>
-
-                    @foreach ($newProducts as $product)
-
-                    @php
-                    $product_image_path = 'front/images/product_images/small/' . $product->product_image;
-
-                    @endphp
-
-                    <div class="ads-list-archive featured_ads">
-                        <div class="row">
-                            <!-- Image Block -->
-
-                            <div class="col-lg-4 col-md-4 col-sm-4 no-padding">
-                                <!-- Img Block -->
-                                <div class="ad-archive-img">
-
-                                    <a class="item-img-wrapper-link" href="{{ url('product/' . $product['id']) }}">
-                                        @if (!empty($product->product_image) && file_exists($product_image_path))
-                                        {{-- if the product image exists in BOTH database table AND filesystem (on server) --}}
-                                        <img class="img-fluid" src="{{ asset($product_image_path) }}" alt="Product">
-                                        @else {{-- show the dummy image --}}
-                                        <img class="img-fluid"
-                                            src="{{ asset('front/images/product_images/small/no-image.png') }}"
-                                            alt="Product">
+                    <table id="products" class="table table-bordered"> {{-- using the id here for the DataTable --}}
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Listing Image</th>
+                                <th>Listing Name</th>
+                                <th>Listing Code</th>
+                                <!-- <th>Listing Color</th> -->
+                                <th>Category</th> {{-- Through the relationship --}}
+                                <th>Section</th>  {{-- Through the relationship --}}
+                                <!-- <th>Added by</th> {{-- Through the relationship --}} -->
+                                <!-- <th>Status</th>
+                                <th>Actions</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($newProducts as $product)
+                                @php
+                                $product_image_path = 'front/images/product_images/small/' . $product->product_image;
+                                @endphp
+                                <tr>
+                                    <td>{{ $product['id'] }}</td>
+                                    <td>
+                                        @if (!empty($product['product_image']))
+                                            <img style="border-radius: 17%; width:120px; height:100px" src="{{ asset('front/images/product_images/small/' . $product['product_image']) }}"> {{-- Show the 'small' image size from the 'small' folder --}}
+                                        @else
+                                            <img style="border-radius: 17%;  width:120px; height:100px" src="{{ asset('front/images/product_images/small/no-image.png') }}"> {{-- Show the 'no-image' Dummy Image: If you have for example a table with an 'images' column (that can exist or not exist), use a 'Dummy Image' in case there's no image. Example: https://dummyimage.com/  --}}
                                         @endif
-                                    </a>
-                                    <div class="featured-ribbon">
-                                        <!-- <span>Featured</span> -->
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Ads Listing -->
-
-                            <!-- Content Block -->
-                            <div class="col-lg-8 col-md-8 col-sm-8 no-padding">
-                                <!-- Ad Desc -->
-                                <div class="ad-archive-desc">
-
-                                    <!-- Title -->
-                                    <h3> <a
-                                            href="{{ url('product/' . $product['id']) }}">{{ $product->product_name }}</a>
-                                    </h3>
-                                    <!-- Category -->
-                                    <div class="category-title"><span class="padding_cats"><a
-                                                href="">{{$product->category_name}}</a></span><span
-                                            class="padding_cats"></span></div>
-                                    <!-- Short Description -->
-                                    <div class="clearfix visible-xs-block"></div>
-                                    <p class="hidden-sm">{{$product->description}}</p>
-                                    <!-- Ad Features -->
-                                    <ul class="short-meta list-inline">
-                                        <li>
-                                            <div class="item-stars">
-                                                <div class='star' title="0 out of 5 - based on 0 Reviews">
-                                                    <span style='width:0'></span>
-                                                </div>
-                                                <span>(0)</span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <!-- Ad History -->
-                                    <!-- Price -->
-                                    <div class="ad-price-simple">
-                                        ${{ $product->product_price }}<span class=""></span>
-                                    </div>
-                                    <div class="clearfix archive-history">
-                                        <div class="last-updated">Posted :
-                                            {{date('d M Y', strtotime($product->created_at))}}</div>
-                                    </div>
-                                    <div>
-                                        <a title="Edit Product"
-                                            href="{{ url('admin/add-edit-product/' . $product->id) }}">
-                                            <i style="font-size: 25px" class="mdi mdi-pencil-box"></i>
-                                           
+                                    </td>
+                                    <td>{{ $product['product_name'] }}</td>
+                                    <td>{{ $product['product_code'] }}</td>
+                                    <!-- <td>{{ $product['product_color'] }}</td> -->
+                                    <td>{{ $product['category']['category_name'] }}</td> {{-- Through the relationship --}}
+                                    <td>{{ $product['section']['name'] }}</td> {{-- Through the relationship --}}
+                                   
+                                    <!-- <td>
+                                        @if ($product['status'] == 1)
+                                            <a title="Listing Status" class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
+                                                <i style="font-size: 25px" class="mdi mdi-bookmark-check" status="Active"></i> {{-- Icons from Skydash Admin Panel Template --}}
+                                            </a>
+                                        @else {{-- if the admin status is inactive --}}
+                                            <a title="Listing Status" class="updateProductStatus" id="product-{{ $product['id'] }}" product_id="{{ $product['id'] }}" href="javascript:void(0)"> {{-- Using HTML Custom Attributes. Check admin/js/custom.js --}}
+                                                <i style="font-size: 25px" class="mdi mdi-bookmark-outline" status="Inactive"></i> {{-- Icons from Skydash Admin Panel Template --}}
+                                            </a>
+                                        @endif
+                                    </td> -->
+                                    <!-- <td>
+                                        <a title="Edit Listing" href="{{ url('admin/add-edit-product/' . $product['id']) }}">
+                                            <i style="font-size: 25px" class="mdi mdi-pencil-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                         </a>
-                                        <a title="Add Multiple Images"
-                                            href="{{ url('admin/add-images/' . $product->id) }}">
-                                            <i style="font-size: 25px" class="mdi mdi-library-plus"></i>
-                                            {{-- Icons from Skydash Admin Panel Template --}}
+                                        <a title="Add Multiple Images" href="{{ url('admin/add-images/' . $product['id']) }}">
+                                            <i style="font-size: 25px" class="mdi mdi-library-plus"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                         </a>
 
-                                        <!-- <a title="Product" class="confirmDelete" href="{{ url('admin/delete-product/' . $product->id) }}">
-                                        
-                                        <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i> 
-                                        
-                                        </a>  -->
-                                        <a href="JavaScript:void(0)" class="confirmDelete" module="product"
-                                            moduleid="{{ $product->id }}">
-                                            {{-- Check admin/js/custom.js and web.php (routes) --}}
-                                            <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i>
-                                            {{-- Icons from Skydash Admin Panel Template --}}
+                                        {{-- Confirm Deletion JS alert and Sweet Alert --}}
+                                        {{-- <a title="Listing" class="confirmDelete" href="{{ url('admin/delete-product/' . $product['id']) }}"> --}}
+                                            {{-- <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i> --}} {{-- Icons from Skydash Admin Panel Template --}}
+                                        {{-- </a> --}}
+                                        <a  title="Delete Listing" href="JavaScript:void(0)" class="confirmDelete" module="product" moduleid="{{ $product['id'] }}"> {{-- Check admin/js/custom.js and web.php (routes) --}}
+                                            <i style="font-size: 25px" class="mdi mdi-file-excel-box"></i> {{-- Icons from Skydash Admin Panel Template --}}
                                         </a>
-                                    </div>
-                                </div>
-                                <!-- Ad Desc End -->
-                            </div>
-
-                        </div>
-                        <!-- Content Block End -->
-                    </div>
-                    @endforeach
+                                    </td> -->
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </section>
+            </div>
         </div>
     </div>
     <!-- content-wrapper ends -->

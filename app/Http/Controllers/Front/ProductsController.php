@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Models\DeliveryAddress;
 use App\Models\Product;
+use App\Models\ProductsImage;
 use App\Models\UserWallet;
 use App\Models\Admin;
 use App\Models\ProductsAttribute;
@@ -436,6 +437,14 @@ class ProductsController extends Controller
             'status'     => 1,
             'rating'     => 5
         ])->count();
+        $getProduct = Product::find($id);
+        if($getProduct->is_resell == '1'){
+            //get details from the User Table
+            $getUser = User::where('id',$getProduct->vendor_id)->first();
+        }
+        else{
+            $getUser = Admin::where('id',$getProduct->vendor_id)->first();
+        }
 
 
         $totalStock = ProductsAttribute::where('product_id', $id)->sum('stock'); // sum() the `stock` column of the `products_attributes` table    // sum(): https://laravel.com/docs/9.x/collections#method-sum
@@ -445,7 +454,7 @@ class ProductsController extends Controller
         $meta_title       = $productDetails['meta_title'];
         $meta_description = $productDetails['meta_description'];
         $meta_keywords    = $productDetails['meta_keywords'];
-        return view('front.products.detail')->with(compact('productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount'));
+        return view('front.products.detail')->with(compact('getUser','productDetails', 'categoryDetails', 'totalStock', 'similarProducts', 'recentlyViewedProducts', 'groupProducts', 'meta_title', 'meta_description', 'meta_keywords', 'ratings', 'avgRating', 'avgStarRating', 'ratingOneStarCount', 'ratingTwoStarCount', 'ratingThreeStarCount', 'ratingFourStarCount', 'ratingFiveStarCount'));
     }
 
 
@@ -570,10 +579,10 @@ class ProductsController extends Controller
         
         // Get the Cart Items of a cerain user (using their `user_id` if they're authenticated/logged in or their `session_id` if they're not authenticated/not logged in (guest))    
         $getCartItems = Cart::getCartItems();
-        // return $getCartItems;
+// return $getCartItems;
 
         // Static SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
-        $meta_title       = 'Shopping Cart - Multi Vendor E-commerce';
+        $meta_title       = 'Shopping Cart - BOD Exchange - Coupan Marketplace Channel';
         $meta_keywords    = 'shopping cart, multi vendor';
 
 
@@ -1170,12 +1179,19 @@ class ProductsController extends Controller
 
         return view('front.users.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view
     }
-    public function userResellEdit(Request $request, $id = null) { 
+    public function userResellEdit(Request $request, $id = null, $order_id = null) { 
         Session::put('page', 'products');
             $title = 'Edit Product';
             $product = Product::find($id);
+            $getProductImages = ProductsImage::where('product_id',$product->original_product_id)->pluck('image');
+            if($order_id != null){
+                $getAvailableResell = OrdersProduct::where('id',$order_id)->first()['remaining_qty'];
+            }
+            else{
+                $getAvailableResell = 0;
+            }
             // dd($product);
-            $message = 'Product updated successfully!';
+            $message = 'Product updated for resell successfully!';
 
         // Get ALL the Sections with their Categories and Subcategories (Get all sections with its categories and subcategories)    // $categories are ALL the `sections` with their (parent) categories (if any (if exist)) and subcategories (if any (if exist))    
         $categories = \App\Models\Section::with('categories')->get()->toArray(); // with('categories') is the relationship method name in the Section.php Model
@@ -1187,24 +1203,27 @@ class ProductsController extends Controller
 
 
         // return view('admin.products.add_edit_product')->with(compact('title', 'product'));
-        return view('front.users.products.add_edit_product')->with(compact('title', 'product', 'categories', 'brands'));
+        return view('front.users.products.add_edit_product')->with(compact('getProductImages','title', 'product', 'categories', 'brands','order_id','getAvailableResell'));
     }
     public function updateResellProduct(Request $request){
         //get PRoduct
+        // return $request->all();
+        $getOrderDetails = OrdersProduct::where('id',$request->order_product)->first();
         $getProduct = Product::find($request->product_id);
-        if($request->product_units > $getProduct->product_units){
-            return redirect()->back()->with('error', "Product quantity is greater than the ordered quantity");
+        if($request->product_units > $getOrderDetails->remaining_qty){
+            return redirect()->back()->with('error', "You have ". $getOrderDetails->remaining_qty. " quantity to resell");
         }
+        $getOrderDetails->remaining_qty = $getOrderDetails->remaining_qty - $request->product_units;
+        $getOrderDetails->save();
         $getProduct->product_price = $request->product_price;
         $getProduct->product_units = $request->product_units;
         $getProduct->save();
         if($getProduct){
-            return redirect()->back()->with('success_message', "Product updated successfully!");
+            return redirect()->route('get.user.products')->with('success_message', "Product updated successfully!");
         }
 
     }
     public function orduserResellOrdersers() {
-        // Correcting issues in the Skydash Admin Panel Sidebar using Session
         Session::put('page', 'orders');
 
 
@@ -1233,9 +1252,15 @@ class ProductsController extends Controller
             $order->product = $getproduct;
             $order->buyer_name = \Illuminate\Support\Facades\Auth::user()->name;
             $order->QRdata = "Buyer Name: " . $order->buyer_name . "\n" . 
-                                "Product Name: " .  $getproduct->product_name . "\n" . 
+                                "Product Name: " .  isset($getproduct->product_name) ? $getproduct->product_name : '' . "\n" . 
                                 "Product Code: " . $getproduct->product_code;
+             $order->is_resell = true;                   
+            if($order->remaining_qty <= 0){
+                $order->is_resell = false;
+            }
+            
         }
+        // return $products;
         // $products = Product::whereIn('id',$getProducts)->get();
         // foreach($products as $product){
         //     $product->buyer_name = \Illuminate\Support\Facades\Auth::user()->name;
@@ -1405,6 +1430,7 @@ class ProductsController extends Controller
 
 
                 $cartItem->product_qty     = $item['quantity'];
+                $cartItem->remaining_qty     = $item['quantity'];
 
                 $cartItem->save(); // INSERT data INTO the `orders_products` table
 

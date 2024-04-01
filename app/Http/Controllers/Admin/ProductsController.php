@@ -82,9 +82,9 @@ class ProductsController extends Controller
         return redirect()->back()->with('success_message', $message);
     }
 
-    public function addEditProduct(Request $request, $id = null) { // If the $id is not passed, this means 'Add a Product', if not, this means 'Edit the Product'    
+    public function addEditProduct(Request $request, $id = null) { // If the $id is not passed, this means 'Add a Product', if not, this means 'Edit the Product' 
         // return $request->all();
-        // Correcting issues in the Skydash Admin Panel Sidebar using Session
+// Correcting issues in the Skydash Admin Panel Sidebar using Session
         Session::put('page', 'products');
 
 
@@ -93,9 +93,11 @@ class ProductsController extends Controller
             $product = new \App\Models\Product();
             // dd($product);
             $message = 'Product added successfully!';
+            $getAllIMages = [];
         } else { // if the $id is passed in the route/URL parameters, this means Edit the Product
             $title = 'Edit Product';
             $product = Product::find($id);
+            $getAllIMages = ProductsImage::where('product_id',$id)->pluck('image');
             // dd($product);
             $message = 'Product updated successfully!';
         }
@@ -111,6 +113,7 @@ class ProductsController extends Controller
                 'product_name'  => 'required', // only alphabetical characters and spaces
                 // 'product_code'  => 'required|regex:/^\w+$/', // alphanumeric regular expression
                 'product_price' => 'required|numeric',
+                'product_image.*' => 'required|mimes:jpeg,png,jpg|max:3048',
                 // 'product_color' => 'required|regex:/^[\pL\s\-]+$/u', // only alphabetical characters and spaces
             ];
 
@@ -122,21 +125,20 @@ class ProductsController extends Controller
                 // 'product_code.regex'     => 'Valid Product Code is required',
                 'product_price.required' => 'Product Price is required',
                 'product_price.numeric'  => 'Valid Product Price is required',
+                'product_image.required'  => 'File size is greater',
                 // 'product_color.required' => 'Product Color is required',
                 // 'product_color.regex'    => 'Valid Product Color is required',
 
             ];
 
             $this->validate($request, $rules, $customMessages);
-
-            // Upload Product Image after Resize
-            // Important Note: There are going to be 3 three sizes for the product image: Admin will upload the image with the recommended size which 1000*1000 which is the 'large' size, but then we're going to use 'Intervention' package to get another two sizes: 500*500 which is the 'medium' size and 250*250 which is the 'small' size
-            // The 3 three image sizes: large: 1000x1000, medium: 500x500, small: 250x250
-            if ($request->hasFile('product_image')) {
-                $image_tmp = $request->file('product_image');
-                if ($image_tmp->isValid()) { // Validating Successful Uploads: https://laravel.com/docs/9.x/requests#validating-successful-uploads
+            if (is_array($request->product_image) && count($request->product_image) > 0) {
+                $getFirstImage = $request->product_image[0];
+                // return $getFirstImage;
+                $image_tmp = $request->file('product_image')[0];
+                if ($image_tmp) { 
                     // Get image extension
-                    $extension = $image_tmp->getClientOriginalExtension();
+                    $extension = $image_tmp->getClientOriginalName();
 
                     // Generate a new random name for the uploaded image (to avoid that the image might get overwritten if its name is repeated)
                     $imageName = rand(111, 99999) . '.' . $extension; // e.g. 5954.png
@@ -156,7 +158,7 @@ class ProductsController extends Controller
                     $product->product_image = $imageName;
                 }
             }
-
+            // store all the images
 
             // Upload Product Video
             // Important Note: Default php.ini file upload Maximum file size is 2MB (If you upload a file with a larger size, it won't be uploaded!). Check upload_max_filesize using phpinfo() method.
@@ -276,13 +278,43 @@ class ProductsController extends Controller
 
             $product->save(); // Save all data in the database
 
+            //store all the images
+            if (is_array($request->product_image) && count($request->product_image) > 1) {
+                $image_tmp = $request->file('product_image');
+                if ($image_tmp) { 
+                    foreach( $image_tmp as $image){
+                        $extension = $image->getClientOriginalName();
+
+                        // Generate a new random name for the uploaded image (to avoid that the image might get overwritten if its name is repeated)
+                        $imageName = rand(111, 99999) . '.' . $extension; // e.g. 5954.png
+
+                        // Assigning the uploaded images path inside the 'public' folder
+                        // We will have three folders: small, medium and large, depending on the images sizes
+                        $largeImagePath  = 'front/images/product_images/large/'  . $imageName; // 'large'  images folder
+                        $mediumImagePath = 'front/images/product_images/medium/' . $imageName; // 'medium' images folder
+                        $smallImagePath  = 'front/images/product_images/small/'  . $imageName; // 'small'  images folder
+
+                        // Upload the image using the 'Intervention' package and save it in our THREE paths (folders) inside the 'public' folder
+                        Image::make($image)->resize(1000, 1000)->save($largeImagePath);  // resize the 'large'  image size then store it in the 'large'  folder
+                        Image::make($image)->resize(500,   500)->save($mediumImagePath); // resize the 'medium' image size then store it in the 'medium' folder
+                        Image::make($image)->resize(250,   250)->save($smallImagePath);  // resize the 'small'  image size then store it in the 'small'  folder
+                    
+                        // Insert the image name in the database table
+                        $newMultipleImages = new ProductsImage();
+                        $newMultipleImages->product_id = $product->id;
+                        $newMultipleImages->image = $imageName;
+                        $newMultipleImages->status = 1;
+                        $newMultipleImages->save();
+                    }
+                }
+            }
+
             return redirect('admin/products')->with('success_message', $message);
         }
 
 
         // Get ALL the Sections with their Categories and Subcategories (Get all sections with its categories and subcategories)    // $categories are ALL the `sections` with their (parent) categories (if any (if exist)) and subcategories (if any (if exist))    
         $categories = \App\Models\Section::with('categories')->get()->toArray(); // with('categories') is the relationship method name in the Section.php Model
-        // dd($categories);
 
         // Get all brands
         $brands = \App\Models\Brand::where('status', 1)->get()->toArray();
@@ -290,7 +322,7 @@ class ProductsController extends Controller
 
 
         // return view('admin.products.add_edit_product')->with(compact('title', 'product'));
-        return view('admin.products.add_edit_product')->with(compact('title', 'product', 'categories', 'brands'));
+        return view('admin.products.add_edit_product')->with(compact('getAllIMages','title', 'product', 'categories', 'brands'));
     }
 
     public function deleteProductImage($id) { // AJAX call from admin/js/custom.js    // Delete the product image from BOTH SERVER (FILESYSTEM) & DATABASE    // $id is passed as a Route Parameter    

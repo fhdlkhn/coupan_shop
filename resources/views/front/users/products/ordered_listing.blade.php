@@ -76,8 +76,9 @@
                                                     @endif
                                                 </td> -->
                                                 <td><form method="POST" action="{{ route('add.user.products', ['id' => $product['id']]) }}">
+                                                    
                                                     @csrf
-                                                    <button type="submit" class="btn btn-theme">Resell</button>
+                                                    <button type="submit" class="btn btn-theme" style="display:{{$product['is_resell'] == false ? 'none' : 'block'}}">Resell</button>
                                                 </form></td>
                                                 <td>
                                                     <button type="submit" class="btn btn-theme" onclick="createDispute({{$product['product']['id']}})">Create Dispute</button>
