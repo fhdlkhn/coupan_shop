@@ -31,8 +31,7 @@ class ProductsController extends Controller
 {
     // match() method is used for the HTTP 'GET' requests to render listing.blade.php page and the HTTP 'POST' method for the AJAX request of the Sorting Filter or the HTML Form submission and jQuery for the Sorting Filter WITHOUT AJAX, AND ALSO for submitting the Search Form in listing.blade.php    // e.g.    /men    or    /computers    
     // Search Form
-    public function listing(Request $request) { // using the Dynamic Routes with the foreach loop
-        // Sorting Filter WITH AJAX in listing.blade.php. Load (and check) ajax_products_listing.blade.php    
+    public function listing(Request $request) { 
         if ($request->ajax()) {
             $data = $request->all();
 
@@ -148,28 +147,20 @@ class ProductsController extends Controller
                 abort(404); // we will create the 404 page later on    // https://laravel.com/docs/9.x/helpers#method-abort
             }
         
-        } else { // Sorting Filter WITHOUT AJAX (using the HTML <form> and jQuery) Or handling the website Search Form (in front/layout/header.blade.php) BOTH in front/products/listing.blade.php
-
-            // Website Search Form (to search for all website products). Check the HTML Form in front/layout/header.blade.php    
-            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) { // If the Search Form is used, handle the Search Form submission
-                // New Arrivals    // Check front/layout/header.blade.php    
+        } else {    
+            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {   
                 if ($_REQUEST['search'] == 'new-arrivals') {
                     $search_product = $_REQUEST['search'];
-
-                    // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
                     $categoryDetails['breadcrumbs']                      = 'New Arrival Products';
                     $categoryDetails['categoryDetails']['category_name'] = 'New Arrival Products';
                     $categoryDetails['categoryDetails']['description']   = 'New Arrival Products';
-
-                    // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
-                    // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
                     $categoryProducts = Product::select(
                         'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
-                        'categories', // `categories` table
-                        'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
-                    )->where('products.status', 1)->orderBy('id', 'Desc'); // Show from the latest to the earliest (NEW ARRIVALS!)
-                    // dd($categoryProducts);
+                    )->with('brand')->join( 
+                        'categories', 
+                        'categories.id', '=', 'products.category_id'
+                    )->where('products.status', 1)->orderBy('id', 'Desc');
+                    dd($categoryProducts);
 
                 // Best Sellers    // Check front/layout/header.blade.php    
                 } elseif ($_REQUEST['search'] == 'best-sellers') {
@@ -266,14 +257,12 @@ class ProductsController extends Controller
 
                 return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
 
-            } else { // If the Search Form is NOT used, render the listing.blade.php page with the Sorting Filter WITHOUT AJAX (using the HTML <form> and jQuery)
-                $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); // Accessing The Current Route: https://laravel.com/docs/9.x/routing#accessing-the-current-route    // Accessing The Current URL: https://laravel.com/docs/9.x/urls#accessing-the-current-url       
-                // dd($url);
+            } else { 
+                $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); 
                 $categoryCount = Category::where([
                     'url'    => $url,
                     'status' => 1
                 ])->count();
-                // dd($categoryCount);
         
                 if ($categoryCount > 0) { // if the category entered as a URL in the browser address bar exists
                     // Get the entered URL in the browser address bar category details
@@ -1179,6 +1168,25 @@ class ProductsController extends Controller
 
         return view('front.users.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view
     }
+    public function allListings() {
+     // render products.blade.php in the Admin Panel
+        Session::put('page', 'products');
+
+        // Get ALL products ($products)
+        $products = Product::with([ // Constraining Eager Loads: https://laravel.com/docs/9.x/eloquent-relationships#constraining-eager-loads    // Subquery Where Clauses: https://laravel.com/docs/9.x/queries#subquery-where-clauses    // Advanced Subqueries: https://laravel.com/docs/9.x/eloquent#advanced-subqueries
+            'section' => function($query) { // the 'section' relationship method in Product.php Model
+                $query->select('id', 'name'); // Important Note: It's a MUST to select 'id' even if you don't need it, because the relationship Foreign Key `product_id` depends on it, or else the `product` relationship would give you 'null'!
+            },
+            'category' => function($query) { // the 'category' relationship method in Product.php Model
+                $query->select('id', 'category_name'); // Important Note: It's a MUST to select 'id' even if you don't need it, because the relationship Foreign Key `product_id` depends on it, or else the `product` relationship would give you 'null'!
+            }
+        ]);
+        // $produtcs = $products->where('vendor_id', \Illuminate\Support\Facades\Auth::user()->id);
+
+        $products = $products->get()->toArray(); 
+
+        return view('front.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view
+    }
     public function userResellEdit(Request $request, $id = null, $order_id = null) { 
         Session::put('page', 'products');
             $title = 'Edit Product';
@@ -1205,6 +1213,7 @@ class ProductsController extends Controller
         // return view('admin.products.add_edit_product')->with(compact('title', 'product'));
         return view('front.users.products.add_edit_product')->with(compact('getProductImages','title', 'product', 'categories', 'brands','order_id','getAvailableResell'));
     }
+    
     public function updateResellProduct(Request $request){
         //get PRoduct
         // return $request->all();
@@ -1252,7 +1261,7 @@ class ProductsController extends Controller
             $order->product = $getproduct;
             $order->buyer_name = \Illuminate\Support\Facades\Auth::user()->name;
             $order->QRdata = "Buyer Name: " . $order->buyer_name . "\n" . 
-                                "Product Name: " .  isset($getproduct->product_name) ? $getproduct->product_name : '' . "\n" . 
+                                "Product Name: " .  isset($getproduct) ? $getproduct->product_name : '' . "\n" . 
                                 "Product Code: " . $getproduct->product_code;
              $order->is_resell = true;                   
             if($order->remaining_qty <= 0){

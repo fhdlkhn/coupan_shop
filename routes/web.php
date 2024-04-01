@@ -246,6 +246,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
     // Render Cart page (front/products/cart.blade.php)    // this route is accessed from the <a> HTML tag inside the flash message inside cartAdd() method in Front/ProductsController.php (inside front/products/detail.blade.php)
     Route::get('cart', 'ProductsController@cart')->name('cart');
+    Route::get('all-listings', 'ProductsController@allListings')->name('all.listings');
 
     // Update Cart Item Quantity AJAX call in front/products/cart_items.blade.php. Check front/js/custom.js
     Route::post('cart/update', 'ProductsController@cartUpdate');
