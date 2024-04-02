@@ -255,7 +255,7 @@ $sections = \App\Models\Section::sections();
                                     <div class="selected">
                                         <a href="#">
                                             <div class="img-box">
-                                            <img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
+                                            <img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
                                             </div>
                                             <div class="meta-box">
                                                 @if(\Illuminate\Support\Facades\Auth::guard('admin')->check())
@@ -351,12 +351,18 @@ $sections = \App\Models\Section::sections();
                                         </ol>
                                         <div class="user-profile-info">
                                             <div class="img-box">
-                                                <a href="#"><img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
+                                                <a href="#"><img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
                                             </div>
+                                   
                                             <div class="meta-box">
                                                  @if(\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->type == 'vendor')
                                                     <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->name}}</h6></a>
                                                     <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small>
+                                                    
+                                                @elseif(\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->type == 'superadmin')
+                                                    <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->name}}</h6></a>
+                                                    <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small>
+                                                    
                                                 @else
                                                     <a href="#"><h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
                                                     <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>
