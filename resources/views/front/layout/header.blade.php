@@ -217,6 +217,9 @@ $sections = \App\Models\Section::sections();
                         <li class="">
                             <a href="#">How it works</a>
                         </li>
+                        <li class="">
+                            <a href="{{route('all.listings')}}">Shop</a>
+                        </li>
                         <li class="ly-list">
                             <a href="" class="ly-social ly-linkedin">
                                 <span>

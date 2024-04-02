@@ -28,23 +28,23 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ly-car-show-map">
-                        <h2>Shop</h2>
+                        <!-- <h2>Shop</h2> -->
                         <div class="row">
                             @foreach ($products as $product)
                                 <div class="col-lg-4">
                                     <div class="ly-car-card ly-car-card-grid ly-grid-2">
                                         <div class="car-img-box">
                                             @if (!empty($product['product_image']))
-                                                <a href="#"><img src="{{ asset('front/images/product_images/small/' . $product['product_image']) }}" alt="list-img"></a>
+                                                <a href="{{ url('product/' . $product['id']) }}"><img src="{{ asset('front/images/product_images/small/' . $product['product_image']) }}" alt="list-img"></a>
                                             @else
-                                                <a href="#"><img src="{{ asset('front/images/product_images/small/no-image.png') }}" alt="list-img"></a>
+                                                <a href="{{ url('product/' . $product['id']) }}"><img src="{{ asset('front/images/product_images/small/no-image.png') }}" alt="list-img"></a>
                                             @endif
                                             <span class="card-tag">listed</span>
                                         </div>
                                         <div class="car-detail-box">
                                             <div class="car-title-box">
                                                 <div class="meta-box">
-                                                    <h5 class="car-title"><a href="#">{{ $product['product_name'] }}</a></h5>
+                                                    <h5 class="car-title"><a href="{{ url('product/' . $product['id']) }}">{{ $product['product_name'] }}</a></h5>
                                                     <span>{{ $product['product_code'] }}</span>
                                                     <div class="car-meta-box">
                                                         <div class="sub-meta car-location">
