@@ -267,8 +267,7 @@ class ProductsController extends Controller
                 if ($categoryCount > 0) { // if the category entered as a URL in the browser address bar exists
                     // Get the entered URL in the browser address bar category details
                     $categoryDetails = Category::categoryDetails($url);
-                    $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1); // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php
-        
+                    $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1); // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap       
         
                     // Sorting Filter WITHOUT AJAX (using HTML <form> and jQuery) in front/products/listing.blade.php
                     if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
@@ -298,7 +297,38 @@ class ProductsController extends Controller
                     return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
 
                 } else {
-                    abort(404); // we will create the 404 page later on    // https://laravel.com/docs/9.x/helpers#method-abort
+                    $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); 
+                    $categoryDetails = [];
+                    $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
+                   $categoryProducts = Product::with(['section' => function($query) { 
+                                        $query->select('id', 'name');},
+                                        'category' => function($query) { 
+                                            $query->select('id', 'category_name');
+                                        }
+                                    ]);
+                    if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
+                        if ($_GET['sort'] == 'product_latest') {
+                            $categoryProducts->orderBy('products.id', 'Desc');
+                        } elseif ($_GET['sort'] == 'price_lowest') {
+                            $categoryProducts->orderBy('products.product_price', 'Asc');
+                        } elseif ($_GET['sort'] == 'price_highest') {
+                            $categoryProducts->orderBy('products.product_price', 'Desc');
+                        } elseif ($_GET['sort'] == 'name_z_a') {
+                            $categoryProducts->orderBy('products.product_name', 'Desc');
+                        } elseif ($_GET['sort'] == 'name_a_z') {
+                            $categoryProducts->orderBy('products.product_name', 'Asc');
+                        }
+                    }
+        
+                    // Pagination (after the Sorting Filter)
+                    $categoryProducts = $categoryProducts->paginate(30); // Moved the pagination after checking for the sorting filter <form>
+
+
+                    // Dynamic SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
+                    $meta_title       = '';
+                    $meta_description = '';
+                    $meta_keywords    = '';
+                    return view('front.products.listing')->with(compact('fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
                 }
 
             }
@@ -1181,8 +1211,6 @@ class ProductsController extends Controller
                 $query->select('id', 'category_name'); // Important Note: It's a MUST to select 'id' even if you don't need it, because the relationship Foreign Key `product_id` depends on it, or else the `product` relationship would give you 'null'!
             }
         ]);
-        // $produtcs = $products->where('vendor_id', \Illuminate\Support\Facades\Auth::user()->id);
-
         $products = $products->get()->toArray(); 
 
         return view('front.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view

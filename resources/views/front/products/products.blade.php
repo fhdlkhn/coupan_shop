@@ -12,9 +12,6 @@
             </div>
         </div>
     </section>
-    <!-- ly-page-top-section-end -->
-
-    <!-- ly-listing-projects-section-start -->
     <section class="ly-listing-projects-section">
         <div class="container">
             @if (Session::has('success_message')) <!-- Check AdminController.php, updateAdminPassword() method -->
@@ -26,9 +23,9 @@
                 </div>
             @endif
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-9">
                     <div class="ly-car-show-map">
-                        <!-- <h2>Shop</h2> -->
+
                         <div class="row">
                             @foreach ($products as $product)
                                 <div class="col-lg-4">

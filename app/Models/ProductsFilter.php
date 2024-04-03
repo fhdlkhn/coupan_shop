@@ -95,7 +95,7 @@ class ProductsFilter extends Model
     }
 
     // Get the brand of a product from a URL (URL of the category)    
-    public static function getBrands($url) { // this method is used in filters.blade.php
+    public static function getBrands($url = null) { // this method is used in filters.blade.php
         // Get the parent category & its subcategories (child categories) ids of a certain URL
         $categoryDetails = Category::categoryDetails($url);
 
