@@ -189,7 +189,8 @@ Route::get('orders/invoice/download/{id}', 'App\Http\Controllers\Admin\OrderCont
     Route::POST('add-dispute-response', 'App\Http\Controllers\Front\DisputeController@addDisputeResponse')->name('add.dispute.response');
     Route::get('get-dispute', 'App\Http\Controllers\Front\DisputeController@getDispute')->name('get.dispute');
     Route::get('received-dispute', 'App\Http\Controllers\Front\DisputeController@receivedDispute')->name('received.dispute');
-
+    Route::get('listing_verification', 'App\Http\Controllers\Front\ProductsController@listingVerification')->name('listing.verification');
+    Route::post('check_verification', 'App\Http\Controllers\Front\ProductsController@checkListingVerification')->name('check.listing.verification');
 
 
 
@@ -275,7 +276,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
     Route::get('user/confirm/{code}', 'UserController@confirmAccount'); // {code} is the base64 encoded user's 'Activation Code' sent to the user in the Confirmation E-mail with which they have registered, which is received as a Route Parameters/URL Paramters in the 'Activation Link'    // this route is requested (accessed/opened) from inside the mail sent to user (in resources/views/emails/confirmation.blade.php)
 
     // Website Search Form (to search for all website products). Check the HTML Form in front/layout/header.blade.php
-    Route::get('search-products', 'ProductsController@listing');
+    Route::get('search-products/{cat?}', 'ProductsController@listing')->name('search.product');
 
     // PIN code Availability Check: check if the PIN code of the user's Delivery Address exists in our database (in both `cod_pincodes` and `prepaid_pincodes`) or not in front/products/detail.blade.php via AJAX. Check front/js/custom.js
     Route::post('check-pincode', 'ProductsController@checkPincode');
@@ -323,8 +324,8 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::match(['GET', 'POST'], 'add/user_products', 'OrderController@addUserProducts')->name('add.user.products');
         Route::get('user_products', 'ProductsController@userResellProducts')->name('get.user.products');
         Route::get('user_ordered_listings', 'ProductsController@userOrderedListing')->name('user.ordered.listings');
-        Route::get('listing_verification', 'ProductsController@listingVerification')->name('listing.verification');
-        Route::post('check_verification', 'ProductsController@checkListingVerification')->name('check.listing.verification');
+        // Route::get('listing_verification', 'ProductsController@listingVerification')->name('listing.verification');
+        // Route::post('check_verification', 'ProductsController@checkListingVerification')->name('check.listing.verification');
         Route::get('edit/user_products/{id?}/{order_id?}', 'ProductsController@userResellEdit')->name('edit.user.products');
         Route::post('update/user_products', 'ProductsController@updateResellProduct')->name('update.user.products');
         Route::get('user/resell_orders', 'ProductsController@orduserResellOrdersers')->name('user.resell.orders');

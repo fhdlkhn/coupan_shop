@@ -1,4 +1,3 @@
-<!-- Footer -->
     <section class="ly-footer">
         <div class="container">
             <div class="footer-content">
@@ -6,8 +5,8 @@
                     <div class="col-12">
                         <div class="footer-logo-bar">
                             <a href="#" class="footer-logo">
-                                <img src="{{ asset('logo.png') }}" alt="location-img">
-                             
+                                <img src="{{asset('front/images/banners/footer_logo_new.png')}}" alt="footer logo">
+                                Company name
                             </a>
                             <div class="meta-box">
                                 <span>Ready to get started?</span>
@@ -94,4 +93,3 @@
             </div>
         </div>
     </div>
-    <!-- ly-copyright-section-end -->

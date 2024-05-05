@@ -196,7 +196,7 @@ $sections = \App\Models\Section::sections();
     <div class="header-shadow-wrapper">
     </div>
 </div>
-<div class="ly-menu sb-header header-shadow transparent viewport-lg">
+<div class="ly-menu sb-header header-shadow headerstyle-default viewport-lg">
         <div class="container">
             <!-- sb header -->
             <div class="sb-header-container">

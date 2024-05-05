@@ -4,30 +4,22 @@
 
 @section('content')
     <!-- Page Introduction Wrapper -->
-    <div class="page-style-a">
-        <div class="container">
-            <div class="page-intro">
-                <h2>Contact Us</h2>
-                <ul class="bread-crumb">
-                    <li class="has-separator">
-                        <i class="ion ion-md-home"></i>
-                        <a href="index.html">Home</a>
-                    </li>
-                    <li class="is-marked">
-                        <a href="contact.html">Listing Verification</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- Page Introduction Wrapper /- -->
-    <!-- Contact-Page -->
-    <div class="page-contact u-s-p-t-80">
+    <section class="ly-page-top-section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="col-12">
+                    <h1>Listing Verification</h1>
+                    <p>Join top UK hosts who make an average of £6,492 every year for each listing they list</p>
+                </div>
+            </div>
+        </div>
+    </section>
+   <section class="ly-listing-projects-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md- col-sm-6">
                     <div class="touch-wrapper">
-                        <h1 class="contact-h1">Get In Touch With Us</h1>
+                        <h1 class="contact-h1">Verify your Listing here</h1>
                         <div display="none" id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none; position: fixed; top: 10px; right: 10px; width: 500px; z-index: 999;">
                         <strong>Error:</strong> <span id="error-text"></span>
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -61,46 +53,51 @@
                 </div>
             </div>
         </div>
-        <div class="u-s-p-t-80">
+        <!-- <div class="u-s-p-t-80">
             <div id="map"></div>
-        </div>
-    </div>
+        </div> -->
+    </section>
     <!-- Contact-Page /- -->
     <script type="text/javascript">
-        function listingVerification(){
-                var email = $("#listingId").val();
+        function listingVerification() {
+            var email = $("#listingId").val();
 
             $.ajax({
                 type: 'POST',
                 url: '{{ route('check.listing.verification') }}',
                 data: {
-                    email: email, 
+                    email: email,
                     _token: '{{ csrf_token() }}',
                 },
-                success: function (response) {
-                    if(response.success == 1){
+                success: function(response) {
+                    if (response.success == 1) {
                         var ownerName = response.data.owner_name;
                         var productName = response.data.product_name;
                         var productCode = response.data.product_code;
 
-            // Update the HTML with the retrieved data
-            $('#productDetails').html('Owner Name: ' + ownerName + '<br>' +
-                                      'Product Name: ' + productName + '<br>' +
-                                      'Product Code: ' + productCode);
-                    }
-                    else{
-                        $('#productDetails').html();
+                        // Update the HTML with the retrieved data
+                        $('#productDetails').html('Owner Name: ' + ownerName + '<br>' +
+                            'Product Name: ' + productName + '<br>' +
+                            'Product Code: ' + productCode);
+                    } else {
+                        // Clear the product details if no product found
+                        $('#productDetails').html('No Product Found!');
                     }
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(errorThrown)
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+
+                    // Display the error message
                     $('#error-text').text(jqXHR.responseJSON.message);
                     $('#error-message').show();
-                    setTimeout(function () {
-                    $('#error-message').fadeOut('slow');
-                }, 5000);
+
+                    // Hide the error message after 5 seconds
+                    setTimeout(function() {
+                        $('#error-message').fadeOut('slow');
+                    }, 5000);
                 }
             });
         }
+
         </script>
 @endsection

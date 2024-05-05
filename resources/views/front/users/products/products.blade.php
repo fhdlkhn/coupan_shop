@@ -44,7 +44,7 @@
                                         <div class="car-detail-box">
                                             <div class="car-title-box">
                                                 <div class="meta-box">
-                                                    <h5 class="car-title"><a href="#">{{ $product['product_name'] }}</a></h5>
+                                                    <h5 class="car-title"><a <a href="{{ url('product/' . $product['id']) }}">{{ $product['product_name'] }}</a></h5>
                                                     <span>{{ $product['product_code'] }}</span>
                                                     <div class="car-meta-box">
                                                         <div class="sub-meta car-location">

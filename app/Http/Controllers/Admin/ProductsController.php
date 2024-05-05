@@ -190,6 +190,9 @@ class ProductsController extends Controller
 
             $product->section_id  = $categoryDetails['section_id'];
             $product->category_id = $data['category_id'];
+            $product->address = $data['address'];
+            $product->latitude = $data['lat'];
+            $product->longitude = $data['long'];
             $product->brand_id    = $data['brand_id']  ?? NULL;
             $product->group_code  = $data['group_code'] ?? NULL; // Managing Product Colors (in front/products/detail.blade.php)
 
@@ -252,6 +255,7 @@ class ProductsController extends Controller
             $product->product_units    = $data['product_units'] ?? NULL;
             $product->validity         = $data['validity'] ?? NULL;
             $product->product_type     = $data['product_type'] ?? NULL;
+            // return $product; 
 
 
 
@@ -280,6 +284,7 @@ class ProductsController extends Controller
 
             //store all the images
             if (is_array($request->product_image) && count($request->product_image) > 1) {
+                // ProductsImage::where('product_id',$product->id)->delete();
                 $image_tmp = $request->file('product_image');
                 if ($image_tmp) { 
                     foreach( $image_tmp as $image){
@@ -306,13 +311,13 @@ class ProductsController extends Controller
                         $newMultipleImages->status = 1;
                         $newMultipleImages->save();
                     }
+                    // $getAllIMages = ProductsImage::where('product_id',$product->id)->pluck('image');
                 }
             }
 
             return redirect('admin/products')->with('success_message', $message);
         }
-
-
+       
         // Get ALL the Sections with their Categories and Subcategories (Get all sections with its categories and subcategories)    // $categories are ALL the `sections` with their (parent) categories (if any (if exist)) and subcategories (if any (if exist))    
         $categories = \App\Models\Section::with('categories')->get()->toArray(); // with('categories') is the relationship method name in the Section.php Model
 

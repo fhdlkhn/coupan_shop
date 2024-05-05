@@ -48,11 +48,15 @@ class OrderController extends Controller
         $getOrder = OrdersProduct::where('id',$req->id)->first();
         if($getOrder !=null){
         $getProduct = Product::where('id',$getOrder->product_id)->first();
+        // return $getProduct;
         $getProduct->original_product_id = $getOrder->product_id;
         $getProduct->vendor_id =  \Illuminate\Support\Facades\Auth::user()->id;
         $getProduct->product_units = $getOrder->product_qty;
         $getProduct->is_resell = '1';
         $getProduct->product_code = rand(1000, 9999);
+        $getProduct->address = $getProduct->address;
+        $getProduct->latitude = $getProduct->latitude;
+        $getProduct->longitude = $getProduct->longitude;
         $AddProductToUser = $getProduct->replicate();
         $AddProductToUser->save();
         if($AddProductToUser){

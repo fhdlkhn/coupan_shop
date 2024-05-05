@@ -3,482 +3,106 @@
 
 
 @section('content')
-    <!-- Main-Slider -->
-    <!-- <div class="default-height ph-item">
-        <div class="slider-main owl-carousel">
-
-            {{-- Show the banner dynamically depending on the Admin Panel choice --}} 
-            @foreach ($sliderBanners as $banner)
-                <div class="bg-image">
-                    <div class="slide-content">
-                        <h1>
-                            <a @if (!empty($banner['link'])) href="{{ url($banner['link']) }}" @else href="javascript:;" @endif>
-                                <img src="{{ asset('front/images/banner_images/' . $banner['image']) }}" title="{{ $banner['title'] }}" alt="{{ $banner['title'] }}">
-                            </a>
-                        </h1>Our company is the world’s largest car sharing
-                        <h2>{{ $banner['title'] }}</h2>
-                    </div>Browse top online businesses
-                </div>
-            @endforeach
-        </div>
-    </div> -->
-    
-    
-    
-    
-    
-
-    <!-- theme header start -->
-    <!--<div class="ly-menu sb-header header-shadow transparent viewport-lg">-->
-    <!--    <div class="container">-->
-            <!-- sb header -->
-    <!--        <div class="sb-header-container">-->
-                <!--Logo-->
-    <!--            <div class="logo" data-mobile-logo="imgs/Logo.png" data-sticky-logo="imgs/Logo.png"> <a href="index.html"><img src="{{ asset('logo.png')}}" alt=""></a></div>-->
-                <!-- Burger menu -->
-    <!--            <div class="burger-menu">-->
-    <!--                <div class="line-menu line-half first-line"></div>-->
-    <!--                <div class="line-menu"></div>-->
-    <!--                <div class="line-menu line-half last-line"></div>-->
-    <!--            </div>-->
-                <!--Navigation menu-->
-    <!--            <nav class="sb-menu menu-caret submenu-top-border submenu-scale">-->
-    <!--                <ul>-->
-    <!--                    <li class="">-->
-    <!--                        <a href="#">Start Selling</a>-->
-    <!--                    </li>-->
-    <!--                    <li class="">-->
-    <!--                        <a href="#">How it works</a>-->
-    <!--                    </li>-->
-    <!--                    <li class="ly-list">-->
-    <!--                        <a href="" class="ly-social ly-linkedin">-->
-    <!--                            <span>-->
-    <!--                                <span class="iconify" data-icon="akar-icons:linkedin-fill"></span>-->
-    <!--                            </span>-->
-    <!--                        </a>-->
-    <!--                        <a href="" class="ly-social ly-facebook">-->
-    <!--                            <span>-->
-    <!--                                <span class="iconify" data-icon="uil:facebook-messenger"></span>-->
-    <!--                            </span>-->
-    <!--                        </a>-->
-    <!--                        <a href="" class="ly-social ly-telegram">-->
-    <!--                            <span>-->
-    <!--                                <span class="iconify" data-icon="mingcute:telegram-fill"></span>-->
-    <!--                            </span>-->
-    <!--                        </a>-->
-    <!--                        <a href="" class="ly-social ly-discord">-->
-    <!--                            <span>-->
-    <!--                                <span class="iconify" data-icon="ic:baseline-discord"></span>-->
-    <!--                            </span>-->
-    <!--                        </a>-->
-                          
-    <!--                        <div class="ly-loged-in-drop-down">-->
-    <!--                            <div class="selected">-->
-    <!--                                <a href="#">-->
-    <!--                                    <div class="img-box">-->
-    <!--                                     <img src="{{ asset('images/client-1.png') }}" alt="location-img">-->
-    <!--                                    </div>-->
-    <!--                                    <div class="meta-box">-->
-    <!--                                        <h6>Asep Asomething</h6>-->
-    <!--                                        <small>asepasomething@gmail.com</small>-->
-    <!--                                    </div>-->
-    <!--                                </a>-->
-    <!--                            </div>-->
-    <!--                            <div class="options">-->
-    <!--                                <ol class="list">-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>-->
-    <!--                                                Booking-->
-    <!--                                            </span>-->
-    <!--                                            <span class="badge active">2</span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12H3l9-9l9 9h-2M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></g></svg>-->
-    <!--                                                My listing-->
-    <!--                                            </span>-->
-    <!--                                            <span class="badge">0</span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m8.962 18.91l.464-.588zM12 5.5l-.54.52a.75.75 0 0 0 1.08 0zm3.038 13.41l.465.59zm-5.612-.588C7.91 17.127 6.253 15.96 4.938 14.48C3.65 13.028 2.75 11.335 2.75 9.137h-1.5c0 2.666 1.11 4.7 2.567 6.339c1.43 1.61 3.254 2.9 4.68 4.024zM2.75 9.137c0-2.15 1.215-3.954 2.874-4.713c1.612-.737 3.778-.541 5.836 1.597l1.08-1.04C10.1 2.444 7.264 2.025 5 3.06C2.786 4.073 1.25 6.425 1.25 9.137zM8.497 19.5c.513.404 1.063.834 1.62 1.16c.557.325 1.193.59 1.883.59v-1.5c-.31 0-.674-.12-1.126-.385c-.453-.264-.922-.628-1.448-1.043zm7.006 0c1.426-1.125 3.25-2.413 4.68-4.024c1.457-1.64 2.567-3.673 2.567-6.339h-1.5c0 2.198-.9 3.891-2.188 5.343c-1.315 1.48-2.972 2.647-4.488 3.842zM22.75 9.137c0-2.712-1.535-5.064-3.75-6.077c-2.264-1.035-5.098-.616-7.54 1.92l1.08 1.04c2.058-2.137 4.224-2.333 5.836-1.596c1.659.759 2.874 2.562 2.874 4.713zm-8.176 9.185c-.526.415-.995.779-1.448 1.043c-.452.264-.816.385-1.126.385v1.5c.69 0 1.326-.265 1.883-.59c.558-.326 1.107-.756 1.62-1.16z"/></svg>-->
-    <!--                                                Wishlist-->
-    <!--                                            </span>-->
-    <!--                                            <span class="badge active">4</span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v-.5m4 .5v-.5M8 11v-.5m-4.536 6.328C2 15.657 2 14.771 2 11c0-3.771 0-5.657 1.464-6.828C4.93 3 7.286 3 12 3c4.714 0 7.071 0 8.535 1.172C22 5.343 22 7.229 22 11c0 3.771 0 4.657-1.465 5.828C19.072 18 16.714 18 12 18c-2.51 0-3.8 1.738-6 3v-3.212c-1.094-.163-1.899-.45-2.536-.96"/></svg>-->
-    <!--                                                Message-->
-    <!--                                            </span>-->
-    <!--                                            <span class="badge active">6</span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                </ol>-->
-    <!--                                <div class="list-divider"></div>-->
-    <!--                                <ol class="list extra-links">-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M5 6.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5m-4.5 7h9v-.542A4.51 4.51 0 0 0 4.796 8.5A4.51 4.51 0 0 0 .5 12.958zm8.5-7a2.5 2.5 0 0 0 0-5m2.5 12h2v-.542A4.51 4.51 0 0 0 10 8.61"/></svg>-->
-    <!--                                                Host your home-->
-    <!--                                            </span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v2m0 16v-8m0-8h12l-2 4l2 4H8m0-8v8"/></svg>-->
-    <!--                                                Host an experience-->
-    <!--                                            </span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                    <li>-->
-    <!--                                        <a href="#">-->
-    <!--                                            <span class="value">-->
-    <!--                                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></g></svg>-->
-    <!--                                                Help-->
-    <!--                                            </span>-->
-    <!--                                        </a>-->
-    <!--                                    </li>-->
-    <!--                                </ol>-->
-    <!--                                <div class="user-profile-info">-->
-    <!--                                    <div class="img-box">-->
-    <!--                                        <a href="#"><img src="imgs/user-5.png" alt="user-img"></a>-->
-    <!--                                    </div>-->
-    <!--                                    <div class="meta-box">-->
-    <!--                                        <a href="#"><h6>Asep Asomething</h6></a>-->
-    <!--                                        <small>asepasomething@gmail.com</small>-->
-    <!--                                    </div>-->
-    <!--                                </div>-->
-    <!--                                <button class="logout-btn">Log Out</button>-->
-    <!--                            </div>-->
-    <!--                        </div>-->
-    <!--                    </li>-->
-    <!--                </ul>-->
-    <!--            </nav>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
-    <!-- theme header end -->
-
-    <!-- ly-hero-section-start -->
-    <section class="ly-hero-section">
+   <section class="ly-page-top-section home-banner company-work" style="background-image: url('{{ asset('front/images/banners/banner.png') }}');">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="hero-top-box">
-                        <h1><span>Discover</span> Forver Discount</h1>
-                        <h6>Discover America's Premier Discount</h6>
-                    </div>
-                    <div class="ly-main-searchbar">
-                        <form action="">
-                            <div class="ly-search-dropdown">
-                                <div class="dropdown">
-                                    <span class="ly-search-label">Business Lookup</span>
-                                       <input type ="text"  name = "bussiness_name"  class="btn btn-secondary dropdown-toggle">
-
-                                </div>
-                            </div>
-                            <div class="ly-search-dropdown">
-                               
-                                <div class="ly-dropdown-sub">
-                                    <div class="dropdown">
-                                        <span class="ly-search-label">Date</span>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Select your Location
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                          <li><a class="dropdown-item" href="#">Action</a></li>
-                                          <li><a class="dropdown-item" href="#">Another action</a></li>
-                                          <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                  
-                                </div>
-                            </div>
-                            <div class="ly-search-dropdown">
-                             
-                                <div class="ly-dropdown-sub">
-                                    <div class="dropdown">
-                                        <span class="ly-search-label">Date</span>
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Select your Location
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                          <li><a class="dropdown-item" href="#">Action</a></li>
-                                          <li><a class="dropdown-item" href="#">Another action</a></li>
-                                          <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                        </ul>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <button class="ly-search-btn" type="submit"><span class="iconify" data-icon="lucide:search"></span></button>
-                        </form>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-lg-4">
-                    <div class="hero-meta-box">
-                        <a href="#">
-                            <svg width="126" height="16" viewBox="0 0 126 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 7C0.447715 7 0 7.44772 0 8C0 8.55228 0.447715 9 1 9L1 7ZM125.707 8.70711C126.098 8.31658 126.098 7.68342 125.707 7.29289L119.343 0.928932C118.953 0.538408 118.319 0.538408 117.929 0.928932C117.538 1.31946 117.538 1.95262 117.929 2.34315L123.586 8L117.929 13.6569C117.538 14.0474 117.538 14.6805 117.929 15.0711C118.319 15.4616 118.953 15.4616 119.343 15.0711L125.707 8.70711ZM1 9L125 9V7L1 7L1 9Z" fill="#131212"/>
-                            </svg> 
-                        </a>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse null.</p>
-                        <div class="ly-popular-client">
-                            <ul class="popular-client-img">
-                                <li> 
-                                    <a href="#" class="avatar" data-bs-tooltip="hussnain">
-                                       
-                                        <img src="{{ asset('images/client-1.png') }}" alt="location-img">
-                                    </a>
-                                </li>
-                                <li> 
-                                    <a href="#" class="avatar" data-bs-tooltip="kashif">
-                                        <img src="{{ asset('images/client-2.png') }}" alt="location-img">
-                                    </a>
-                                </li>
-                                <li> 
-                                    <a href="#" class="avatar" data-bs-tooltip="sheezy">
-                                        <img src="{{ asset('images/client-3.png') }}" alt="location-img">
-                                    </a>
-                                </li>
-                                <li> 
-                                    <a href="#" class="avatar" data-bs-tooltip="sheezy">
-                                          <img src="{{ asset('images/client-4.png') }}" alt="location-img">
-                                    </a>
-                                </li>
-                                <li> 
-                                    <a href="#" class="avatar" data-bs-tooltip="sheezy">
-                                         <img src="{{ asset('images/client-5.png') }}" alt="location-img">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="avatar avatar-box" data-bs-tooltip="view more"><span class="iconify" data-icon="icomoon-free:plus"></span></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h6>100+ Popular Clients</h6>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-lg-8">
-                    <div class="hero-main-img-box">
-                       <img src="{{ asset('images/main-hero.png') }}" alt="location-img">
-                        <a href="#" class="ly-explore-btn">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_325_2782)"><path d="M19 14.9998H17V8.40976L5.41 19.9998L4 18.5898L15.59 6.99976H9V4.99976H19V14.9998Z" fill="white"/></g><defs><clipPath id="clip0_325_2782"><rect width="24" height="24" fill="white" transform="matrix(1 0 0 -1 0 24)"/></clipPath></defs></svg>
-                            <span>Explore</span>
-                        </a>
+                    <div class="page-content-wrapper">
+                      
+                        <h1>Start your car sharing business on Turo</h1>
+                        <p>Join top UK hosts who make an average of £6,492 every year for each car they list on Turo*</p>
+                       
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ly-hero-section-end -->
-
-    <!-- ly-location-section-start -->
-    <section class="ly-location-section">
+    <section class="snet-company-started-section inventory-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1">
+                   
+                </div>
+                <div class="col-lg-5">
+                    <div class="snet-started-company-box">
+                        <div class="img-box">
+                            <img src="{{asset('front/images/banners/company-started-1.svg')}}" alt="company-started"> 
+                        </div>
+                        <h4>Tell us about your place</h4>
+                        <p>With thousands of PSLs for sale at below market prices, you are sure to find the perfect seats that fit your needs and budget. There are no buyers fees!</p>
+                         <button class="ly-button-inv">View inventory <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="snet-started-company-box">
+                        <div class="img-box">
+                            <img src="{{asset('front/images/banners/company-started-2.svg')}}" alt="company-started"> 
+                        </div>
+                        <h4>Make it stand out</h4>
+                        <p>With thousands of PSLs for sale at below market prices, you are sure to find the perfect seats that fit your needs and budget. There are no buyers fees! </p>
+                        <button class="ly-button-inv">View Inventory <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                   
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="categories-section">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="ly-heading-content">
-                        <h2 class="ly-heading">Browse by location</h2>
+                    <div class="page-content-wrapper">
+                        <h2>Marketplace Categories</h2>
+                        <p class="cat-description">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>
+                       
                     </div>
-                    <div class="owl-carousel owl-theme ly-location-carousel">
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                   <img src="{{ asset('images/location-1.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Los Angeles</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
+                </div>
+                <div class="col-12 cats-container">
+                    <div class="row">
+                        @foreach($getAllCats as $cats)
+                        <div class="col-3">
+                            <div class="cat-item">
+                                <div class="cat-img"><img src="{{asset('front/images/banners/cat_1.png')}}"></div>
+                                <a href="{{route('search.product',['cat'=>$cats->id])}}">{{$cats->category_name}}
+                                </a>
+                            </div>
                         </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                   <img src="{{ asset('images/location-2.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Miami</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                     <img src="{{ asset('images/location-3.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Honolulu</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                   <img src="{{ asset('images/location-4.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">San Francisco</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                  <img src="{{ asset('images/location-1.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Los Angeles</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                    <img src="{{ asset('images/location-2.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Miami</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                   <img src="{{ asset('images/location-1.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">Honolulu</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
-                        <div class="item">
-                            <a href="#" class="ly-location-card">
-                                <span class="location-img-box">
-                                     <img src="{{ asset('images/location-4.png') }}" alt="location-img">
-                                </span>
-                                <h4 class="location-name">San Francisco</h4>
-                                <span class="location-goto">
-                                    <span class="arrow-icon">
-                                        <span class="iconify" data-icon="ph:arrow-up-right-bold"></span>
-                                    </span>
-                                </span>
-                            </a>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ly-location-section-end -->
-
-    <!-- ly-info-section-start -->
-    <section class="ly-info-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ly-info-card">
-                       <img src="{{ asset('images/info-2.png') }}" alt="location-img">
-                        <h4>Register Business Entity</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ly-info-card">
-                       <img src="{{ asset('images/info-1.png') }}" alt="location-img">
-                        <h4>Become a host</h4>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- ly-info-section-end -->
-
-    <!-- ly-features-section-start -->
-    <section class="ly-features-section">
+    <section class="categories-section colored">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <div class="ly-heading-content">
-                        <h2 class="ly-heading">Our features</h2>
-                        <p class="ly-desc">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>
+                    <div class="page-content-wrapper">
+                      
+                        <h2>Marketplace Categories</h2>
+                        <p class="cat-description">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>
+                       
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="ly-feature-box">
-                        <div class="feature-icon-box">
-                           <img src="{{ asset('images/feature-icon.png') }}" alt="location-img">
+                <div class="col-12 cats-container">
+                    <div class="row">
+                        @foreach($getAllCats as $cats)
+                        <div class="col-3">
+                            <div class="cat-item">
+                                <div class="cat-img"><img src="{{asset('front/images/banners/cat_1.png')}}"></div>
+                                <a href="{{route('search.product',['cat'=>$cats->id])}}">{{$cats->category_name}}
+                                </a>
+                            </div>
                         </div>
-                        <h3>30+</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="ly-feature-box">
-                        <div class="feature-icon-box">
-                             <img src="{{ asset('images/feature-icon.png') }}" alt="location-img">
-                        </div>
-                        <h3>20+</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="ly-feature-box">
-                        <div class="feature-icon-box">
-                             <img src="{{ asset('images/feature-icon.png') }}" alt="location-img">
-                        </div>
-                        <h3>90+</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="ly-feature-box">
-                        <div class="feature-icon-box">
-                             <img src="{{ asset('images/feature-icon.png') }}" alt="location-img">
-                        </div>
-                        <h3>20+</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ly-features-section-end -->
 
-    <!-- ly-works-section-start -->
     <section class="ly-works-section">
         <div class="container">
             <div class="row">
@@ -491,8 +115,8 @@
                                 <span>1</span>
                             </div>
                             <div class="step-meta">
-                                <h6>Explore Discounts and Memberships</h6>
-                                <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
+                                <h6>Find the perfect car</h6>
+                                <p>Enter a location and date and browse thousands of cars shared by local hosts. </p>
                             </div>
                         </div>
                         <div class="work-steps-box">
@@ -500,8 +124,8 @@
                                 <span>2</span>
                             </div>
                             <div class="step-meta">
-                                <h6>Purchase Desired Discounts</h6>
-                                <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
+                                <h6>Book your trip</h6>
+                                <p>Book on the Turo app or online, choose a protection plan, and  say hi to your host! Cancel for free up to 24 hours before your  trip. </p>
                             </div>
                         </div>
                         <div class="work-steps-box">
@@ -509,8 +133,8 @@
                                 <span>3</span>
                             </div>
                             <div class="step-meta">
-                                <h6>Enjoy Exclusive discounts</h6>
-                                <p>Lorem ipsum dolor sit amet consectetur. Dolor ultricies molestie consequat tortor. Suspendisse nulla.</p>
+                                <h6>Hit the road </h6>
+                                <p>Have the car delivered or pick it up from your host. Check in with  the app, grab the keys, and hit the road!</p>
                             </div>
                         </div>
                         <button class="ly-button-1">Get Started <span class="iconify" data-icon="tabler:chevron-right"></span></button>
@@ -518,151 +142,200 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="work-img-box">
-                       <img src="{{ asset('images/white-card.png') }}" alt="location-img">
+                        <img src="{{asset('front/images/banners/work-2.png')}}" alt="main-img">
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- ly-works-section-end -->
 
-    <!-- ly-faq-section-start -->
-    <section class="ly-faq-section">
+    <section class="ly-works-section">
         <div class="container">
             <div class="row">
-                <div class="col-12">
-                    <div class="ly-heading-content">
-                        <h2 class="ly-heading">Frequently Asked Questions</h2>
-                    </div>
-                    <div class="accordion ly-accordion" id="accordionPanelsStayOpenExample">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                                    What services does your marketing agency offer?
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-                                <div class="accordion-body">
-                                <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                                    How can your agency help my business?
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                                    What sets your agency apart from competitors?
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
-                                    What sets your agency apart from competitors?
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
-                                    What sets your agency apart from competitors?
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-lg-6">
+                    <div class="work-img-box">
+                        <img src="{{asset('front/images/banners/work-1.png')}}" alt="main-img">
                     </div>
-                    <div class="faq-btn-box">
+                </div>
+                <div class="col-lg-6">
+                    <div class="work-process-content">
+                        <h3>How does it works</h3>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        <div class="work-steps-box">
+                            <div class="step-counter">
+                                <span>1</span>
+                            </div>
+                            <div class="step-meta">
+                                <h6>Find the perfect car</h6>
+                                <p>Enter a location and date and browse thousands of cars shared by local hosts. </p>
+                            </div>
+                        </div>
+                        <div class="work-steps-box">
+                            <div class="step-counter">
+                                <span>2</span>
+                            </div>
+                            <div class="step-meta">
+                                <h6>Book your trip</h6>
+                                <p>Book on the Turo app or online, choose a protection plan, and  say hi to your host! Cancel for free up to 24 hours before your  trip. </p>
+                            </div>
+                        </div>
+                        <div class="work-steps-box">
+                            <div class="step-counter">
+                                <span>3</span>
+                            </div>
+                            <div class="step-meta">
+                                <h6>Hit the road </h6>
+                                <p>Have the car delivered or pick it up from your host. Check in with  the app, grab the keys, and hit the road!</p>
+                            </div>
+                        </div>
                         <button class="ly-button-1">Get Started <span class="iconify" data-icon="tabler:chevron-right"></span></button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-      
-     
-     
-     
- <section class="fr-serv-2 fr-services-content-2">
-  <div class="container">
-    <div class="row fr-serv2">
-      <div class="col-xl-12 col-sm-12 col-md-12 col-xs-12 col-lg-12">
-        <div class="heading-panel section-center">
-          <div class="heading-meta">
-            <h2>Hand Picked Top Services</h2>
-            <p>Most viewed and all-time top-selling services</p>
-          </div>
+
+    <section class="more-about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="snet-started-company-box">
+                      
+                        <h4>Tell us about your place</h4>
+                        <p>Share some basic info, like where it is and how many guests can stay.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="snet-started-company-box">
+                       
+                        <h4>Make it stand out</h4>
+                        <p>Add 5 or more photos plus a title and description—we'll help you out </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="snet-started-company-box remove-arrow">
+                      
+                        <h4>Finish up and publish</h4>
+                        <p>Choose if you'd like to start with an experienced guest, set a starting price, and publish your listing.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="row grid" >
-          @foreach ($newProducts as $product)
-					  <div class="col-xl-3 col-xs-12 col-lg-4 col-sm-6 col-md-6">
-					      <div class="fr-latest-grid">
-						  <div class="fr-latest-img">
-						  	<a href="{{ url('product/' . $product['id']) }}">
-						  	    
-						  	    @php
-                                            $product_image_path = 'front/images/product_images/small/' . $product['product_image'];
-                                           
-                                        @endphp
-						  	    
-						  	     @if (!empty($product['product_image']) && file_exists($product_image_path)) {{-- if the product image exists in BOTH database table AND filesystem (on server) --}}
-                                                        <img class="img-fluid" src="{{ asset($product_image_path) }}" alt="Product">
-                                                    @else {{-- show the dummy image --}}
-                                                        <img class="img-fluid" src="{{ asset('front/images/product_images/small/no-image.png') }}" alt="Product">
-                                                    @endif
-						  	    
-						  	</a>
-							 <div class="fr-latest-btn"> <span class="badge">Featured</span> </div>
-						  </div>
-						  <div class="fr-latest-details">
-						  		<div class="fr-latest-content-service">
-									
-								  <p>   <a href="{{ url('product/' . $product['id']) }}">{{ $product['product_name'] }}</h3></p>
-								  <a href="javascript:void(0)" class="queue">1 Order in queue</a>
-								  <span class="price"></i> ${{ $product['product_price'] }}</span>
-								   <span class="discount"></i> 30% off</span>
-								  
-							  </div>
-							  <div class="fr-latest-bottom">
-							      
-							  <p>Starting From<span><span class="currency"></span><span class="price">${{ $product['product_price'] }}</span></span></p>
-							  <a href="javascript:void(0)" class="save_service protip" data-pt-position="top" data-pt-scheme="black" data-pt-title="Save Service" data-post-id="355"><i class="fa fa-heart" aria-hidden="true"></i></a>
-							  </div>
-						  </div>
-					  </div>
-					  </div>
-					  
-					   @endforeach
+    </section>
+    <section class="fr-serv-2 fr-services-content-2">
+    <div class="container">
+        <div class="row fr-serv2">
+        <div class="col-xl-12 col-sm-12 col-md-12 col-xs-12 col-lg-12">
+            <div class="heading-panel section-center">
+            <div class="heading-meta">
+                <h2>Hand Picked Top Services</h2>
+                <p>Most viewed and all-time top-selling services</p>
+            </div>
+            </div>
+        </div>
+        <div class="row grid" >
+            @foreach ($newProducts as $product)
+                        <div class="col-xl-3 col-xs-12 col-lg-4 col-sm-6 col-md-6">
+                            <div class="fr-latest-grid">
+                            <div class="fr-latest-img">
+                                <a href="{{ url('product/' . $product['id']) }}">
+                                    
+                                    @php
+                                                $product_image_path = 'front/images/product_images/small/' . $product['product_image'];
+                                            
+                                            @endphp
+                                    
+                                    @if (!empty($product['product_image']) && file_exists($product_image_path)) {{-- if the product image exists in BOTH database table AND filesystem (on server) --}}
+                                                            <img class="img-fluid" src="{{ asset($product_image_path) }}" alt="Product">
+                                                        @else {{-- show the dummy image --}}
+                                                            <img class="img-fluid" src="{{ asset('front/images/product_images/small/no-image.png') }}" alt="Product">
+                                                        @endif
+                                    
+                                </a>
+                                <div class="fr-latest-btn"> <span class="badge">Featured</span> </div>
+                            </div>
+                            <div class="fr-latest-details">
+                                    <div class="fr-latest-content-service">
+                                        
+                                    <p>   <a href="{{ url('product/' . $product['id']) }}">{{ $product['product_name'] }}</h3></p>
+                                    <a href="javascript:void(0)" class="queue">1 Order in queue</a>
+                                    <span class="price"></i> ${{ $product['product_price'] }}</span>
+                                    <span class="discount"></i> 30% off</span>
+                                    
+                                </div>
+                                <div class="fr-latest-bottom">
+                                    
+                                <p>Starting From<span><span class="currency"></span><span class="price">${{ $product['product_price'] }}</span></span></p>
+                                <a href="javascript:void(0)" class="save_service protip" data-pt-position="top" data-pt-scheme="black" data-pt-title="Save Service" data-post-id="355"><i class="fa fa-heart" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        
+                        @endforeach
+        </div>
     </div>
-  </div>
-</section>
+    </section>
+
+<section class="our-goal">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                  <button class="btn btn-full">Create an Account to Get Started</button>
+                </div>
+            </div>
+
+            <div class="goal-details">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>
+                            Use our Tools to Get the Edge
+                        </h3>
+                        <p> Our members have access to metrics that provide valuable insight into the state and trend of the seat license market.</p>
+                    </div>
+                </div>
+            </div>
+
+             <div class="goal-points">
+                    <ul>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+                               <path d="M0 14.7074C0.0500722 13.4967 0.563312 12.6128 1.60857 12.126C2.6726 11.6391 3.67405 11.8249 4.53779 12.6192C5.86471 13.8298 7.16659 15.0661 8.48098 16.296C8.73134 16.5266 8.9817 16.7636 9.23207 16.9942C9.60761 17.3401 9.94559 17.3272 10.2836 16.9365C13.1314 13.6377 15.9793 10.3388 18.8272 7.03998C20.7549 4.81086 22.6765 2.57533 24.6042 0.346212C24.8796 0.0259364 25.1801 -0.0637408 25.5055 0.057964C25.7997 0.173263 26.0188 0.467917 26 0.788193C25.9875 0.954737 25.9186 1.13409 25.831 1.27501C23.6091 4.95819 21.3746 8.64136 19.1464 12.3245C16.6678 16.4177 14.1892 20.5108 11.7106 24.6039C11.2725 25.3277 10.6716 25.821 9.83293 25.9619C8.88782 26.1156 8.09292 25.8017 7.49206 25.0459C5.33269 22.3428 3.17959 19.6332 1.02648 16.9301C0.625903 16.4241 0.19403 15.9372 0.0751083 15.2583C0.0438132 15.0661 0.0187771 14.8675 0 14.7074Z" fill="#3E7EFF"/>
+                               </svg>
+                              <p>See New listings</p>
+                        </li>
+                         <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+                               <path d="M0 14.7074C0.0500722 13.4967 0.563312 12.6128 1.60857 12.126C2.6726 11.6391 3.67405 11.8249 4.53779 12.6192C5.86471 13.8298 7.16659 15.0661 8.48098 16.296C8.73134 16.5266 8.9817 16.7636 9.23207 16.9942C9.60761 17.3401 9.94559 17.3272 10.2836 16.9365C13.1314 13.6377 15.9793 10.3388 18.8272 7.03998C20.7549 4.81086 22.6765 2.57533 24.6042 0.346212C24.8796 0.0259364 25.1801 -0.0637408 25.5055 0.057964C25.7997 0.173263 26.0188 0.467917 26 0.788193C25.9875 0.954737 25.9186 1.13409 25.831 1.27501C23.6091 4.95819 21.3746 8.64136 19.1464 12.3245C16.6678 16.4177 14.1892 20.5108 11.7106 24.6039C11.2725 25.3277 10.6716 25.821 9.83293 25.9619C8.88782 26.1156 8.09292 25.8017 7.49206 25.0459C5.33269 22.3428 3.17959 19.6332 1.02648 16.9301C0.625903 16.4241 0.19403 15.9372 0.0751083 15.2583C0.0438132 15.0661 0.0187771 14.8675 0 14.7074Z" fill="#3E7EFF"/>
+                               </svg>
+                              <p>See New listings</p>
+                        </li>
+                         <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+                               <path d="M0 14.7074C0.0500722 13.4967 0.563312 12.6128 1.60857 12.126C2.6726 11.6391 3.67405 11.8249 4.53779 12.6192C5.86471 13.8298 7.16659 15.0661 8.48098 16.296C8.73134 16.5266 8.9817 16.7636 9.23207 16.9942C9.60761 17.3401 9.94559 17.3272 10.2836 16.9365C13.1314 13.6377 15.9793 10.3388 18.8272 7.03998C20.7549 4.81086 22.6765 2.57533 24.6042 0.346212C24.8796 0.0259364 25.1801 -0.0637408 25.5055 0.057964C25.7997 0.173263 26.0188 0.467917 26 0.788193C25.9875 0.954737 25.9186 1.13409 25.831 1.27501C23.6091 4.95819 21.3746 8.64136 19.1464 12.3245C16.6678 16.4177 14.1892 20.5108 11.7106 24.6039C11.2725 25.3277 10.6716 25.821 9.83293 25.9619C8.88782 26.1156 8.09292 25.8017 7.49206 25.0459C5.33269 22.3428 3.17959 19.6332 1.02648 16.9301C0.625903 16.4241 0.19403 15.9372 0.0751083 15.2583C0.0438132 15.0661 0.0187771 14.8675 0 14.7074Z" fill="#3E7EFF"/>
+                               </svg>
+                              <p>See New listings</p>
+                        </li>
+                         <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+                               <path d="M0 14.7074C0.0500722 13.4967 0.563312 12.6128 1.60857 12.126C2.6726 11.6391 3.67405 11.8249 4.53779 12.6192C5.86471 13.8298 7.16659 15.0661 8.48098 16.296C8.73134 16.5266 8.9817 16.7636 9.23207 16.9942C9.60761 17.3401 9.94559 17.3272 10.2836 16.9365C13.1314 13.6377 15.9793 10.3388 18.8272 7.03998C20.7549 4.81086 22.6765 2.57533 24.6042 0.346212C24.8796 0.0259364 25.1801 -0.0637408 25.5055 0.057964C25.7997 0.173263 26.0188 0.467917 26 0.788193C25.9875 0.954737 25.9186 1.13409 25.831 1.27501C23.6091 4.95819 21.3746 8.64136 19.1464 12.3245C16.6678 16.4177 14.1892 20.5108 11.7106 24.6039C11.2725 25.3277 10.6716 25.821 9.83293 25.9619C8.88782 26.1156 8.09292 25.8017 7.49206 25.0459C5.33269 22.3428 3.17959 19.6332 1.02648 16.9301C0.625903 16.4241 0.19403 15.9372 0.0751083 15.2583C0.0438132 15.0661 0.0187771 14.8675 0 14.7074Z" fill="#3E7EFF"/>
+                               </svg>
+                              <p>See New listings</p>
+                        </li>
+                        
+
+                    </ul>
+
+                 </div>
+          <div class="row">
+                <div class="col-lg-12">
+                  <button class="btn btn-full">Create an Account to Get Started</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
 <style>
 .fr-serv2 {

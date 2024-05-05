@@ -2,6 +2,11 @@
 
 
 @section('content')
+<style type="text/css">
+        #mw_map {
+          height: 400px;
+        }
+    </style>
     {{-- Star Rating (of a Product) (in the "Reviews" tab) --}}
     <style>
         *{
@@ -667,18 +672,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- <div class="car-host-box-meta">
-                                                    <p>Hosted by:</p>
-                                                    <div class="host-box-cont">
-                                                        <div class="img-box">
-                                                            <img src="imgs/host-2.png" alt="host-img">
-                                                        </div>
-                                                        <div class="meta-box">
-                                                            <span>Roger Bergson</span>
-                                                            <small>Joined in March 2014</small>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
                                             </div>
                                             <!-- <div class="extra-specs-grid">
                                                 <div class="specs-box">
@@ -740,6 +733,9 @@
                                                 <p>{{ $productDetails['description'] }}</p>
                                                 <!-- <button class="ly-read-more">Read More</button> -->
                                             </div>
+                                            @if( isset($productDetails['address']) && $productDetails['address'] != null )
+                                            <div id="mw_map">
+                                            @endif
                                         </div>
                                     </div>
                                     
@@ -836,7 +832,7 @@
             </section>
              <section class="fr-serv-2 fr-services-content-2">
                 <div class="container">
-                    <<div class="sec-maker-header text-center">
+                    <div class="sec-maker-header text-center">
                         <h3 class="sec-maker-h3">Similar Listing</h3>
                     </div>
                     <div class="row grid" >
@@ -886,4 +882,28 @@
     </div>
     
     <!-- Single-Product-Full-Width-Page /- -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIwomjpgXMHZdAmwubQ-0iNghQHfbCKU&libraries=places"></script>
+    <script type="text/javascript">
+    // Initialize map
+    
+        var chk_container = document.getElementById('mw_map'); 
+    var map_lat = {!! isset($productDetails['latitude']) ? $productDetails['latitude'] : 40.7128 !!};
+    var map_long = {!! isset($productDetails['longitude']) ? $productDetails['longitude'] :  -74.0060!!};
+
+    var map_center_positionr = new google.maps.LatLng(map_lat, map_long);
+    var mapOptions = {
+        zoom: 13,
+        center: map_center_positionr,
+        disableDefaultUI: false
+    };
+    var map = new google.maps.Map(chk_container, mapOptions);
+    
+    var get_markers = new google.maps.Marker({
+        position: map_center_positionr,
+        map: map,
+      //  icon: admin_varible.p_path + 'libs/images/map-marker.png',
+        labelAnchor: new google.maps.Point(1, 1),
+        draggable: true,
+    });
+</script>
 @endsection

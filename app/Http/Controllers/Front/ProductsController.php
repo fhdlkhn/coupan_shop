@@ -31,8 +31,10 @@ class ProductsController extends Controller
 {
     // match() method is used for the HTTP 'GET' requests to render listing.blade.php page and the HTTP 'POST' method for the AJAX request of the Sorting Filter or the HTML Form submission and jQuery for the Sorting Filter WITHOUT AJAX, AND ALSO for submitting the Search Form in listing.blade.php    // e.g.    /men    or    /computers    
     // Search Form
-    public function listing(Request $request) { 
+    public function listing(Request $request, $cat = null) { 
+        // return $request->all();
         if ($request->ajax()) {
+            
             $data = $request->all();
 
 
@@ -147,8 +149,8 @@ class ProductsController extends Controller
                 abort(404); // we will create the 404 page later on    // https://laravel.com/docs/9.x/helpers#method-abort
             }
         
-        } else {    
-            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) {   
+        } else {   
+            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) { 
                 if ($_REQUEST['search'] == 'new-arrivals') {
                     $search_product = $_REQUEST['search'];
                     $categoryDetails['breadcrumbs']                      = 'New Arrival Products';
@@ -258,16 +260,26 @@ class ProductsController extends Controller
                 return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
 
             } else { 
-                $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); 
+                $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri();
+                $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
                 $categoryCount = Category::where([
-                    'url'    => $url,
+                    'id'    => $cat,
                     'status' => 1
                 ])->count();
         
                 if ($categoryCount > 0) { // if the category entered as a URL in the browser address bar exists
                     // Get the entered URL in the browser address bar category details
-                    $categoryDetails = Category::categoryDetails($url);
-                    $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1); // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap       
+                    $categoryDetails = Category::categoryDetails($cat,$url);
+                    if($request->price != null){
+                        $Sprice = $request->price;
+                        $getPrice = explode("-",$request->price);
+                        $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->whereBetween('product_price', $getPrice)->where('status', 1);
+                    }
+                    else{
+                        $Sprice = null;
+                        $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1);
+                    }
+                     // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap       
         
                     // Sorting Filter WITHOUT AJAX (using HTML <form> and jQuery) in front/products/listing.blade.php
                     if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
@@ -294,18 +306,31 @@ class ProductsController extends Controller
                     $meta_keywords    = $categoryDetails['categoryDetails']['meta_keywords'];
 
 
-                    return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
+                    return view('front.products.listing')->with(compact('Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
 
                 } else {
                     $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); 
                     $categoryDetails = [];
                     $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
-                   $categoryProducts = Product::with(['section' => function($query) { 
+                    if($request->price != null){
+                        $Sprice = $request->price;
+                        $getPrice = explode("-",$request->price);
+                        $categoryProducts = Product::with(['section' => function($query) { 
+                                        $query->select('id', 'name');},
+                                        'category' => function($query) { 
+                                            $query->select('id', 'category_name');
+                                        }
+                                    ])->whereBetween('product_price', $getPrice);
+                    }
+                    else{
+                    $Sprice = null;
+                    $categoryProducts = Product::with(['section' => function($query) { 
                                         $query->select('id', 'name');},
                                         'category' => function($query) { 
                                             $query->select('id', 'category_name');
                                         }
                                     ]);
+                    }
                     if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
                         if ($_GET['sort'] == 'product_latest') {
                             $categoryProducts->orderBy('products.id', 'Desc');
@@ -319,7 +344,7 @@ class ProductsController extends Controller
                             $categoryProducts->orderBy('products.product_name', 'Asc');
                         }
                     }
-        
+                    $getAllProducts = $categoryProducts;
                     // Pagination (after the Sorting Filter)
                     $categoryProducts = $categoryProducts->paginate(30); // Moved the pagination after checking for the sorting filter <form>
 
@@ -328,7 +353,7 @@ class ProductsController extends Controller
                     $meta_title       = '';
                     $meta_description = '';
                     $meta_keywords    = '';
-                    return view('front.products.listing')->with(compact('fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
+                    return view('front.products.listing')->with(compact('getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
                 }
 
             }
@@ -346,8 +371,8 @@ class ProductsController extends Controller
             }, 'images', 'vendor'
         ])->find($id)->toArray(); // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // Eager Loading Multiple Relationships: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading-multiple-relationships
 
-
-        $categoryDetails = Category::categoryDetails($productDetails['category']['url']); // to get the Breadcrumb links (which is HTML) to show them in front/products/detail.blade.php
+// return $productDetails;
+        $categoryDetails = Category::categoryDetails(null, $productDetails['category']['url']); // to get the Breadcrumb links (which is HTML) to show them in front/products/detail.blade.php
         
 
         // Get similar products (or related products) (functionality) by getting other products from THE SAME CATEGORY    
@@ -1254,6 +1279,9 @@ class ProductsController extends Controller
         $getOrderDetails->save();
         $getProduct->product_price = $request->product_price;
         $getProduct->product_units = $request->product_units;
+        $getProduct->address = $request->address;
+        $getProduct->latitude = $request->lat;
+        $getProduct->longitude = $request->long;
         $getProduct->save();
         if($getProduct){
             return redirect()->route('get.user.products')->with('success_message', "Product updated successfully!");

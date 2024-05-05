@@ -1,14 +1,12 @@
 @extends('front.layout.layout')
-
-
-@section('content')
-<style type="text/css">
-        #mw_map {
+  @section('content')
+  <style type="text/css">
+        #map {
           height: 400px;
         }
     </style>
-
-<section class="ly-page-top-section change-bg company-work">
+    <!-- ly-page-top-section-start -->
+    <section class="ly-page-top-section change-bg company-work">
         <div class="container">
             <div class="row">
                 <div class="col-12">
@@ -21,17 +19,24 @@
             </div>
         </div>
     </section>
+
     <section class="snet-car-listing-section car-submit-steps ">
         <div class="container">
             <div class="row">
+                
                 <!-- @if (Session::has('error_message')) 
+
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Error:</strong> {{ Session::get('error_message') }}
                         <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                @endif   -->
+                @endif -->
+
+
+
+                {{-- Displaying Laravel Validation Errors: https://laravel.com/docs/9.x/validation#quick-displaying-the-validation-errors --}}    
                 <!-- @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
 
@@ -44,28 +49,18 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                 @endif -->
-                    <!-- @if (Session::has('success_message')) 
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong>Success:</strong> {{ Session::get('success_message') }}
-                            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif -->
-                    <!-- @if (Session::has('error')) 
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Error:</strong> {{ Session::get('error') }}
-                            <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif -->
+                @endif -->
+                <!-- @if (Session::has('success_message')) 
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success:</strong> {{ Session::get('success_message') }}
+                        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif -->
                 <div class="col-lg-12">
-                    <form class="new_listing_submission" action="{{ route('update.user.products') }}" method="post" enctype="multipart/form-data">
+                    <form class="new_listing_submission" @if (empty($product['id'])) action="{{ url('admin/add-edit-product') }}" @else action="{{ url('admin/add-edit-product/' . $product['id']) }}" @endif id="new_listing_submission" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="product_id" value="{{$product['id']}}">
-                    <input type="hidden" name="order_product" value="{{$order_id}}">
                     <div class="snet-car-listing-wrapper listing-step-2">
                      
                       
@@ -76,11 +71,11 @@
                                   
                                     <h5>Upload photo </h5>
                                      <p>Drag or Choose your photo to upload</p>
-                                    <input type="file" name="product_image[]" id="images" multiple class="form-control" disabled>
+                                      <input type="file" name="product_image[]" id="images" multiple class="form-control">
                                     <div id="dropzone_new" class="dropzone_new dz-clickable dz-started">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <!-- <path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 2.79086 4.79086 1 7 1H15.3431C16.404 1 17.4214 1.42143 18.1716 2.17157L19.8284 3.82843C20.5786 4.57857 21 5.59599 21 6.65685V19C21 21.2091 19.2091 23 17 23H7C4.79086 23 3 21.2091 3 19V5ZM19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14V5C14 6.65685 15.3431 8 17 8H19ZM18.8891 6C18.7909 5.7176 18.6296 5.45808 18.4142 5.24264L16.7574 3.58579C16.5419 3.37035 16.2824 3.20914 16 3.11094V5C16 5.55228 16.4477 6 17 6H18.8891Z" fill="#777E91"/> -->
-                                            <!-- <path d="M11.6172 9.07588C11.4993 9.12468 11.3888 9.19702 11.2929 9.29289L8.29289 12.2929C7.90237 12.6834 7.90237 13.3166 8.29289 13.7071C8.68342 14.0976 9.31658 14.0976 9.70711 13.7071L11 12.4142V17C11 17.5523 11.4477 18 12 18C12.5523 18 13 17.5523 13 17V12.4142L14.2929 13.7071C14.6834 14.0976 15.3166 14.0976 15.7071 13.7071C16.0976 13.3166 16.0976 12.6834 15.7071 12.2929L12.7071 9.29289C12.4125 8.99825 11.9797 8.92591 11.6172 9.07588Z" fill="#777E91"/> -->
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 2.79086 4.79086 1 7 1H15.3431C16.404 1 17.4214 1.42143 18.1716 2.17157L19.8284 3.82843C20.5786 4.57857 21 5.59599 21 6.65685V19C21 21.2091 19.2091 23 17 23H7C4.79086 23 3 21.2091 3 19V5ZM19 8V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14V5C14 6.65685 15.3431 8 17 8H19ZM18.8891 6C18.7909 5.7176 18.6296 5.45808 18.4142 5.24264L16.7574 3.58579C16.5419 3.37035 16.2824 3.20914 16 3.11094V5C16 5.55228 16.4477 6 17 6H18.8891Z" fill="#777E91"/>
+                                            <path d="M11.6172 9.07588C11.4993 9.12468 11.3888 9.19702 11.2929 9.29289L8.29289 12.2929C7.90237 12.6834 7.90237 13.3166 8.29289 13.7071C8.68342 14.0976 9.31658 14.0976 9.70711 13.7071L11 12.4142V17C11 17.5523 11.4477 18 12 18C12.5523 18 13 17.5523 13 17V12.4142L14.2929 13.7071C14.6834 14.0976 15.3166 14.0976 15.7071 13.7071C16.0976 13.3166 16.0976 12.6834 15.7071 12.2929L12.7071 9.29289C12.4125 8.99825 11.9797 8.92591 11.6172 9.07588Z" fill="#777E91"/>
                                             </svg>
                                             <div class="form-group"><div id="image_preview" style="width:100%;"> </div>
                                          <p>PNG, GIF, WEBP, MP4. Max 5Mb.</p>
@@ -96,18 +91,18 @@
                                         <div class="col-6">
                                             <div class="car_detail">
                                                 <label for="category_id">Select Category</label>
-                                                <select name="category_id" id="category_id" class="form-control text-dark" disabled style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                <select name="category_id" id="category_id" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
                                                     <option value="">Select Category</option>
-                                                    @foreach ($categories as $section) 
-                                                        <optgroup label="{{ $section['name'] }}"> 
-                                                            @foreach ($section['categories'] as $category)
-                                                                <option value="{{ $category['id'] }}" @if (!empty($product['category_id'] == $category['id'])) selected @endif>{{ $category['category_name'] }}</option> {{-- parent categories --}}
-                                                                @foreach ($category['sub_categories'] as $subcategory) {{-- subcategories or child categories --}} {{-- Check ProductsController.php --}}
-                                                                    <option value="{{ $subcategory['id'] }}" @if (!empty($product['category_id'] == $subcategory['id'])) selected @endif>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> {{-- subcategories or child categories --}}
+                                                         @foreach ($categories as $section)
+                                                            <optgroup label="{{ $section['name'] }}"> 
+                                                                @foreach ($section['categories'] as $category) 
+                                                                    <option value="{{ $category['id'] }}" @if (!empty($product['category_id'] == $category['id'])) selected @endif>{{$category['category_name']}}</option>
+                                                                    @foreach ($category['sub_categories'] as $subcategory) 
+                                                                        <option value="{{ $subcategory['id'] }}" @if (!empty($product['category_id'] == $subcategory['id'])) selected @endif>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> 
+                                                                    @endforeach
                                                                 @endforeach
-                                                            @endforeach
-                                                        </optgroup>
-                                                    @endforeach
+                                                            </optgroup>
+                                                        @endforeach
                                                 </select>
                                             </div>
                                             <div class="loadFilters">
@@ -115,20 +110,20 @@
                                             </div>
                                             <div class="car_detail">
                                                 <label for="product_type">Tax id </label>
-                                                <input disabled type="number" class="form-control" id="product_code" placeholder="Enter Tax Id" name="product_code" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['product_code'])) value="{{ $product['product_code'] }}" @else value="{{ old('product_code') }}" @endif> 
+                                                <input required type="number" class="form-control" id="product_code" placeholder="Enter Tax Id" name="product_code" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['product_code'])) value="{{ $product['product_code'] }}" @else value="{{ old('product_code') }}" @endif> 
                                             </div>
                                             <div class="car_detail">
                                                 <label for="product_type">Listing Type</label>
-                                                <input disabled type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> 
+                                                <input required type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> 
                                             </div>
                                             
                                             <div class="car_detail">
                                                 <label for="gross_sale">What’s your annual savings?</label>
-                                                <input disabled type="text" class="form-control" id="gross_sale" placeholder="Enter Monthly Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
+                                                <input required type="text" class="form-control" id="gross_sale" placeholder="Enter Monthly Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
                                             </div>
                                             <div class="car_detail" >
                                                 <label for="avg_customer">Membership Valid Through?</label>
-                                                <select disabled name="avg_customer" id="avg_customer" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;" onchange="disablePermanent(this.value)">
+                                                <select required name="avg_customer" id="avg_customer" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;" onchange="disablePermanent(this.value)">
                                                     <option value="" selected disabled style="margin-bottom:-10px;">Select Membership (Years)</option>
                                                     @for($i = 0; $i < 10; $i++)
                                                         <option value="{{$i + 1}}">{{$i + 1}}</option>
@@ -138,7 +133,7 @@
                                             </div>
                                             <div class="car_detail">
                                                 <label for="is_featured">Featured Item (Yes/No)</label>
-                                                <input  disabled type="checkbox" name="is_featured" id="is_featured" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>
+                                                <input  type="checkbox" name="is_featured" id="is_featured" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>
                                             </div>
 
                                         </div>
@@ -146,7 +141,7 @@
 
                                             <div class="car_detail">
                                                 <label for="product_name">Listing Name</label>
-                                                <input disabled type="text" class="form-control" id="product_name" placeholder="Enter Product Name" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
+                                                <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
                                             </div>
                                             <div class="car_detail">
                                                 <label for="product_price">Listing Price</label>
@@ -159,12 +154,12 @@
 
                                             <div class="car_detail">
                                                 <label for="product_discount">Annual Savings</label>
-                                                <input disabled type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
+                                                <input type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
                                             </div>
                                            
                                             <div class="car_detail" id="validity">
                                                 <label for="validity">Validity</label>
-                                                <input disabled type="date" class="form-control"  placeholder="Enter Product Discount" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="validity" @if (!empty($product['validity'])) value="{{ $product['validity'] }}" @else value="{{ old('validity') }}" @endif>
+                                                <input type="date" class="form-control"  placeholder="Enter Product Discount" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="validity" @if (!empty($product['validity'])) value="{{ $product['validity'] }}" @else value="{{ old('validity') }}" @endif>
                                             </div>
                                             
 
@@ -173,21 +168,19 @@
                                         <div class="col-12">
                                             <div class="car_detail">
                                                 <label for="description">Listing Description</label>
-                                                <textarea disabled required name="description" id="description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['description'] }}</textarea>
+                                                <textarea required name="description" id="description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['description'] }}</textarea>
                                             </div>
                                         </div>
+
                                         <div class="col-12">
                                             <div class="car_detail">
                                                 <label for="address">Listing Address</label>
-                                                <input type="text" name="address" id="mw_address" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['address'])) value="{{ $product['address'] }}" @else value="{{ old('address') }}" @endif></input>
+                                                <input type="text" required name="address" id="mw_address" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;"></input>
                                             </div>
                                         </div>
-                                        <div id="mw_map">
-                                            
-                                        </div>
-                                        <input type="hidden" name="lat" id="mw_latt" @if (!empty($product['latitude'])) value="{{ $product['latitude'] }}" @else value="40.7128" @endif>
-                                        <input type="hidden" name="long" id="mw_long" @if (!empty($product['longitude'])) value="{{ $product['longitude'] }}" @else value="-74.0060" @endif>
-
+                                        <div id="mw_map"></div>
+                                        <input type="hidden" name="lat" id="mw_latt">
+                             <input type="hidden" name="long" id="mw_long">
                                     </div>
                                 </div>
 
@@ -199,7 +192,7 @@
                             <div class="col-sm-4" style="float:right;">
 
                                 <div class="snet-listing-preview-box">
-                                       <h5>Preview</h5>
+                                    <h5>Preview</h5>
                                     <div class="ly-car-card ly-car-card-grid">
                                         <div class="car-img-box">
                                             <a href="#"><img src="https://placehold.co/395x240?text=Preview+Image" alt="list-img"></a>
@@ -210,9 +203,15 @@
                                 </div>
                             </div>
                             
+                             
+                            
                              <div class="col-lg-8 col-xl-8 col-sm-12" style="">
                              <input type="submit" class="submit_product"></input>
                              </div>
+                             
+                            
+
+                            
                             
                         </div>
                     </div>
@@ -221,15 +220,26 @@
             </div>
         </div>
     </section>
-    <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIwomjpgXMHZdAmwubQ-0iNghQHfbCKU&libraries=places"></script>
-<script type="text/javascript">
+    <script  src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&libraries=places" ></script>
+    <!-- <script type="text/javascript">
+        function initMap() {
+          const myLatLng = { lat: 22.2734719, lng: 70.7512559 };
+          const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 5,
+            center: myLatLng,
+          });
+  
+          new google.maps.Marker({
+            position: myLatLng,
+            map,
+            title: "Hello Rajkot!",
+          });
+        }
+  
+        window.initMap = initMap;
+    </script> -->
+    <script type="text/javascript">
     var chk_container = document.getElementById('mw_map'); // Corrected map container id
-    
-    var map_lat = document.getElementById('mw_latt').value;
-    var map_long = document.getElementById('mw_long').value;
-      
-      
-      
     var map_center_positionr = new google.maps.LatLng(map_lat, map_long);
     var mapOptions = {
         zoom: 13,
@@ -241,7 +251,7 @@
     var get_markers = new google.maps.Marker({
         position: map_center_positionr,
         map: map,
-      //  icon: admin_varible.p_path + 'libs/images/map-marker.png',
+        icon: admin_varible.p_path + 'libs/images/map-marker.png',
         labelAnchor: new google.maps.Point(1, 1),
         draggable: true,
     });
@@ -254,7 +264,6 @@
     });
     
     var places_input = document.getElementById('mw_address');
-    console.log(places_input);
     var autocomplete = new google.maps.places.Autocomplete(places_input);
     autocomplete.bindTo('bounds', map);
     
@@ -279,7 +288,76 @@
     });
 </script>
     <script type="text/javascript">
-        const imageUrls = {!! json_encode($getProductImages) !!};
+        function disablePermanent(value){
+            if(value == 'permanent'){
+                document.getElementById('validity').style.display = 'none';
+            }
+            else{
+                document.getElementById('validity').style.display = 'block';
+            }
+        }
+
+        $(document).ready(function() {
+
+        var fileArr = [];
+        $("#images").change(function(event) {
+            // check if fileArr length is greater than 0
+            if (fileArr.length > 0) fileArr = [];
+
+            $('#image_preview').html("");
+            var total_file = document.getElementById("images").files;
+            if (!total_file.length) return;
+            
+            // Flag to track if the first image is added
+            var firstImageAdded = false;
+
+            for (var i = 0; i < total_file.length; i++) {
+                if (total_file[i].size > 1048576) {
+                    return false;
+                } else {
+                    fileArr.push(total_file[i]);
+                    $('#image_preview').append("<div class='img-div' id='img-div"+i+"'><img src='"+URL.createObjectURL(total_file[i])+"' class='img-responsive image img-thumbnail' title='"+total_file[i].name+"'><div class='middle'><button id='action-icon' value='img-div"+i+"' class='btn btn-danger' role='"+total_file[i].name+"'><i class='fa fa-trash'></i></button></div></div>");
+                    
+                    // Display the first image in the specified div
+                    if (!firstImageAdded) {
+                        $('.col-sm-4 .car-img-box img').attr('src', URL.createObjectURL(total_file[i]));
+                        firstImageAdded = true;
+                    }
+                }
+            }
+        });
+
+        $('body').on('click', '#action-icon', function(evt) {
+            var divName = this.value;
+            var fileName = $(this).attr('role');
+            $(`#${divName}`).remove();
+
+            for (var i = 0; i < fileArr.length; i++) {
+                if (fileArr[i].name === fileName) {
+                    fileArr.splice(i, 1);
+                }
+            }
+            document.getElementById('images').files = FileListItem(fileArr);
+            evt.preventDefault();
+        });
+        
+        
+       $('.dropzone_new').on('click', function() {
+    $('#images').click();
+});
+
+        function FileListItem(file) {
+            file = [].slice.call(Array.isArray(file) ? file : arguments)
+            for (var c, b = c = file.length, d = !0; b-- && d;) d = file[b] instanceof File
+            if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
+            for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(file[c])
+            return b.files
+        }
+    });
+
+    </script>
+    <script type="text/javascript">
+        const imageUrls = {!! json_encode($getAllIMages) !!};
         console.log(imageUrls);
         const imagePreviewDiv = document.getElementById('image_preview');
 

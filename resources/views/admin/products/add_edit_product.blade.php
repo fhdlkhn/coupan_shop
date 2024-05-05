@@ -1,5 +1,10 @@
 @extends('front.layout.layout')
   @section('content')
+  <style type="text/css">
+        #mw_map {
+          height: 400px;
+        }
+    </style>
     <!-- ly-page-top-section-start -->
     <section class="ly-page-top-section change-bg company-work">
         <div class="container">
@@ -121,7 +126,7 @@
                                                 <select required name="avg_customer" id="avg_customer" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;" onchange="disablePermanent(this.value)">
                                                     <option value="" selected disabled style="margin-bottom:-10px;">Select Membership (Years)</option>
                                                     @for($i = 0; $i < 10; $i++)
-                                                        <option value="{{$i + 1}}">{{$i + 1}}</option>
+                                                        <option value="{{$i + 1}}" {{ $product['avg_customer'] == ($i + 1) ? 'selected' : '' }}>{{$i + 1}}</option>
                                                     @endfor
                                                         <option value="permanent">Permanent</option>
                                                 </select>
@@ -167,6 +172,17 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-12">
+                                            <div class="car_detail">
+                                                <label for="address">Listing Address</label>
+                                                <input type="text" required name="address" id="mw_address" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['address'])) value="{{ $product['address'] }}" @else value="{{ old('address') }}" @endif></input>
+                                            </div>
+                                        </div>
+                                        <div id="mw_map">
+                                            
+                                        </div>
+                                        <input type="hidden" name="lat" id="mw_latt" @if (!empty($product['latitude'])) value="{{ $product['latitude'] }}" @else value="40.7128" @endif>
+                                        <input type="hidden" name="long" id="mw_long" @if (!empty($product['longitude'])) value="{{ $product['longitude'] }}" @else value="-74.0060" @endif>
                                     </div>
                                 </div>
 
@@ -181,7 +197,7 @@
                                     <h5>Preview</h5>
                                     <div class="ly-car-card ly-car-card-grid">
                                         <div class="car-img-box">
-                                            <a href="#"><img src="https://placehold.co/395x240?text=Preview+Image" alt="list-img"></a>
+                                            <a href="#"><img src="{{ !empty($product['product_image']) ? asset('front/images/product_images/small/'.$product['product_image']) : 'https://placehold.co/395x240?text=Preview+Image' }}" alt="list-img"></a>
                                             <span class="card-tag">superhost</span>
                                         </div>
                                       
@@ -189,9 +205,15 @@
                                 </div>
                             </div>
                             
+                             
+                            
                              <div class="col-lg-8 col-xl-8 col-sm-12" style="">
                              <input type="submit" class="submit_product"></input>
                              </div>
+                             
+                            
+
+                            
                             
                         </div>
                     </div>
@@ -200,6 +222,84 @@
             </div>
         </div>
     </section>
+    
+    
+
+    <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIwomjpgXMHZdAmwubQ-0iNghQHfbCKU&libraries=places"></script>
+   
+    <!-- <script type="text/javascript">
+        function initMap() {
+          const myLatLng = { lat: 22.2734719, lng: 70.7512559 };
+          const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 5,
+            center: myLatLng,
+          });
+  
+          new google.maps.Marker({
+            position: myLatLng,
+            map,
+            title: "Hello Rajkot!",
+          });
+        }
+  
+        window.initMap = initMap;
+    </script> -->
+    <script type="text/javascript">
+    var chk_container = document.getElementById('mw_map'); // Corrected map container id
+    
+    var map_lat = document.getElementById('mw_latt').value;
+    var map_long = document.getElementById('mw_long').value;
+      
+      
+      
+    var map_center_positionr = new google.maps.LatLng(map_lat, map_long);
+    var mapOptions = {
+        zoom: 13,
+        center: map_center_positionr,
+        disableDefaultUI: false
+    };
+    var map = new google.maps.Map(chk_container, mapOptions);
+    
+    var get_markers = new google.maps.Marker({
+        position: map_center_positionr,
+        map: map,
+      //  icon: admin_varible.p_path + 'libs/images/map-marker.png',
+        labelAnchor: new google.maps.Point(1, 1),
+        draggable: true,
+    });
+    
+    google.maps.event.addListener(get_markers, "mouseup", function(event) {
+        var latitude = this.position.lat();
+        var longitude = this.position.lng();
+        $('#mw_latt').val(latitude);
+        $('#mw_long').val(longitude);
+    });
+    
+    var places_input = document.getElementById('mw_address');
+    console.log(places_input);
+    var autocomplete = new google.maps.places.Autocomplete(places_input);
+    autocomplete.bindTo('bounds', map);
+    
+    google.maps.event.addListener(autocomplete, 'place_changed', function() {
+        var fetch_places = autocomplete.getPlace();
+        
+        if (!fetch_places.geometry) {
+            return;
+        }
+        
+        if (fetch_places.geometry.viewport) {
+            map.fitBounds(fetch_places.geometry.viewport);
+        } else {
+            map.setCenter(fetch_places.geometry.location);
+            map.setZoom(13);
+        }
+        
+        get_markers.setPosition(fetch_places.geometry.location); // Update marker position
+        get_markers.setVisible(true);
+        $('#mw_latt').val(get_markers.getPosition().lat());
+        $('#mw_long').val(get_markers.getPosition().lng());
+    });
+</script>
     <script type="text/javascript">
         function disablePermanent(value){
             if(value == 'permanent'){
@@ -210,78 +310,63 @@
             }
         }
 
-        $(document).ready(function() {
-
-        var fileArr = [];
-        $("#images").change(function(event) {
-            // check if fileArr length is greater than 0
-            if (fileArr.length > 0) fileArr = [];
-
-            $('#image_preview').html("");
-            var total_file = document.getElementById("images").files;
-            if (!total_file.length) return;
-            
-            // Flag to track if the first image is added
-            var firstImageAdded = false;
-
-            for (var i = 0; i < total_file.length; i++) {
-                if (total_file[i].size > 1048576) {
-                    return false;
-                } else {
-                    fileArr.push(total_file[i]);
-                    $('#image_preview').append("<div class='img-div' id='img-div"+i+"'><img src='"+URL.createObjectURL(total_file[i])+"' class='img-responsive image img-thumbnail' title='"+total_file[i].name+"'><div class='middle'><button id='action-icon' value='img-div"+i+"' class='btn btn-danger' role='"+total_file[i].name+"'><i class='fa fa-trash'></i></button></div></div>");
-                    
-                    // Display the first image in the specified div
-                    if (!firstImageAdded) {
-                        $('.col-sm-4 .car-img-box img').attr('src', URL.createObjectURL(total_file[i]));
-                        firstImageAdded = true;
-                    }
-                }
-            }
-        });
-
-        $('body').on('click', '#action-icon', function(evt) {
-            var divName = this.value;
-            var fileName = $(this).attr('role');
-            $(`#${divName}`).remove();
-
-            for (var i = 0; i < fileArr.length; i++) {
-                if (fileArr[i].name === fileName) {
-                    fileArr.splice(i, 1);
-                }
-            }
-            document.getElementById('images').files = FileListItem(fileArr);
-            evt.preventDefault();
-        });
         
-        
-       $('.dropzone_new').on('click', function() {
-    $('#images').click();
-});
-
-        function FileListItem(file) {
-            file = [].slice.call(Array.isArray(file) ? file : arguments)
-            for (var c, b = c = file.length, d = !0; b-- && d;) d = file[b] instanceof File
-            if (!d) throw new TypeError("expected argument to FileList is File or array of File objects")
-            for (b = (new ClipboardEvent("")).clipboardData || new DataTransfer; c--;) b.items.add(file[c])
-            return b.files
-        }
-    });
-
     </script>
     <script type="text/javascript">
-        const imageUrls = {!! json_encode($getAllIMages) !!};
-        console.log(imageUrls);
-        const imagePreviewDiv = document.getElementById('image_preview');
 
-    imageUrls.forEach(filename => {
-        const imgElement = document.createElement('img');
-        imgElement.src = "{{ asset('front/images/product_images/small') }}" + '/' + filename;
-        imgElement.style.maxWidth = '100px'; 
-        imgElement.style.marginRight = '10px';
+       $(document).ready(function() {
+    var fileArr = [];
 
-        // Append img element to the image preview div
-        imagePreviewDiv.appendChild(imgElement);
+    // Function to add images to the preview
+    function addImagesToPreview(files) {
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (file.size > 1048576) {
+                return false;
+            } else {
+                fileArr.push(file);
+                $('#image_preview').append("<div class='img-div'><img src='" + URL.createObjectURL(file) + "' class='img-responsive image img-thumbnail' title='" + file.name + "'><div class='middle'><button class='btn btn-danger delete-btn'><i class='fa fa-trash'></i></button></div></div>");
+            }
+        }
+    }
+
+    // Handle file input change event
+    $("#images").change(function(event) {
+        var total_file = event.target.files;
+        if (!total_file.length) return;
+
+        // Add new images to preview
+        addImagesToPreview(total_file);
     });
+
+    // Handle delete button click event
+    $('#image_preview').on('click', '.delete-btn', function(event) {
+        event.preventDefault(); // Prevent default behavior
+
+        var imgDiv = $(this).closest('.img-div');
+        var fileName = imgDiv.find('img').attr('title');
+
+        // Remove the image div from the preview
+        imgDiv.remove();
+
+        // Remove the corresponding file from fileArr
+        fileArr = fileArr.filter(function(file) {
+            return file.name !== fileName;
+        });
+    });
+
+    // Trigger file input click when dropzone is clicked
+    $('.dropzone_new').on('click', function() {
+        $('#images').click();
+    });
+
+    // Append existing images to the preview
+    const imageUrls = {!! json_encode($getAllIMages) !!};
+    imageUrls.forEach(function(filename) {
+        $('#image_preview').append("<div class='img-div'><img src='{{ asset('front/images/product_images/small') }}/" + filename + "' class='img-responsive image img-thumbnail' title='" + filename + "'><div class='middle'><button class='btn btn-danger delete-btn'><i class='fa fa-trash'></i></button></div></div>");
+    });
+});
+
+
     </script>
 @endsection
