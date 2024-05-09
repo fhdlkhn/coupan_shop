@@ -87,7 +87,7 @@
                                                         <input type="checkbox" name="terms">
                                                         <span class="checkmark"></span>
                                                     </label>
-                                                    <p>I agreen to all the <a href="#">Term</a> & <a href="#">Privacy Policy</a></p>
+                                                    <p>I agree to all the <a href="#">Term</a> & <a href="#">Privacy Policy</a></p>
                                                 </div>
                                                 <button class="ly-button-3 register-btn">Register</button>
                                                 <div class="login-box">

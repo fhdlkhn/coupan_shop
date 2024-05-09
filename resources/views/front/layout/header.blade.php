@@ -218,7 +218,10 @@ $sections = \App\Models\Section::sections();
                             <a href="#">How it works</a>
                         </li>
                         <li class="">
-                            <a href="{{route('all.listings')}}">Shop</a>
+                            <a href="{{route('search.product')}}">Shop</a>
+                        </li>
+                        <li class="">
+                            <a href="{{route('listing.verification')}}">Listing Verification</a>
                         </li>
                         <li class="ly-list">
                             <a href="" class="ly-social ly-linkedin">

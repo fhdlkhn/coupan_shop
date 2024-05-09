@@ -23,7 +23,7 @@
                                 @csrf 
                                     <input type="hidden" name="email" id="passed_email">
                                     <input type="hidden" name="password" value = "{{$pass}}"id="passed_password">
-                                    <button class="btn btn-theme login-me-vendor" name="button" value="vendor" type="submit"> Business Trader </button>
+                                    <button class="btn btn-theme login-me-vendor" name="button" value="vendor" type="submit"> Business Entity </button>
                                 </form>
                                 </li>
                                 <li class="ad-post-btn">

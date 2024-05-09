@@ -126,7 +126,7 @@
                                                 <select required name="avg_customer" id="avg_customer" class="form-control text-dark" style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;" onchange="disablePermanent(this.value)">
                                                     <option value="" selected disabled style="margin-bottom:-10px;">Select Membership (Years)</option>
                                                     @for($i = 0; $i < 10; $i++)
-                                                        <option value="{{$i + 1}}" {{ $product['avg_customer'] == ($i + 1) ? 'selected' : '' }}>{{$i + 1}}</option>
+                                                        <option value="{{$i + 1}}" {{ $product['avg_customer'] == ($i + 1) ? 'selected' : '' }}>{{$i + 1}} Years</option>
                                                     @endfor
                                                         <option value="permanent">Permanent</option>
                                                 </select>

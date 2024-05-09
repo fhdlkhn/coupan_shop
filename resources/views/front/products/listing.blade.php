@@ -56,7 +56,7 @@ input:checked + .slider:before {
             <div class="row">
                 <div class="col-12">
                     <h1>Shop</h1>
-                    <p>Join top UK hosts who make an average of £6,492 every year for each listing they list</p>
+                    <!-- <p>Join top UK hosts who make an average of £6,492 every year for each listing they list</p> -->
                 </div>
             </div>
         </div>

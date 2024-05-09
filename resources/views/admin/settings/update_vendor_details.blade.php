@@ -198,19 +198,19 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_name">Business Name</label>
-                                        <input type="text" class="form-control" id="shop_name" placeholder="Enter Shop Name" name="shop_name"  @if (isset($vendorDetails['shop_name'])) value="{{ $vendorDetails['shop_name'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
+                                        <input type="text" class="form-control" id="shop_name" placeholder="Enter Business Name" name="shop_name"  @if (isset($vendorDetails['shop_name'])) value="{{ $vendorDetails['shop_name'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_address">Business Address</label>
-                                        <input type="text" class="form-control" id="shop_address" placeholder="Enter Shop Address" name="shop_address"  @if (isset($vendorDetails['shop_address'])) value="{{ $vendorDetails['shop_address'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
+                                        <input type="text" class="form-control" id="shop_address" placeholder="Enter Business Address" name="shop_address"  @if (isset($vendorDetails['shop_address'])) value="{{ $vendorDetails['shop_address'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_city">Business City</label>
-                                        <input type="text" class="form-control" id="shop_city" placeholder="Enter Shop City" name="shop_city"  @if (isset($vendorDetails['shop_city'])) value="{{ $vendorDetails['shop_city'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
+                                        <input type="text" class="form-control" id="shop_city" placeholder="Enter Business City" name="shop_city"  @if (isset($vendorDetails['shop_city'])) value="{{ $vendorDetails['shop_city'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_state">Business State</label>
-                                        <input type="text" class="form-control" id="shop_state" placeholder="Enter Shop State" name="shop_state"  @if (isset($vendorDetails['shop_state'])) value="{{ $vendorDetails['shop_state'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
+                                        <input type="text" class="form-control" id="shop_state" placeholder="Enter Business State" name="shop_state"  @if (isset($vendorDetails['shop_state'])) value="{{ $vendorDetails['shop_state'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
                                         {{-- Show all world countries from the database `countries` table --}}
@@ -227,15 +227,15 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_pincode">Business Pincode</label>
-                                        <input type="text" class="form-control" id="shop_pincode" placeholder="Enter Shop Pincode" name="shop_pincode"  @if (isset($vendorDetails['shop_pincode'])) value="{{ $vendorDetails['shop_pincode'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
+                                        <input type="text" class="form-control" id="shop_pincode" placeholder="Enter Business Pincode" name="shop_pincode"  @if (isset($vendorDetails['shop_pincode'])) value="{{ $vendorDetails['shop_pincode'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_mobile">Business Mobile</label>
-                                        <input type="text" class="form-control" id="shop_mobile" placeholder="Enter 10 Digit Shop Mobile Number" name="shop_mobile"  @if (isset($vendorDetails['shop_mobile'])) value="{{ $vendorDetails['shop_mobile'] }}" @endif maxlength="10" minlength="10">
+                                        <input type="text" class="form-control" id="shop_mobile" placeholder="Enter 10 Digit Business Mobile Number" name="shop_mobile"  @if (isset($vendorDetails['shop_mobile'])) value="{{ $vendorDetails['shop_mobile'] }}" @endif maxlength="10" minlength="10">
                                     </div>
                                     <div class="form-group">
                                         <label for="shop_mobile">Business Website</label>
-                                        <input type="text" class="form-control" id="shop_website" placeholder="Enter Shop Website" name="shop_website"  @if (isset($vendorDetails['shop_website'])) value="{{ $vendorDetails['shop_website'] }}" @endif>
+                                        <input type="text" class="form-control" id="shop_website" placeholder="Enter Business Website" name="shop_website"  @if (isset($vendorDetails['shop_website'])) value="{{ $vendorDetails['shop_website'] }}" @endif>
                                     </div>
                                     <div class="form-group">
                                         <label for="business_license_number">Business License Number</label>

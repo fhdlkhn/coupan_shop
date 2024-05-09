@@ -9,8 +9,8 @@
                 <div class="col-12">
                     <div class="page-content-wrapper">
                       
-                        <h1>Start your car sharing business on Turo</h1>
-                        <p>Join top UK hosts who make an average of £6,492 every year for each car they list on Turo*</p>
+                        <h1>BOD Exchange</h1>
+                        <p>Unlock exclusive savings with our premium discount membership platform today!</p>
                        
                     </div>
                 </div>
@@ -28,9 +28,9 @@
                         <div class="img-box">
                             <img src="{{asset('front/images/banners/company-started-1.svg')}}" alt="company-started"> 
                         </div>
-                        <h4>Tell us about your place</h4>
-                        <p>With thousands of PSLs for sale at below market prices, you are sure to find the perfect seats that fit your needs and budget. There are no buyers fees!</p>
-                         <button class="ly-button-inv">View inventory <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                        <h4>Sell Discounts</h4>
+                        <p>Empower your business: Start Selling Discounts, Boosting Sales Today!</p>
+                         <button class="ly-button-inv"><a href="{{ url('admin/add-edit-product') }}">Post Listings</a><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
                     </div>
                 </div>
                 <div class="col-lg-5">
@@ -38,39 +38,13 @@
                         <div class="img-box">
                             <img src="{{asset('front/images/banners/company-started-2.svg')}}" alt="company-started"> 
                         </div>
-                        <h4>Make it stand out</h4>
-                        <p>With thousands of PSLs for sale at below market prices, you are sure to find the perfect seats that fit your needs and budget. There are no buyers fees! </p>
-                        <button class="ly-button-inv">View Inventory <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                        <h4>Explore Memberships</h4>
+                        <p>Browse our vast memberships, offering unbeatable discounts tailored to you!</p>
+                        <button class="ly-button-inv"><a href="{{route('search.product')}}">View Inventory</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
                     </div>
                 </div>
                 <div class="col-lg-1">
                    
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="categories-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-content-wrapper">
-                        <h2>Marketplace Categories</h2>
-                        <p class="cat-description">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>
-                       
-                    </div>
-                </div>
-                <div class="col-12 cats-container">
-                    <div class="row">
-                        @foreach($getAllCats as $cats)
-                        <div class="col-3">
-                            <div class="cat-item">
-                                <div class="cat-img"><img src="{{asset('front/images/banners/cat_1.png')}}"></div>
-                                <a href="{{route('search.product',['cat'=>$cats->id])}}">{{$cats->category_name}}
-                                </a>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
                 </div>
             </div>
         </div>
@@ -223,7 +197,7 @@
             </div>
         </div>
     </section>
-    <section class="fr-serv-2 fr-services-content-2">
+    <!-- <section class="fr-serv-2 fr-services-content-2">
     <div class="container">
         <div class="row fr-serv2">
         <div class="col-xl-12 col-sm-12 col-md-12 col-xs-12 col-lg-12">
@@ -276,7 +250,7 @@
                         @endforeach
         </div>
     </div>
-    </section>
+    </section> -->
 
 <section class="our-goal">
         <div class="container">
