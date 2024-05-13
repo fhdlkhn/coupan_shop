@@ -17,6 +17,12 @@
                 </a>
             </li>
         <li class="nav-item">
+            <a @if (Session::get('page') == 'personal_details') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('user.ordered.listings') }}">
+            <i class="icon-layout menu-icon"></i>
+                <span class="menu-title">Personal Details</span>
+            </a>
+        </li>
+        <li class="nav-item">
                 <a @if (Session::get('page') == 'sections' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'brands' || Session::get('page') == 'filters' || Session::get('page') == 'coupons') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('get.user.products') }}">
                 <i class="icon-layout menu-icon"></i>
                     <span class="menu-title">Listing Management</span>

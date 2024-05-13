@@ -29,278 +29,167 @@ use App\Models\OrdersProduct;
 
 class ProductsController extends Controller
 {
-    // match() method is used for the HTTP 'GET' requests to render listing.blade.php page and the HTTP 'POST' method for the AJAX request of the Sorting Filter or the HTML Form submission and jQuery for the Sorting Filter WITHOUT AJAX, AND ALSO for submitting the Search Form in listing.blade.php    // e.g.    /men    or    /computers    
-    // Search Form
     public function listing(Request $request, $cat = null) { 
-        // return $request->all();
-        if ($request->ajax()) {
-            
-            $data = $request->all();
-
-
-            $url          = $data['url'];
-            $_GET['sort'] = $data['sort'];
-            // dd($url);
-            $categoryCount = Category::where([
-                'url'    => $url,
-                'status' => 1
-            ])->count();
-            // dd($categoryCount);
-    
-            if ($categoryCount > 0) { // if the category entered as a URL in the browser address bar exists
-                // Get the entered URL in the browser address bar category details
-                $categoryDetails = Category::categoryDetails($url); // get the categories of the opened $url (get categories depending on the $url)
-
-                $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1); // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php
-
-
-
-                // We used TWO ways to OPERATE the Dynamic Filters (on the left side of the listing.blade.php page): statically for every filter using jQuery and dynamically from Admin Panel. Here we use the first way (for the 'fabric' filter only):    // Check front/js/custom.js    
-                // Note: the checked checkboxes <input> fields will be submitted as an ARRAY because we used SQUARE BRACKETS [] with the "name" HTML attribute in the checkbox <input> field in filters.blade.php e.g.    'fabric' => ['cotton', 'polyester']    , or else, AJAX is used to send the <input> values WITHOUT submitting the <form> at all    // Sidenote: There are TWO ways to submit a <form> to the backed: firstly, the regular one using the <button type="submit">, secondly, using AJAX by sending the "value" attributes of the <input> fields
-
-                // The second way to operate the Dynamic Filters    
-                // Note: the checked checkboxes <input> fields will be submitted as an ARRAY because we used SQUARE BRACKETS [] with the "name" HTML attribute in the checkbox <input> field in filters.blade.php e.g.    'fabric' => ['cotton', 'polyester']    , or else, AJAX is used to send the <input> values WITHOUT submitting the <form> at all    // Sidenote: There are TWO ways to submit a <form> to the backed: firstly, the regular one using the <button type="submit">, secondly, using AJAX by sending the "value" attributes of the <input> fields
-                $productFilters = ProductsFilter::productFilters(); // Get all the (enabled/active) Filters    // (Another way to go is using an AJAX call to get the $productFilters!)
-                foreach ($productFilters as $key => $filter) {
-                    if (isset($filter['filter_column']) && isset($data[$filter['filter_column']]) && !empty($filter['filter_column']) && !empty($data[$filter['filter_column']])) {
-                        $categoryProducts->whereIn($filter['filter_column'], $data[$filter['filter_column']]); // `products.fabric` means the `fabric` column in the `products` table    // $data['fabric'] is an ARRAY like    $data['fabric'] = ['cotton', 'polyester'] (because the checked checkboxes <input> fields will be submitted as an ARRAY because we used SQUARE BRACKETS [] with the "name" HTML attribute in the checkbox <input> field in filters.blade.php, or else, AJAX is used to send the <input> values WITHOUT submitting the <form> at all)    // https://laravel.com/docs/9.x/queries#additional-where-clauses
-                    }
-                }
-
-    
-    
-                // Sorting Filter WITHOUT AJAX (using HTML <form> and jQuery) in front/products/listing.blade.php
-                if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
-                    if ($_GET['sort'] == 'product_latest') {
-                        $categoryProducts->orderBy('products.id', 'Desc');
-                    } elseif ($_GET['sort'] == 'price_lowest') {
-                        $categoryProducts->orderBy('products.product_price', 'Asc');
-                    } elseif ($_GET['sort'] == 'price_highest') {
-                        $categoryProducts->orderBy('products.product_price', 'Desc');
-                    } elseif ($_GET['sort'] == 'name_z_a') {
-                        $categoryProducts->orderBy('products.product_name', 'Desc');
-                    } elseif ($_GET['sort'] == 'name_a_z') {
-                        $categoryProducts->orderBy('products.product_name', 'Asc');
-                    }
-                }
-
-
-
+        // return $request->all();  
+            // if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) { 
                 
-                // Size, price, color, brand, … are also Dynamic Filters, but won't be managed like the other Dynamic Filters, but we will manage every filter of them from the suitable respective database table, like the 'size' Filter from the `products_attributes` database table, 'color' Filter and `price` Filter from `products` table, 'brand' Filter from `brands` table
-                // First: the 'size' filter (from `products_attributes` database table)
-                if (isset($data['size']) && !empty($data['size'])) { // coming from the AJAX call in front/js/custom.js    // example:    $data['size'] = 'Large'
-                    $productIds = ProductsAttribute::select('product_id')->whereIn('size', $data['size'])->pluck('product_id')->toArray(); // fetch the products ids of the $data['size'] from the `products_attributes` table
+            //     if ($_REQUEST['search'] == 'new-arrivals') {
+            //         $search_product = $_REQUEST['search'];
+            //         $categoryDetails['breadcrumbs']                      = 'New Arrival Products';
+            //         $categoryDetails['categoryDetails']['category_name'] = 'New Arrival Products';
+            //         $categoryDetails['categoryDetails']['description']   = 'New Arrival Products';
+            //         $categoryProducts = Product::select(
+            //             'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
+            //         )->with('brand')->join( 
+            //             'categories', 
+            //             'categories.id', '=', 'products.category_id'
+            //         )->where('products.status', 1)->orderBy('id', 'Desc');
+            //         dd($categoryProducts);
 
-                    $categoryProducts->whereIn('products.id', $productIds); // `products.id` means that `products` is the table name (means grab the `id` column of the `products` table)
-                }
+            //     // Best Sellers    // Check front/layout/header.blade.php    
+            //     } elseif ($_REQUEST['search'] == 'best-sellers') {
+            //         $search_product = $_REQUEST['search'];
 
-                
-                // Size, price, color, brand, … are also Dynamic Filters, but won't be managed like the other Dynamic Filters, but we will manage every filter of them from the suitable respective database table, like the 'size' Filter from the `products_attributes` database table, 'color' Filter and `price` Filter from `products` table, 'brand' Filter from `brands` table
-                // Second: the 'color' filter (from `products` database table)
-                if (isset($data['color']) && !empty($data['color'])) { // coming from the AJAX call in front/js/custom.js    // example:    $data['color'] = 'Large'
-                    $productIds = Product::select('id')->whereIn('product_color', $data['color'])->pluck('id')->toArray(); // fetch the products ids of the $data['color'] from the `products` table
+            //         // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
+            //         $categoryDetails['breadcrumbs']                      = 'Best Sellers Products';
+            //         $categoryDetails['categoryDetails']['category_name'] = 'Best Sellers Products';
+            //         $categoryDetails['categoryDetails']['description']   = 'Best Sellers Products';
 
-                    $categoryProducts->whereIn('products.id', $productIds); // `products.id` means that `products` is the table name (means grab the `id` column of the `products` table)
-                }
+            //         // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
+            //         // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
+            //         $categoryProducts = Product::select(
+            //             'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
+            //         )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
+            //             'categories', // `categories` table
+            //             'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
+            //         )->where('products.status', 1)->where('products.is_bestseller', 'Yes');
+            //         // dd($categoryProducts);
 
-                // Size, price, color, brand, … are also Dynamic Filters, but won't be managed like the other Dynamic Filters, but we will manage every filter of them from the suitable respective database table, like the 'size' Filter from the `products_attributes` database table, 'color' Filter and `price` Filter from `products` table, 'brand' Filter from `brands` table
-                // Third: the 'price' filter (from `products` database table)
-                // checking for Price
-                $productIds = array();
+            //     // Featured    // Check front/layout/header.blade.php    
+            //     } elseif ($_REQUEST['search'] == 'featured') {
+            //         $search_product = $_REQUEST['search'];
 
-                if (isset($data['price']) && !empty($data['price'])) {
-                    foreach($data['price'] as $key => $price){
-                        $priceArr = explode('-', $price); // Example: First loop iteration: 0, 1000    then Second loop iteration: 1000, 2000, ...etc
-                        if (isset($priceArr[0]) && isset($priceArr[1])) { // Example: First loop iteration: 0, 1000    then Second loop iteration: 1000, 2000, ...etc
-                            $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0], $priceArr[1]])->pluck('id')->toArray(); // fetch the products ids of the range $priceArr[0] and $priceArr[1] (whereBetween() method) from the `products` table    // whereBetween(): https://laravel.com/docs/9.x/queries#additional-where-clauses    // e.g.    [    [2], [4, 5], [6]    ]
-                        }
-                    }
+            //         // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
+            //         $categoryDetails['breadcrumbs']                      = 'Featured Products';
+            //         $categoryDetails['categoryDetails']['category_name'] = 'Featured Products';
+            //         $categoryDetails['categoryDetails']['description']   = 'Featured Products';
 
-                    $productIds = array_unique(\Illuminate\Support\Arr::flatten($productIds)); // Arr::flatten(): https://laravel.com/docs/9.x/helpers#method-array-flatten    // We use array_unique() function to eliminate any repeated product ids
-                    $categoryProducts->whereIn('products.id', $productIds);
-                }                    
+            //         // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
+            //         // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
+            //         $categoryProducts = Product::select(
+            //             'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
+            //         )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
+            //             'categories', // `categories` table
+            //             'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
+            //         )->where('products.status', 1)->where('products.is_featured', 'Yes');
+            //         // dd($categoryProducts);
 
+            //     // Discount    // Check front/layout/header.blade.php    
+            //     } elseif ($_REQUEST['search'] == 'discounted') {
+            //         $search_product = $_REQUEST['search'];
 
+            //         // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
+            //         $categoryDetails['breadcrumbs']                      = 'Discounted Products';
+            //         $categoryDetails['categoryDetails']['category_name'] = 'Discounted Products';
+            //         $categoryDetails['categoryDetails']['description']   = 'Discounted Products';
 
-                
-                // Size, price, color, brand, … are also Dynamic Filters, but won't be managed like the other Dynamic Filters, but we will manage every filter of them from the suitable respective database table, like the 'size' Filter from the `products_attributes` database table, 'color' Filter and `price` Filter from `products` table, 'brand' Filter from `brands` table
-                // Fourth: the 'brand' filter (from `products` and `brands` database table)
-                if (isset($data['brand']) && !empty($data['brand'])) { // coming from the AJAX call in front/js/custom.js    // example:    $data['brand'] = 'Large'
-                    $productIds = Product::select('id')->whereIn('brand_id', $data['brand'])->pluck('id')->toArray(); // fetch the products ids with `brand_id` of $data['brand'] from the `products` table
+            //         // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
+            //         // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
+            //         $categoryProducts = Product::select(
+            //             'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
+            //         )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
+            //             'categories', // `categories` table
+            //             'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
+            //         )->where('products.status', 1)->where('products.product_discount', '>', 0); // Show products which have discounts more than 0 zero
+            //         // dd($categoryProducts);
 
-                    $categoryProducts->whereIn('products.id', $productIds); // `products.id` means that `products` is the table name (means grab the `id` column of the `products` table)
-                }
+            //     } else { // The Search Bar
+            //         $search_product = $_REQUEST['search'];
 
+            //         // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
+            //         $categoryDetails['breadcrumbs']                      = $search_product;
+            //         $categoryDetails['categoryDetails']['category_name'] = $search_product;
+            //         $categoryDetails['categoryDetails']['description']   = 'Search Products for ' . $search_product;
 
-    
-                // Pagination (after the Sorting Filter)
-                $categoryProducts = $categoryProducts->paginate(30); // Moved the pagination after checking for the sorting filter <form>
-
-                // Dynamic SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
-                $meta_title       = $categoryDetails['categoryDetails']['meta_title'];
-                $meta_description = $categoryDetails['categoryDetails']['meta_description'];
-                $meta_keywords    = $categoryDetails['categoryDetails']['meta_keywords'];
-
-
-                return view('front.products.ajax_products_listing')->with(compact('categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
-
-            } else {
-                abort(404); // we will create the 404 page later on    // https://laravel.com/docs/9.x/helpers#method-abort
-            }
-        
-        } else {   
-            if (isset($_REQUEST['search']) && !empty($_REQUEST['search'])) { 
-                if ($_REQUEST['search'] == 'new-arrivals') {
-                    $search_product = $_REQUEST['search'];
-                    $categoryDetails['breadcrumbs']                      = 'New Arrival Products';
-                    $categoryDetails['categoryDetails']['category_name'] = 'New Arrival Products';
-                    $categoryDetails['categoryDetails']['description']   = 'New Arrival Products';
-                    $categoryProducts = Product::select(
-                        'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( 
-                        'categories', 
-                        'categories.id', '=', 'products.category_id'
-                    )->where('products.status', 1)->orderBy('id', 'Desc');
-                    dd($categoryProducts);
-
-                // Best Sellers    // Check front/layout/header.blade.php    
-                } elseif ($_REQUEST['search'] == 'best-sellers') {
-                    $search_product = $_REQUEST['search'];
-
-                    // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
-                    $categoryDetails['breadcrumbs']                      = 'Best Sellers Products';
-                    $categoryDetails['categoryDetails']['category_name'] = 'Best Sellers Products';
-                    $categoryDetails['categoryDetails']['description']   = 'Best Sellers Products';
-
-                    // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
-                    // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
-                    $categoryProducts = Product::select(
-                        'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
-                        'categories', // `categories` table
-                        'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
-                    )->where('products.status', 1)->where('products.is_bestseller', 'Yes');
-                    // dd($categoryProducts);
-
-                // Featured    // Check front/layout/header.blade.php    
-                } elseif ($_REQUEST['search'] == 'featured') {
-                    $search_product = $_REQUEST['search'];
-
-                    // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
-                    $categoryDetails['breadcrumbs']                      = 'Featured Products';
-                    $categoryDetails['categoryDetails']['category_name'] = 'Featured Products';
-                    $categoryDetails['categoryDetails']['description']   = 'Featured Products';
-
-                    // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
-                    // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
-                    $categoryProducts = Product::select(
-                        'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
-                        'categories', // `categories` table
-                        'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
-                    )->where('products.status', 1)->where('products.is_featured', 'Yes');
-                    // dd($categoryProducts);
-
-                // Discount    // Check front/layout/header.blade.php    
-                } elseif ($_REQUEST['search'] == 'discounted') {
-                    $search_product = $_REQUEST['search'];
-
-                    // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
-                    $categoryDetails['breadcrumbs']                      = 'Discounted Products';
-                    $categoryDetails['categoryDetails']['category_name'] = 'Discounted Products';
-                    $categoryDetails['categoryDetails']['description']   = 'Discounted Products';
-
-                    // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
-                    // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
-                    $categoryProducts = Product::select(
-                        'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
-                        'categories', // `categories` table
-                        'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
-                    )->where('products.status', 1)->where('products.product_discount', '>', 0); // Show products which have discounts more than 0 zero
-                    // dd($categoryProducts);
-
-                } else { // The Search Bar
-                    $search_product = $_REQUEST['search'];
-
-                    // We fill in the $categoryDetails array MANUALLY with the same indexes/keys that come from the categoryDetails() method in Category.php model (because in either cases of the if-else statement, we pass in $categoryDetails variable to the view down below)
-                    $categoryDetails['breadcrumbs']                      = $search_product;
-                    $categoryDetails['categoryDetails']['category_name'] = $search_product;
-                    $categoryDetails['categoryDetails']['description']   = 'Search Products for ' . $search_product;
-
-                    // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
-                    // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
-                    $categoryProducts = Product::select(
-                        'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
-                    )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
-                        'categories', // `categories` table
-                        'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
-                    )->where(function($query) use ($search_product) { // Constraining Eager Loads: https://laravel.com/docs/9.x/eloquent-relationships#constraining-eager-loads    // Subquery Where Clauses: https://laravel.com/docs/9.x/queries#subquery-where-clauses    // Advanced Subqueries: https://laravel.com/docs/9.x/eloquent#advanced-subqueries    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model    // function () use ()     syntax: https://www.php.net/manual/en/functions.anonymous.php#:~:text=the%20use%20language%20construct
-                        // We'll search for the searched term by the user in the `product_name`, `product_code`, `product_color` and `description` columns in the `products` table and in the `category_name` column in the `categories` table
-                        $query->where('products.product_name',    'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
-                            ->orWhere('products.product_code',    'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
-                            ->orWhere('products.product_color',   'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
-                            ->orWhere('products.description',     'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
-                            ->orWhere('categories.category_name', 'like', '%' . $search_product . '%'); // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
-                    })->where('products.status', 1);
-                    // dd($categoryProducts);
-                }
+            //         // We join `products` table (at the `category_id` column) with `categoreis` table (becausee we're going to search `category_name` column in `categories` table)
+            //         // Note: It's best practice to name table columns with more verbose descriptive names (e.g. if the table name is `products`, then you should have a column called `product_id`, NOT `id`), and also, don't have repeated column names THROUGHOUT/ACROSS the tables of a certain (one) database (i.e. make all your database tables column names (throughout your database) UNIQUE (even columns in different tables!)). That's because of that problem that emerges when you join (JOIN clause) two tables which have the same column names, when you join them, the column names of the second table overrides the column names of the first table (similar column names override each other), leading to many problems. There are TWO ways/workarounds to tackle this problem
+            //         $categoryProducts = Product::select(
+            //             'products.id', 'products.section_id', 'products.category_id', 'products.brand_id', 'products.vendor_id', 'products.product_name', 'products.product_code', 'products.product_color', 'products.product_price',  'products.product_discount', 'products.product_image', 'products.description'
+            //         )->with('brand')->join( // Joins: Inner Join Clause: https://laravel.com/docs/9.x/queries#inner-join-clause    // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap        // https://laravel.com/docs/9.x/queries#additional-where-clauses    // using the brand() relationship method in Product.php model    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model
+            //             'categories', // `categories` table
+            //             'categories.id', '=', 'products.category_id' // JOIN both `products` and `categories` tables at    `categories`.`id` = `products`.`category_id`
+            //         )->where(function($query) use ($search_product) { // Constraining Eager Loads: https://laravel.com/docs/9.x/eloquent-relationships#constraining-eager-loads    // Subquery Where Clauses: https://laravel.com/docs/9.x/queries#subquery-where-clauses    // Advanced Subqueries: https://laravel.com/docs/9.x/eloquent#advanced-subqueries    // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'brand' is the relationship method name in Product.php model    // function () use ()     syntax: https://www.php.net/manual/en/functions.anonymous.php#:~:text=the%20use%20language%20construct
+            //             // We'll search for the searched term by the user in the `product_name`, `product_code`, `product_color` and `description` columns in the `products` table and in the `category_name` column in the `categories` table
+            //             $query->where('products.product_name',    'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
+            //                 ->orWhere('products.product_code',    'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
+            //                 ->orWhere('products.product_color',   'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
+            //                 ->orWhere('products.description',     'like', '%' . $search_product . '%')  // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
+            //                 ->orWhere('categories.category_name', 'like', '%' . $search_product . '%'); // 'like' SQL operator    // '%' SQL Wildcard Character    // Basic Where Clauses: Where Clauses: https://laravel.com/docs/9.x/queries#where-clauses
+            //         })->where('products.status', 1);
+            //         // dd($categoryProducts);
+            //     }
 
 
-                // If the user selects a certain Section from the Search Form drop-down menu (the <select><option> HTML tags), do the search using the `section_id` too
-                if (isset($_REQUEST['section_id']) && !empty($_REQUEST['section_id'])) { // if the user selects a Section using <select><option> in the Search Form drop-down menu
-                    $categoryProducts = $categoryProducts->where('products.section_id', $_REQUEST['section_id']);
-                }
+            //     // If the user selects a certain Section from the Search Form drop-down menu (the <select><option> HTML tags), do the search using the `section_id` too
+            //     if (isset($_REQUEST['section_id']) && !empty($_REQUEST['section_id'])) { // if the user selects a Section using <select><option> in the Search Form drop-down menu
+            //         $categoryProducts = $categoryProducts->where('products.section_id', $_REQUEST['section_id']);
+            //     }
 
-                $categoryProducts = $categoryProducts->get();
-                // dd($categoryProducts);
+            //     $categoryProducts = $categoryProducts->get();
+            //     // dd($categoryProducts);
 
 
-                return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
+            //     return view('front.products.listing')->with(compact('categoryDetails', 'categoryProducts'));
 
-            } else { 
+            // } else { 
                 $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri();
                 $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
-                $categoryCount = Category::where([
-                    'id'    => $cat,
-                    'status' => 1
-                ])->count();
-        
-                if ($categoryCount > 0) { // if the category entered as a URL in the browser address bar exists
-                    // Get the entered URL in the browser address bar category details
-                    $categoryDetails = Category::categoryDetails($cat,$url);
-                    if($request->price != null){
-                        $Sprice = $request->price;
-                        $getPrice = explode("-",$request->price);
-                        $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->whereBetween('product_price', $getPrice)->where('status', 1);
+                $categoryCount = 0;
+                if($cat != null){
+                    $categoryCount = Category::where([
+                        'id'    => $cat,
+                        'status' => 1
+                    ])->count();
+                $categoryDetails = Category::categoryDetails($cat,$url);
+                }
+                else if($request->category_id != null){
+                    $categoryCount = Category::where([
+                        'id'    => $request->category_id,
+                        'status' => 1
+                    ])->count();
+                    $categoryDetails = Category::categoryDetails($request->category_id,$url);
+                }
+                $categoryProducts = Product::with('brand')->where('status', 1);
+                if ($categoryCount > 0) {
+                    // return $categoryDetails['categoryDetails']['id']; 
+                    // $categoryDetails = Category::categoryDetails($cat,$url);
+                    $Sprice = null;
+                    $categoryProducts = $categoryProducts->where('category_id', $categoryDetails['categoryDetails']['id']);
+                    if($request->product_name != null){
+                        $categoryProducts = $categoryProducts->where('product_name','%' . $request->product_name . '%');
                     }
-                    else{
-                        $Sprice = null;
-                        $categoryProducts = Product::with('brand')->whereIn('category_id', $categoryDetails['catIds'])->where('status', 1);
+                    if($request->discount != null){
+                        $Sprice = $request->discount;
+                        $getPrice = explode("-",$request->discount);
+                        $categoryProducts = $categoryProducts->whereBetween('product_discount', $getPrice);
                     }
-                     // moving the paginate() method after checking for the sorting filter <form>    // Paginating Eloquent Results: https://laravel.com/docs/9.x/pagination#paginating-eloquent-results    // Displaying Pagination Results Using Bootstrap: https://laravel.com/docs/9.x/pagination#using-bootstrap       
-        
-                    // Sorting Filter WITHOUT AJAX (using HTML <form> and jQuery) in front/products/listing.blade.php
-                    if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
-                        if ($_GET['sort'] == 'product_latest') {
-                            $categoryProducts->orderBy('products.id', 'Desc');
-                        } elseif ($_GET['sort'] == 'price_lowest') {
-                            $categoryProducts->orderBy('products.product_price', 'Asc');
-                        } elseif ($_GET['sort'] == 'price_highest') {
-                            $categoryProducts->orderBy('products.product_price', 'Desc');
-                        } elseif ($_GET['sort'] == 'name_z_a') {
-                            $categoryProducts->orderBy('products.product_name', 'Desc');
-                        } elseif ($_GET['sort'] == 'name_a_z') {
-                            $categoryProducts->orderBy('products.product_name', 'Asc');
-                        }
+                    if($request->price_range != null){
+                        $categoryProducts = $categoryProducts->whereBetween('product_price', $request->price_range);
                     }
-        
-                    // Pagination (after the Sorting Filter)
-                    $categoryProducts = $categoryProducts->paginate(30); // Moved the pagination after checking for the sorting filter <form>
-
-
-                    // Dynamic SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
+                    // if (isset($_GET['sort']) && !empty($_GET['sort'])) {
+                    //     if ($_GET['sort'] == 'product_latest') {
+                    //         $categoryProducts->orderBy('products.id', 'Desc');
+                    //     } elseif ($_GET['sort'] == 'price_lowest') {
+                    //         $categoryProducts->orderBy('products.product_price', 'Asc');
+                    //     } elseif ($_GET['sort'] == 'price_highest') {
+                    //         $categoryProducts->orderBy('products.product_price', 'Desc');
+                    //     } elseif ($_GET['sort'] == 'name_z_a') {
+                    //         $categoryProducts->orderBy('products.product_name', 'Desc');
+                    //     } elseif ($_GET['sort'] == 'name_a_z') {
+                    //         $categoryProducts->orderBy('products.product_name', 'Asc');
+                    //     }
+                    // }
+                    $categoryProducts = $categoryProducts->paginate(30);   
                     $meta_title       = $categoryDetails['categoryDetails']['meta_title'];
                     $meta_description = $categoryDetails['categoryDetails']['meta_description'];
                     $meta_keywords    = $categoryDetails['categoryDetails']['meta_keywords'];
@@ -309,44 +198,53 @@ class ProductsController extends Controller
                     return view('front.products.listing')->with(compact('Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
 
                 } else {
+                    // return $request->all();
                     $url = \Illuminate\Support\Facades\Route::getFacadeRoot()->current()->uri(); 
                     $categoryDetails = [];
-                    $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
-                    if($request->price != null){
-                        $Sprice = $request->price;
-                        $getPrice = explode("-",$request->price);
-                        $categoryProducts = Product::with(['section' => function($query) { 
-                                        $query->select('id', 'name');},
-                                        'category' => function($query) { 
-                                            $query->select('id', 'category_name');
-                                        }
-                                    ])->whereBetween('product_price', $getPrice);
-                    }
-                    else{
                     $Sprice = null;
+                    $fetchAllCategories = Category::with('subCategories')->where('parent_id',0)->get();
                     $categoryProducts = Product::with(['section' => function($query) { 
                                         $query->select('id', 'name');},
                                         'category' => function($query) { 
                                             $query->select('id', 'category_name');
                                         }
                                     ]);
+                    
+                    if($request->discount != null){
+                        $Sprice = $request->discount;
+                        $getPrice = explode("-",$request->discount);
+                        $categoryProducts = $categoryProducts->whereBetween('product_discount', $getPrice);
                     }
-                    if (isset($_GET['sort']) && !empty($_GET['sort'])) {// if the URL query string parameters contain '&sort=someValue'    // 'sort' is the 'name' HTML attribute of the <select> box
-                        if ($_GET['sort'] == 'product_latest') {
-                            $categoryProducts->orderBy('products.id', 'Desc');
-                        } elseif ($_GET['sort'] == 'price_lowest') {
-                            $categoryProducts->orderBy('products.product_price', 'Asc');
-                        } elseif ($_GET['sort'] == 'price_highest') {
-                            $categoryProducts->orderBy('products.product_price', 'Desc');
-                        } elseif ($_GET['sort'] == 'name_z_a') {
-                            $categoryProducts->orderBy('products.product_name', 'Desc');
-                        } elseif ($_GET['sort'] == 'name_a_z') {
-                            $categoryProducts->orderBy('products.product_name', 'Asc');
-                        }
+                    if($request->product_name != null){
+                        $categoryProducts = $categoryProducts->where('product_name', $request->product_name);
                     }
+                    // if($request->discount != null){
+                    //     $Sprice = $request->discount;
+                    //     $getPrice = explode("-",$request->discount);
+                    //     $categoryProducts =  $categoryProducts->where('product_name', $request->product_name)->whereBetween('product_discount', $getPrice)->where('status', 1);
+                    // }
+                    if ($request->address != null) {
+                        $latitude = $request->lat;
+                        $longitude = $request->long;
+                        // $radius = $request->radius;
+                        $radiusInKm = $request->radius ?? 5; // Assuming a 5km radius, you can adjust this as needed
+
+                        
+                        // $categoryProductsFilter =  Product::with(['section' => function($query) { 
+                        //                 $query->select('id', 'name');},
+                        //                 'category' => function($query) { 
+                        //                     $query->select('id', 'category_name');
+                        //                 }
+                        //             ])->get();
+                        $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(30);
+                        $categoryProducts = $categoryProducts->filter(function ($product) use ($latitude, $longitude, $radiusInKm) {
+                            return $product->distance($latitude, $longitude) <= $radiusInKm;
+                        });
+                    }
+                    
                     $getAllProducts = $categoryProducts;
                     // Pagination (after the Sorting Filter)
-                    $categoryProducts = $categoryProducts->paginate(30); // Moved the pagination after checking for the sorting filter <form>
+                    // $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(30); // Moved the pagination after checking for the sorting filter <form>
 
 
                     // Dynamic SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
@@ -356,10 +254,30 @@ class ProductsController extends Controller
                     return view('front.products.listing')->with(compact('getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
                 }
 
-            }
+            // }
 
-        }
+        
     }
+        public function distance($lat2, $lon2)
+        {
+            $lat1 = $this->latitude;
+            $lon1 = $this->longitude;
+
+            $earthRadius = 6371; // in kilometers
+
+            $dLat = deg2rad($lat2 - $lat1);
+            $dLon = deg2rad($lon2 - $lon1);
+
+            $a = sin($dLat / 2) * sin($dLat / 2) +
+                cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+                sin($dLon / 2) * sin($dLon / 2);
+
+            $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+            $distance = $earthRadius * $c;
+
+            return $distance; // in kilometers
+        }
 
 
 
@@ -370,7 +288,6 @@ class ProductsController extends Controller
                 $query->where('stock', '>', 0)->where('status', 1); // the 'attributes' relationship method in Product.php model     // Constraining Eager Loads to get the `products_attributes` of `stock` more than Zero 0 ONLY and `status` is 1 (active/enabled)
             }, 'images', 'vendor'
         ])->find($id)->toArray(); // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // Eager Loading Multiple Relationships: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading-multiple-relationships
-
 // return $productDetails;
         $categoryDetails = Category::categoryDetails(null, $productDetails['category']['url']); // to get the Breadcrumb links (which is HTML) to show them in front/products/detail.blade.php
         
@@ -614,7 +531,7 @@ class ProductsController extends Controller
             }
 
 
-            return redirect()->back()->with('success_message', 'Product has been added in Cart!');
+            return redirect()->back()->with('success_messages', 'Product has been added in Cart!');
         }
     }
 

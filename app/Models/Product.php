@@ -81,27 +81,27 @@ class Product extends Model
 
         // Get the product DISCOUNT and CATEGORY ID of that product
         $proDetails = Product::select('product_discount', 'category_id','product_price')->where('id', $product_id)->first();
-        $proDetails = json_decode(json_encode($proDetails), true); // convert the object to an array    
+        // $proDetails = json_decode(json_encode($proDetails), true); // convert the object to an array   
 
         // Get the product category discount `category_discount` from `categories` table using its `category_id` in `products` table
         $catDetails = Category::select('category_discount')->where('id', $proDetails['category_id'])->first();
         $catDetails = json_decode(json_encode($catDetails), true); // convert the object to an array    
 
-        if ($proDetails['product_discount'] > 0) { // if there's a 'product_discount' (in `products` table) (i.e. discount is not zero 0)
-            // if there's a PRODUCT discount on the product itself
-            $final_price = $proDetails['product_price'] - ($proDetails['product_price'] * $proDetails['product_discount'] / 100);
-            $discount = $proDetails['product_price'] - $final_price; // the discount value = original price - price after discount
+        // if ($proDetails['product_discount'] > 0) { // if there's a 'product_discount' (in `products` table) (i.e. discount is not zero 0)
+        //     // if there's a PRODUCT discount on the product itself
+        //     $final_price = $proDetails['product_price'] - ($proDetails['product_price'] * $proDetails['product_discount'] / 100);
+        //     $discount = $proDetails['product_price'] - $final_price; // the discount value = original price - price after discount
 
-        } else if ($catDetails['category_discount'] > 0) { // if there's a `category_discount` (in `categories` table) (i.e. discount is not zero 0) (if there's a discount on the whole category of that product)
-            // if there's NO a PRODUCT discount, but there's a CATEGORY discount
-            $final_price = $proDetails->product_price - ($proDetails->product_price * $catDetails['category_discount'] / 100);
-            $discount = $proDetails->product_price - $final_price; // the discount value = original price - price after discount
+        // } else if ($catDetails['category_discount'] > 0) { // if there's a `category_discount` (in `categories` table) (i.e. discount is not zero 0) (if there's a discount on the whole category of that product)
+        //     // if there's NO a PRODUCT discount, but there's a CATEGORY discount
+        //     $final_price = $proDetails->product_price - ($proDetails->product_price * $catDetails['category_discount'] / 100);
+        //     $discount = $proDetails->product_price - $final_price; // the discount value = original price - price after discount
 
-        // Note: Didn't ACCOUNT FOR presence of discounts of BOTH `product_discount` (in `products` table) AND `category_discount` (in `categories` table) AT THE SAME TIME!!
-        } else { // there's no discount on neither `product_discount` (in `products` table) nor `category_discount` (in `categories` table)
+        // // Note: Didn't ACCOUNT FOR presence of discounts of BOTH `product_discount` (in `products` table) AND `category_discount` (in `categories` table) AT THE SAME TIME!!
+        // } else { // there's no discount on neither `product_discount` (in `products` table) nor `category_discount` (in `categories` table)
             $final_price = $proDetails->product_price;
             $discount = 0;
-        }
+        // }
 
 
         return array(
@@ -109,6 +109,26 @@ class Product extends Model
             'final_price'   => $final_price,           // the price of that `product_id` and `size` in `products_attributes` table after deducting the discount (of either `product_discount` (in `products` table) or `category_discount` (in `categories` table))
             'discount'      => $discount               // the value of the discount (if any)
         );
+    }
+    public function distance($lat2, $lon2)
+    {
+        $lat1 = $this->latitude;
+        $lon1 = $this->longitude;
+
+        $earthRadius = 6371; // in kilometers
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earthRadius * $c;
+
+        return $distance; // in kilometers
     }
 
 

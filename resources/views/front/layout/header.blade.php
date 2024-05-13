@@ -224,26 +224,6 @@ $sections = \App\Models\Section::sections();
                             <a href="{{route('listing.verification')}}">Listing Verification</a>
                         </li>
                         <li class="ly-list">
-                            <a href="" class="ly-social ly-linkedin">
-                                <span>
-                                    <span class="iconify" data-icon="akar-icons:linkedin-fill"></span>
-                                </span>
-                            </a>
-                            <a href="" class="ly-social ly-facebook">
-                                <span>
-                                    <span class="iconify" data-icon="uil:facebook-messenger"></span>
-                                </span>
-                            </a>
-                            <a href="" class="ly-social ly-telegram">
-                                <span>
-                                    <span class="iconify" data-icon="mingcute:telegram-fill"></span>
-                                </span>
-                            </a>
-                            <a href="" class="ly-social ly-discord">
-                                <span>
-                                    <span class="iconify" data-icon="ic:baseline-discord"></span>
-                                </span>
-                            </a>
                             @if(!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check()))
                             <a href="{{route('user.login')}}" class="ly-login">
                                 <span>
@@ -312,7 +292,8 @@ $sections = \App\Models\Section::sections();
                                                     <!-- <span class="badge active">2</span> -->
                                                 </a>
                                             </li>
-                                            @if(Auth::user() && \App\Models\OrdersProduct::where('user_id',\Illuminate\Support\Facades\Auth::user()->id)->exists())
+                                            
+                                            @if(Auth::user())
                                             <li>
                                                 <a href="{{ route('user.ordered.listings') }}">
                                                     <span class="value">

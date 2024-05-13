@@ -364,7 +364,8 @@ class UserController extends Controller
             $countries = \App\Models\Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
 
 
-            return view('front.users.user_account')->with(compact('countries'));
+            return view('front.users.products.reseller_account')->with(compact('countries'));
+            // return view('front.users.user_account')->with(compact('countries'));
         }
     }
 

@@ -1,7 +1,7 @@
 
 <div class="row product-container grid-style">
     <!-- <div class="ly-car-show-map"> -->
-    @foreach ($categoryProducts as $product)
+    @forelse ($categoryProducts as $product)
         <div class="col-lg-4">
             <div class="fr-latest-grid">
                 <div class="ly-car-card ly-car-card-grid ly-grid-2">
@@ -22,7 +22,7 @@
                                     <div class="sub-meta car-location">
                                         <span class="iconify" data-icon="ri:route-line" data-flip="vertical"></span>
                                         <span>{{ $product['category']['category_name'] }}</span>
-                                        <span>{{ $product['section']['name'] }}</span>
+                                        <!-- <span>{{ $product['section']['name'] }}</span> -->
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +39,9 @@
                 </div>
             </div>
         </div>
-    @endforeach   
+        @empty
+         <div id="noProduc" class="fr-latest-grid">No Product Found</div>
+    @endforelse   
     <!-- </div> -->
 </div>
 <!-- Row-of-Product-Container /- -->

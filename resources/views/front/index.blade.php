@@ -28,9 +28,9 @@
                         <div class="img-box">
                             <img src="{{asset('front/images/banners/company-started-1.svg')}}" alt="company-started"> 
                         </div>
-                        <h4>Sell Discounts</h4>
-                        <p>Empower your business: Start Selling Discounts, Boosting Sales Today!</p>
-                         <button class="ly-button-inv"><a href="{{ url('admin/add-edit-product') }}">Post Listings</a><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                        <h4>BODE</h4>
+                        <p>Have you ever imagined your company being publicly traded? Do you ever dream of having an army of customers invested in your success? We allow any businesses regardless of size to sell and trade in permanent discounts. We resemble a stock market, but have the personal feel that encourages your stock owners to give valuable input because they become invested in your success. Business owners already know their best customers to promote the forever discount to. Businesses can generate large amounts of cash very quickly by selling forever discounts while simultaneously improving overall profits by inspiring larger volumes of sales with the discount owners. </p>
+                         <!-- <button class="ly-button-inv"><a href="{{ url('admin/add-edit-product') }}">Post Listings</a><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button> -->
                     </div>
                 </div>
                 <div class="col-lg-5">
@@ -38,9 +38,9 @@
                         <div class="img-box">
                             <img src="{{asset('front/images/banners/company-started-2.svg')}}" alt="company-started"> 
                         </div>
-                        <h4>Explore Memberships</h4>
-                        <p>Browse our vast memberships, offering unbeatable discounts tailored to you!</p>
-                        <button class="ly-button-inv"><a href="{{route('search.product')}}">View Inventory</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button>
+                        <h4>Buyers/Investors</h4>
+                        <p>Have you ever dreamed professional athletes couldn’t be traded to create loyalty from both the fans and the athletes? Discount buyers are generally already great customers to the brand they are buying. Once a seller buys, they are committed to the success of that brand. They aren’t going to switch brands the second a competitor comes out with something cheaper. They are going to provide feedback to the business owner on how to improve quality and reduce costs because the business success is also the buyers success when they go to resell their discount. Some buyers may buy the discounts as a speculative investment. Because the discounts are finite and some businesses will grow exponentially the value of these discounts will also grow exponentially and investors with a good eye will spot that potential</p>
+                        <!-- <button class="ly-button-inv"><a href="{{route('search.product')}}">View Inventory</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em" viewBox="0 0 24 24" data-icon="tabler:chevron-right" class="iconify iconify--tabler"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 6l6 6l-6 6"></path></svg></button> -->
                     </div>
                 </div>
                 <div class="col-lg-1">
@@ -49,35 +49,35 @@
             </div>
         </div>
     </section>
-    <section class="categories-section colored">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="page-content-wrapper">
+    <!--<section class="categories-section colored">-->
+    <!--    <div class="container">-->
+    <!--        <div class="row">-->
+    <!--            <div class="col-12">-->
+    <!--                <div class="page-content-wrapper">-->
                       
-                        <h2>Marketplace Categories</h2>
-                        <p class="cat-description">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>
+    <!--                    <h2>Marketplace Categories</h2>-->
+    <!--                    <p class="cat-description">Our company stands as the world's leading marketplace for unparalleled discounts, offering the best deals from renowned brands. Explore and secure unbeatable discounts with us.</p>-->
                        
-                    </div>
-                </div>
-                <div class="col-12 cats-container">
-                    <div class="row">
-                        @foreach($getAllCats as $cats)
-                        <div class="col-3">
-                            <div class="cat-item">
-                                <div class="cat-img"><img src="{{asset('front/images/banners/cat_1.png')}}"></div>
-                                <a href="{{route('search.product',['cat'=>$cats->id])}}">{{$cats->category_name}}
-                                </a>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--            <div class="col-12 cats-container">-->
+    <!--                <div class="row">-->
+    <!--                    @foreach($getAllCats as $cats)-->
+    <!--                    <div class="col-3">-->
+    <!--                        <div class="cat-item">-->
+    <!--                            <div class="cat-img"><img src="{{asset('front/images/banners/cat_1.png')}}"></div>-->
+    <!--                            <a href="{{route('search.product',['cat'=>$cats->id])}}">{{$cats->category_name}}-->
+    <!--                            </a>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                    @endforeach-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</section>-->
 
-    <section class="ly-works-section">
+    <!-- <section class="ly-works-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
@@ -121,9 +121,9 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
-    <section class="ly-works-section">
+    <!-- <section class="ly-works-section">
         <div class="container">
             <div class="row">
 
@@ -168,9 +168,9 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
-    <section class="more-about">
+    <!-- <section class="more-about">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4">
@@ -196,7 +196,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- <section class="fr-serv-2 fr-services-content-2">
     <div class="container">
         <div class="row fr-serv2">
@@ -252,7 +252,7 @@
     </div>
     </section> -->
 
-<section class="our-goal">
+<!-- <section class="our-goal">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -309,7 +309,7 @@
             </div>
 
         </div>
-    </section>
+    </section> -->
 
 <style>
 .fr-serv2 {

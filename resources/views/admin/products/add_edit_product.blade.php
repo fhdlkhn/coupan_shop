@@ -153,7 +153,7 @@
                                             </div>
 
                                             <div class="car_detail">
-                                                <label for="product_discount">Annual Savings</label>
+                                                <label for="product_discount">Listing Discount</label>
                                                 <input type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
                                             </div>
                                            

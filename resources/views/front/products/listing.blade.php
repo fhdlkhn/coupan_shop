@@ -50,13 +50,141 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(16px);
 }
+
+
+section.ly-page-top-section::before {
+    content: "";
+    width: 100%;
+    /* height: 1000px; */
+    background-color: rgba(0, 35, 82, 0.4);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 286px;
+    z-index: 0;
+}
+
+form#priceForm {
+    z-index: 1;
+    position: relative;
+}
+
+
+
+#priceForm input.form-control ,#priceForm  select{
+    width: 100% !important;
+    border: 2px solid #E6E8EC !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    background: #fff !important;
+    height: 50px;
+    line-height: 30px;
+    color: #777;
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    margin-bottom : 20px;
+}
+
+.map_toggle {
+    float: right;
+    position: relative;
+    /* display: inline-block; */
+    /* position: absolute; */
+    right: 0;
+    top: 0;
+    margin-bottom: 25px;
+    text-align: right;
+}
+
+
 </style>
         <section class="ly-page-top-section">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <h1>Shop</h1>
-                    <!-- <p>Join top UK hosts who make an average of £6,492 every year for each listing they list</p> -->
+                     <form class="" action="{{url('search-products',['cat'=> null])}}" method="get" id="priceForm">
+                             
+                            <div class="row">
+                                
+                                <div class="col-xl-4 col-mb-4 col-lg-4">
+                               
+                                    <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name"  value="{{ request()->input('product_name') }}" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
+                              
+                                </div>
+                              <div class="col-xl-4 col-mb-4 col-lg-4">
+                                <select name="category_id" id="category_id" class="form-control text-dark">
+                                    <option value="">Select Category</option>
+                                    @foreach ($fetchAllCategories as $section)
+                                        <option value="{{ $section['id'] }}" label="{{ $section['category_name'] }}">
+                                            @if (!empty($section['sub_categories']))
+                                                @foreach ($section['sub_categories'] as $subcategory)
+                                                    <option value="{{ $subcategory['id'] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> 
+                                                @endforeach
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                
+                                </div>
+                                
+                               
+                               <div class="col-xl-4 col-mb-4 col-lg-4">
+  <select class="form-select" id="discount" name="discount">
+    <option value="">Select Discount Range</option> <!-- First option with no value -->
+    @php
+        $prices = array('0-10', '11-20', '21-30', '31-40', '41-50', '51-60');
+    @endphp
+    @foreach ($prices as $key => $price)
+        <option value="{{ $price }}" @if ($Sprice == $price) selected @endif>{{ $price }}%</option>
+    @endforeach
+</select>
+</div>
+                               <div class="col-xl-2 col-mb-2 col-lg-2">
+                                   </div>
+                               <!--<div class="col-xl-4 col-mb-4 col-lg-4">-->
+                                
+                               <!-- <input type="range" id="price_range" name="price_range" min="0" max="1000000" value="50">-->
+                                
+                               <!-- </div>-->
+                               
+                               <div class="col-xl-4 col-mb-4 col-lg-4">
+                                <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address"></input>
+                               
+                                <input type="hidden" name="lat" id="mw_latt" value="40.7128">
+                                <input type="hidden" name="long" id="mw_long" value="-74.0060"> 
+                                
+                                
+                                </div>
+                                <div class="col-xl-2 col-mb-2 col-lg-2">
+                                    <input type="number" name="radius" id="mw_address" class="form-control" placeholder="Radius in KM"></input>
+                                </div>
+                                
+
+                                 <div class="col-xl-4 col-mb-4 col-lg-4">
+                                     <input type="submit" name="Search" class="ly-button-3 "></input>
+                          @if (!empty($_GET))
+    <button type="reset" class="ly-button-3" onclick="clearRecord()">Clear</button>
+@endif
+                                     </div>
+                                     <div class="col-xl-2 col-mb-2 col-lg-2">
+                                   </div>
+                                 
+                               </div>
+                            </form>
                 </div>
             </div>
         </div>
@@ -65,50 +193,8 @@ input:checked + .slider:before {
         <div class="page-shop u-s-p-t-80">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-12">
-                        <div class="fetch-categories">
-                             <!-- <h3 class="title-name">Search Location</h3>
-                            <div id="locationField">
-                                <input type="text" required name="address" id="mw_address" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;"></input>
-                            </div> -->
-                            <h3 class="title-name">Browse Categories</h3>
-                            @foreach($fetchAllCategories as $allCats)
-                            <h3 class="fetch-mark-category">
-                                <a href="{{url('search-products',['cat'=>$allCats])}}">{{$allCats->category_name}}
-                                    <span class="total-fetch-items">(5)</span>
-                                </a>
-                            </h3>
-                            <ul>
-                                @if($allCats->subCategories != null)
-                                    @foreach($allCats->subCategories as $allSubCats)
-                                    <li>
-                                        <a href="{{url('search-products',['cat'=> $allSubCats])}}">{{$allSubCats->category_name}}
-                                            <span class="total-fetch-items">(2)</span>
-                                        </a>
-                                    </li>
-                                    @endforeach
-                                @endif
-                            </ul>
-                            @endforeach
-                        </div>
-                            <div class="facet-filter-associates">
-                        <h3 class="title-name">Price</h3>
-                        <form class="" action="{{url('search-products',['cat'=> null])}}" method="get" id="priceForm">
-                            <div class="associate-wrapper">
-                                @php
-                                    $prices = array('0-1000', '1000-2000', '2000-5000', '5000-10000', '10000-100000');
-                                @endphp
-
-                                @foreach ($prices as $key => $price)
-                                    <input type="radio" class="check-box price" id="price{{ $key }}" name="price" value="{{ $price }}" @if ($Sprice == $price) checked @endif>
-                                    <label class="label-text" for="price{{ $key }}">$ {{ $price }}</label>
-                                @endforeach
-                            </div>
-                        </form>
-                    </div>
-                    </div>
-                    <div class="col-lg-9 col-md-9 col-sm-12">
-                        <div class="page-bar clearfix">
+                    
+                    <div class="col-lg-12 col-md-12 col-sm-12">
                             <!-- @if (!isset($_REQUEST['search']))
                                 <form name="sortProducts" id="sortProducts"> 
                                     <input type="hidden" name="url" id="url" value="{{ $url }}">
@@ -138,10 +224,17 @@ input:checked + .slider:before {
                                 </div>
                             </div> -->
                         </div>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleContent" checked>
-                            <span class="slider"></span>
-                        </label>
+                        
+                       <div class="map_toggle">
+                           <span id="map_toggle_text"> Show Map </span>
+                         <label class="switch">
+                             <input type="checkbox" id="toggleContent" checked>
+                             <span class="slider"></span>
+                          </label>
+                       </div>
+                        
+                        
+                        
                         
                         <div id="mw_map"></div>
                         <div class="filter_products" id="filterProducts">
@@ -154,7 +247,7 @@ input:checked + .slider:before {
                                 </div>
                             @else
                                 <div>
-                                    {{ $categoryProducts->links() }}
+                                   
                                 </div>
                             @endif
                         @endif
@@ -168,107 +261,106 @@ input:checked + .slider:before {
     <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZIwomjpgXMHZdAmwubQ-0iNghQHfbCKU&libraries=places"></script>
     <script  src="https://googlemaps.github.io/js-marker-clusterer/src/markerclusterer.js"></script>
     <script type="text/javascript">
-    var chk_container = document.getElementById('mw_map'); // Corrected map container id
-    var markers = [];
-    var map_lat = 40.7128
-    var map_long = -74.0060;
-      
-      
-      
-    var map_center_positionr = new google.maps.LatLng(map_lat, map_long);
-    var mapOptions = {
-        zoom: 13,
-        center: map_center_positionr,
-        disableDefaultUI: false
-    };
-    var map = new google.maps.Map(chk_container, mapOptions);
-    var getListingLocations = {!! json_encode($categoryProducts) !!};
-    console.log(getListingLocations.data);
+        var chk_container = document.getElementById('mw_map'); // Corrected map container id
+        var map_lat = document.getElementById('mw_latt').value;
+        var map_long = document.getElementById('mw_long').value;   
+        var map_center_positionr = new google.maps.LatLng(map_lat, map_long);
+        var mapOptions = {
+            zoom: 13,
+            center: map_center_positionr,
+            disableDefaultUI: false
+        };
+        var map = new google.maps.Map(chk_container, mapOptions);
+        var get_markers = new google.maps.Marker({
+            position: map_center_positionr,
+            map: map,
+            labelAnchor: new google.maps.Point(1, 1),
+            draggable: true,
+        });
 
-    var addMarker = function (location, content) {
-    var marker = new google.maps.Marker({
-        map: map,
-        position: location,
-        title: 'test',
-        icon: {
-            path: 'M10,5c2.762,0,5,2.239,5,5s-2.239,5-5,5c-2.761,0-5-2.239-5-5S7.239,5,10,5z',
-            anchor: new google.maps.Point(10, 10),
-            fillColor: '#FF0000',
-            fillOpacity: 1,
-            strokeWeight: 10,
-            strokeColor: '#000000',
-            strokeOpacity: 0.25
-        }
-    });
-
-    var infoWindow = new google.maps.InfoWindow({
-        content: content
-    });
-
-    google.maps.event.addListener(marker, 'click', function() {
-        infoWindow.open(map, marker);
-    });
-
-    markers.push(marker);
-};
-
-    for (var d = 0, dl = getListingLocations.data.length; d < dl; d++) {
-        console.log()
-		addMarker(new google.maps.LatLng(getListingLocations.data[d].latitude, getListingLocations.data[d].longitude), getListingLocations.data[d].product_name);
-        var content = getListingLocations.data[d].product_name;
-	}
-    var markerClusterOptions = {
-		gridSize: 40,
-		maxZoom: 15,
-		styles: [{
-			width: 30,
-			height: 30,
-			
-			url: 'data:image/svg+xml;base64,' + window.btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path fill="#78c1a3" stroke="#78c1a3" stroke-width="10" stroke-opacity="0.25" d="M15,5c5.524,0,10,4.478,10,10s-4.478,10-10,10S5,20.522,5,15S9.478,5,15,5z"/></svg>'),
-			textColor: 'white',
-			textSize: 12
-		}]
-	};
-	var markerCluster = new MarkerClusterer(map, markers, markerClusterOptions);
-    
-    var get_markers = new google.maps.Marker({
-        position: map_center_positionr,
-        map: map,
-        labelAnchor: new google.maps.Point(1, 1),
-        draggable: true,
-    });
-    google.maps.event.addDomListener(window, 'load', initialize);
-    
-    // google.maps.event.addListener(get_markers, "mouseup", function(event) {
-    //     var latitude = this.position.lat();
-    //     var longitude = this.position.lng();
-    //     $('#mw_latt').val(latitude);
-    //     $('#mw_long').val(longitude);
-    // });
-    
-    var places_input = document.getElementById('mw_address');
-    var autocomplete = new google.maps.places.Autocomplete(places_input);
-    autocomplete.bindTo('bounds', map);
-    
-    google.maps.event.addListener(autocomplete, 'place_changed', function() {
-        var fetch_places = autocomplete.getPlace();
+        google.maps.event.addListener(get_markers, "mouseup", function(event) {
+            var latitude = this.position.lat();
+            var longitude = this.position.lng();
+            $('#mw_latt').val(latitude);
+            $('#mw_long').val(longitude);
+        });
         
-        if (!fetch_places.geometry) {
-            return;
-        }
+        var places_input = document.getElementById('mw_address');
+        var autocomplete = new google.maps.places.Autocomplete(places_input);
+        autocomplete.bindTo('bounds', map);
         
-        if (fetch_places.geometry.viewport) {
-            map.fitBounds(fetch_places.geometry.viewport);
-        } else {
-            map.setCenter(fetch_places.geometry.location);
-            map.setZoom(13);
+        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            var fetch_places = autocomplete.getPlace();
+            
+            if (!fetch_places.geometry) {
+                return;
+            }
+            
+            if (fetch_places.geometry.viewport) {
+                // map.fitBounds(fetch_places.geometry.viewport);
+            } else {
+                // map.setCenter(fetch_places.geometry.location);
+                // map.setZoom(13);
+            }
+            
+            get_markers.setPosition(fetch_places.geometry.location); // Update marker position
+            get_markers.setVisible(true);
+          
+            $('#mw_latt').val(get_markers.getPosition().lat());
+            $('#mw_long').val(get_markers.getPosition().lng());
+        });
+
+
+        var markers = [];
+        var getListingLocations = {!! json_encode($categoryProducts) !!};
+
+        var addMarker = function (location, content) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: location,
+                title: 'test',
+                icon: {
+                    path: 'M10,5c2.762,0,5,2.239,5,5s-2.239,5-5,5c-2.761,0-5-2.239-5-5S7.239,5,10,5z',
+                    anchor: new google.maps.Point(10, 10),
+                    fillColor: '#FF0000',
+                    fillOpacity: 1,
+                    strokeWeight: 10,
+                    strokeColor: '#000000',
+                    strokeOpacity: 0.25
+                }
+            });
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: content
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        };
+
+        for (var d = 0, dl = getListingLocations.data.length; d < dl; d++) {
+            console.log()
+            addMarker(new google.maps.LatLng(getListingLocations.data[d].latitude, getListingLocations.data[d].longitude), getListingLocations.data[d].product_name);
+            var content = getListingLocations.data[d].product_name;
         }
+        var markerClusterOptions = {
+            gridSize: 40,
+            maxZoom: 15,
+            styles: [{
+                width: 30,
+                height: 30,
+                
+                url: 'data:image/svg+xml;base64,' + window.btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path fill="#78c1a3" stroke="#78c1a3" stroke-width="10" stroke-opacity="0.25" d="M15,5c5.524,0,10,4.478,10,10s-4.478,10-10,10S5,20.522,5,15S9.478,5,15,5z"/></svg>'),
+                textColor: 'white',
+                textSize: 12
+            }]
+        };
+        var markerCluster = new MarkerClusterer(map, markers, markerClusterOptions);
         
-        get_markers.setPosition(fetch_places.geometry.location); // Update marker position
-        get_markers.setVisible(true);
-        // $('#mw_latt').val(get_markers.getPosition().lat());
-        // $('#mw_long').val(get_markers.getPosition().lng());
-    });
+        // google.maps.event.addDomListener(window, 'load', initialize);
 </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -287,14 +379,12 @@ input:checked + .slider:before {
                 }
             });
         });
-    document.addEventListener("DOMContentLoaded", function() {
-        var radioButtons = document.querySelectorAll('.check-box.price');
-        
-        radioButtons.forEach(function(radioButton) {
-            radioButton.addEventListener('click', function() {
-                document.getElementById('priceForm').submit();
-            });
-        });
-    });
+        function clearRecord(){
+            document.getElementById("product_name").value ="";
+            document.getElementById("category_id").value ="";
+            // document.getElementById("price_range").value ="";
+            // document.getElementById("price").value ="";
+            document.getElementById('priceForm').submit();
+        }
 </script>
 @endsection
