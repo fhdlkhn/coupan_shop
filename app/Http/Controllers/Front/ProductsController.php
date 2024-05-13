@@ -223,11 +223,15 @@ class ProductsController extends Controller
                     //     $getPrice = explode("-",$request->discount);
                     //     $categoryProducts =  $categoryProducts->where('product_name', $request->product_name)->whereBetween('product_discount', $getPrice)->where('status', 1);
                     // }
+                    $showMap = false;
+                    $address = $request->address;
+                    $radius = $request->radius;
                     if ($request->address != null) {
+                        $showMap = true;
                         $latitude = $request->lat;
                         $longitude = $request->long;
                         // $radius = $request->radius;
-                        $radiusInKm = $request->radius ?? 5; // Assuming a 5km radius, you can adjust this as needed
+                        $radiusInKm = $request->radius; // Assuming a 5km radius, you can adjust this as needed
 
                         
                         // $categoryProductsFilter =  Product::with(['section' => function($query) { 
@@ -241,7 +245,10 @@ class ProductsController extends Controller
                             return $product->distance($latitude, $longitude) <= $radiusInKm;
                         });
                     }
-                    
+                    else{
+                        $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(30);
+                    }
+                    // return $categoryProducts;
                     $getAllProducts = $categoryProducts;
                     // Pagination (after the Sorting Filter)
                     // $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(30); // Moved the pagination after checking for the sorting filter <form>
@@ -251,7 +258,7 @@ class ProductsController extends Controller
                     $meta_title       = '';
                     $meta_description = '';
                     $meta_keywords    = '';
-                    return view('front.products.listing')->with(compact('getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
+                    return view('front.products.listing')->with(compact('radius','address','showMap','getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
                 }
 
             // }

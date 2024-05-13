@@ -24,13 +24,6 @@
     <!-- Account-Page -->
     <div class="page-account u-s-p-t-80">
         <div class="container">
-
-
-
-            {{-- Displaying The Validation Errors: https://laravel.com/docs/9.x/validation#quick-displaying-the-validation-errors AND https://laravel.com/docs/9.x/blade#validation-errors --}} 
-            {{-- Determining If An Item Exists In The Session (using has() method): https://laravel.com/docs/9.x/session#determining-if-an-item-exists-in-the-session --}}
-            {{-- Our Bootstrap success message in case of updating admin password is successful: --}}
-            {{-- Displaying Success Message --}}
             @if (Session::has('success_message')) <!-- Check userRegister() method in Front/UserController.php -->
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <strong>Success:</strong> {{ Session::get('success_message') }}
@@ -39,7 +32,6 @@
                     </button>
                 </div>
             @endif
-            {{-- Displaying Error Messages --}}
             @if (Session::has('error_message')) <!-- Check userRegister() method in Front/UserController.php -->
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>Error:</strong> {{ Session::get('error_message') }}
@@ -48,7 +40,6 @@
                     </button>
                 </div>
             @endif
-            {{-- Displaying Error Messages --}}
             @if ($errors->any()) <!-- Check userRegister() method in Front/UserController.php -->
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>Error:</strong> @php echo implode('', $errors->all('<div>:message</div>')); @endphp
@@ -57,11 +48,7 @@
                     </button>
                 </div>
             @endif
-
-
-
             <div class="row">
-                <!-- Update User Account Contact Details -->
                 <div class="col-lg-6">
                     <div class="login-wrapper">
                         <h2 class="account-h2 u-s-m-b-20" style="font-size: 18px">Update Contact Details</h2>
@@ -160,11 +147,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- Update User Account Contact Details /- -->
-
-
-
-                <!-- Update User Password via AJAX --> 
                 <div class="col-lg-6">
                     <div class="reg-wrapper">
                         <h2 class="account-h2 u-s-m-b-20" style="font-size: 18px">Update Password</h2>
@@ -215,10 +197,6 @@
                         </form>
                     </div>
                 </div>
-                <!-- Update User Password via AJAX /- -->
-
-
-
             </div>
         </div>
     </div>

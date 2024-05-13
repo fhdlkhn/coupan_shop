@@ -161,17 +161,7 @@ form#priceForm {
                                 
                                <!-- </div>-->
                                
-                               <div class="col-xl-4 col-mb-4 col-lg-4">
-                                <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address"></input>
                                
-                                <input type="hidden" name="lat" id="mw_latt" value="40.7128">
-                                <input type="hidden" name="long" id="mw_long" value="-74.0060"> 
-                                
-                                
-                                </div>
-                                <div class="col-xl-2 col-mb-2 col-lg-2">
-                                    <input type="number" name="radius" id="mw_address" class="form-control" placeholder="Radius in KM"></input>
-                                </div>
                                 
 
                                  <div class="col-xl-4 col-mb-4 col-lg-4">
@@ -214,28 +204,32 @@ form#priceForm {
                                     </div>
                                 </form>
                             @endif -->
-                            <!-- <div class="toolbar-sorter-2">
-                                <div class="select-box-wrapper">
-                                    <label class="sr-only" for="show-records">Show Records Per Page</label>
-                                    <select class="select-box" id="show-records">
-                                        <option selected="selected" value="">Showing: {{ count($categoryProducts) }}</option>
-                                        <option value="">Showing: All</option>
-                                    </select>
-                                </div>
-                            </div> -->
                         </div>
-                        
-                       <div class="map_toggle">
-                           <span id="map_toggle_text"> Show Map </span>
-                         <label class="switch">
-                             <input type="checkbox" id="toggleContent" checked>
-                             <span class="slider"></span>
-                          </label>
-                       </div>
-                        
-                        
-                        
-                        
+                        <form class="" action="{{url('search-products',['cat'=> null])}}" method="get" id="priceForm">
+                            <div class="row align-items-center">
+                                <div class="col-xl-4 col-mb-4 col-lg-4" id="addressSearch" style="display:none">
+                                    <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address" value="{{$address != null ? $address : ''}}">
+                                    <input type="hidden" name="lat" id="mw_latt" value="40.7128">
+                                    <input type="hidden" name="long" id="mw_long" value="-74.0060"> 
+                                </div>
+                                <div class="col-xl-2 col-mb-2 col-lg-2" id="radiusSearch" style="display:none">
+                                    <input type="number" name="radius" id="mw_radius" class="form-control" placeholder="Radius in KM" value="{{$radius != null ? $radius : ''}}">
+                                </div>
+                                <div class="col-xl-2 col-mb-2 col-lg-2" id="submitSearch" style="display:none">
+                                    <button type="submit" class="ly-button-3 ">Search</button>
+                                </div>
+                                <div class="col-xl-4 col-mb-4 col-lg-4">
+                                    <!-- This column is used to create space between the button and the other inputs -->
+                                </div>
+                                <div class="map_toggle">
+                                    <span id="map_toggle_text"> Show Map </span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggleContent" {{ $showMap == false ? 'checked' : ''}}>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
                         <div id="mw_map"></div>
                         <div class="filter_products" id="filterProducts">
                             @include('front.products.ajax_products_listing')
@@ -272,7 +266,7 @@ form#priceForm {
         };
         var map = new google.maps.Map(chk_container, mapOptions);
         var get_markers = new google.maps.Marker({
-            position: map_center_positionr,
+            // position: map_center_positionr,
             map: map,
             labelAnchor: new google.maps.Point(1, 1),
             draggable: true,
@@ -313,6 +307,7 @@ form#priceForm {
 
         var markers = [];
         var getListingLocations = {!! json_encode($categoryProducts) !!};
+        console.log(getListingLocations);
 
         var addMarker = function (location, content) {
             var marker = new google.maps.Marker({
@@ -342,7 +337,7 @@ form#priceForm {
         };
 
         for (var d = 0, dl = getListingLocations.data.length; d < dl; d++) {
-            console.log()
+            console.log(getListingLocations.data[d].latitude)
             addMarker(new google.maps.LatLng(getListingLocations.data[d].latitude, getListingLocations.data[d].longitude), getListingLocations.data[d].product_name);
             var content = getListingLocations.data[d].product_name;
         }
@@ -366,17 +361,36 @@ form#priceForm {
         document.addEventListener("DOMContentLoaded", function() {
             var toggleContent = document.getElementById("toggleContent");
             var filterProducts = document.getElementById("filterProducts");
+            var submitProducts = document.getElementById("submitSearch");
+            var radiusProducts = document.getElementById("radiusSearch");
+            var addressProducts = document.getElementById("addressSearch");
             var filterLocation = document.getElementById("mw_map");
-             filterLocation.style.display = "none";
+            var showMap = localStorage.getItem("showMap");
 
-            toggleContent.addEventListener("change", function() {
-                if (this.checked) {
-                filterProducts.style.display = "block";
-                filterLocation.style.display = "none";
+            // Function to toggle the display of elements based on the checked state
+            function toggleElements() {
+                if (toggleContent.checked) {
+                    radiusProducts.style.display = "none";
+                    submitProducts.style.display = "none";
+                    addressProducts.style.display = "none";
+                    filterProducts.style.display = "block";
+                    filterLocation.style.display = "none";
                 } else {
-                filterProducts.style.display = "none";
-                filterLocation.style.display = "block";
+                    submitProducts.style.display = "block";
+                    radiusProducts.style.display = "block";
+                    addressProducts.style.display = "block";
+                    filterProducts.style.display = "none";
+                    filterLocation.style.display = "block";
                 }
+            }
+
+            // Toggle the display initially based on the checked state
+            toggleElements();
+
+            // Listen for changes in the checkbox state
+            toggleContent.addEventListener("change", function() {
+                toggleElements();
+                localStorage.setItem("showMap", toggleContent.checked);
             });
         });
         function clearRecord(){

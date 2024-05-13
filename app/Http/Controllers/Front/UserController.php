@@ -358,8 +358,11 @@ class UserController extends Controller
                     'errors' => $validator->messages() // we'll loop over the Validation Errors Messages array using jQuery to show them in the frontend (Check    $('#accountForm').submit();    in front/js/custom.js)    // Working With Error Messages: https://laravel.com/docs/9.x/validation#working-with-error-messages    
                 ]);
             }
+            Session::put('page', 'personal_details');
 
-        } else { // if it's a 'GET' request, render front/users/user_account.blade.php
+        } else { 
+            Session::put('page', 'personal_details');
+            // if it's a 'GET' request, render front/users/user_account.blade.php
             // Fetch all of the world countries from the database table `countries`
             $countries = \App\Models\Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
 

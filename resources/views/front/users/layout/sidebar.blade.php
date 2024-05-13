@@ -17,7 +17,7 @@
                 </a>
             </li>
         <li class="nav-item">
-            <a @if (Session::get('page') == 'personal_details') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('user.ordered.listings') }}">
+            <a @if (Session::get('page') == 'personal_details') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('user.account') }}">
             <i class="icon-layout menu-icon"></i>
                 <span class="menu-title">Personal Details</span>
             </a>
