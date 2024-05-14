@@ -491,26 +491,26 @@
                                     </div>
                                     <div class="car-action-icons">
                                         <ul>
-                                            <!-- <li>
-                                                <a href="#" class="icon-box">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M8.684 3.051a1 1 0 0 1 .632 0L15 4.946l4.367-1.456A2 2 0 0 1 22 5.387V17.28a2 2 0 0 1-1.367 1.898l-5.317 1.772a1 1 0 0 1-.632 0L9 19.054L4.632 20.51A2 2 0 0 1 2 18.613V6.72a2 2 0 0 1 1.368-1.898L8.684 3.05zM10 17.28l4 1.334V6.72l-4-1.334zM8 5.387L4 6.721v11.892l4-1.334zm8 1.334v11.892l4-1.334V5.387z"/></svg>
-                                                </a>
-                                            </li> -->
+                                            <!--<li>-->
+                                            <!--    <a href="#" class="icon-box">-->
+                                            <!--        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M8.684 3.051a1 1 0 0 1 .632 0L15 4.946l4.367-1.456A2 2 0 0 1 22 5.387V17.28a2 2 0 0 1-1.367 1.898l-5.317 1.772a1 1 0 0 1-.632 0L9 19.054L4.632 20.51A2 2 0 0 1 2 18.613V6.72a2 2 0 0 1 1.368-1.898L8.684 3.05zM10 17.28l4 1.334V6.72l-4-1.334zM8 5.387L4 6.721v11.892l4-1.334zm8 1.334v11.892l4-1.334V5.387z"/></svg>-->
+                                            <!--    </a>-->
+                                            <!--</li>-->
                                             <li>
-                                                <a href="https://www.facebook.com/sharer/sharer.php?u=https://coupon-shop.smartdevpk.com/product/'{{$productDetails['id']}}'" class="icon-box">
+                                                <a href="https://www.facebook.com/sharer/sharer.php?u=https://coupon-shop.smartdevpk.com/product/{{$productDetails['id']}}" target="_blank" class="icon-box">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 1.25a.75.75 0 0 1 .57.262l3 3.5a.75.75 0 1 1-1.14.976l-1.68-1.96V15a.75.75 0 0 1-1.5 0V4.027L9.57 5.988a.75.75 0 1 1-1.14-.976l3-3.5A.75.75 0 0 1 12 1.25M6.996 8.252a.75.75 0 0 1 .008 1.5c-1.093.006-1.868.034-2.457.142c-.566.105-.895.272-1.138.515c-.277.277-.457.666-.556 1.4c-.101.755-.103 1.756-.103 3.191v1c0 1.436.002 2.437.103 3.192c.099.734.28 1.122.556 1.4c.277.276.665.456 1.4.555c.754.102 1.756.103 3.191.103h8c1.435 0 2.436-.001 3.192-.103c.734-.099 1.122-.279 1.399-.556c.277-.277.457-.665.556-1.399c.101-.755.103-1.756.103-3.192v-1c0-1.435-.002-2.436-.103-3.192c-.099-.733-.28-1.122-.556-1.399c-.244-.243-.572-.41-1.138-.515c-.589-.108-1.364-.136-2.457-.142a.75.75 0 1 1 .008-1.5c1.082.006 1.983.032 2.72.167c.758.14 1.403.405 1.928.93c.602.601.86 1.36.982 2.26c.116.866.116 1.969.116 3.336v1.11c0 1.368 0 2.47-.116 3.337c-.122.9-.38 1.658-.982 2.26c-.602.602-1.36.86-2.26.982c-.867.116-1.97.116-3.337.116h-8.11c-1.367 0-2.47 0-3.337-.116c-.9-.121-1.658-.38-2.26-.982c-.602-.602-.86-1.36-.981-2.26c-.117-.867-.117-1.97-.117-3.337v-1.11c0-1.367 0-2.47.117-3.337c.12-.9.38-1.658.981-2.26c.525-.524 1.17-.79 1.928-.929c.737-.135 1.638-.161 2.72-.167" clip-rule="evenodd"/></svg>
                                                 </a>
                                             </li>
-                                            <!-- <li>
-                                                <a href="#" class="icon-box favourite">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m11.645 20.91l-.007-.003l-.022-.012a15.247 15.247 0 0 1-.383-.218a25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25C2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052A5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25c0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17a15.247 15.247 0 0 1-.383.219l-.022.012l-.007.004l-.003.001a.752.752 0 0 1-.704 0z"/></svg>
-                                                </a>
-                                            </li> -->
-                                            <!-- <li>
-                                                <a href="#" class="icon-box">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/></svg>
-                                                </a>
-                                            </li> -->
+                                            <!--<li>-->
+                                            <!--    <a href="#" class="icon-box favourite">-->
+                                            <!--        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="m11.645 20.91l-.007-.003l-.022-.012a15.247 15.247 0 0 1-.383-.218a25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25C2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052A5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25c0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17a15.247 15.247 0 0 1-.383.219l-.022.012l-.007.004l-.003.001a.752.752 0 0 1-.704 0z"/></svg>-->
+                                            <!--    </a>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                            <!--    <a href="#" class="icon-box">-->
+                                            <!--        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0"/></svg>-->
+                                            <!--    </a>-->
+                                            <!--</li>-->
                                         </ul>
                                     </div>
                                 </div>
@@ -540,7 +540,7 @@
                                         @endphp
                                         <div class="ly-reserve-sidebar">
                                             <!-- <h3 class="stay-price">${{ $getDiscountPrice }}</h3> -->
-                                            <h3 class="stay-price">${{$productDetails['product_price']}}</h3>
+                                            <h3 class="stay-price">Price: {{$productDetails['product_price']}} $</h3>
                                             <!-- <span class="txt">5 Nights in Pasir putih resort</span>
                                             <small class="from-to-date">Feb 8, 2023 - Feb 13, 2023</small> -->
                                             <!-- <form action="" class="reserve-action-box">
@@ -582,10 +582,10 @@
                                                     <span>Listing Discount(On Membership)</span>
                                                     <strong>{{ $productDetails['product_discount'] }}%</strong>
                                                 </li>
-                                                <li class="service-list-item">
-                                                    <span>Original Price</span>
-                                                    <strong>${{ $productDetails['product_price'] }}</strong>
-                                                </li>
+                                                <!--<li class="service-list-item">-->
+                                                <!--    <span>Original Price</span>-->
+                                                <!--    <strong>${{ $productDetails['product_price'] }}</strong>-->
+                                                <!--</li>-->
                                                 <li class="service-list-item">
                                                     <span>Availability</span>
                                                     @if ($productDetails['product_units'] > 0)
@@ -607,8 +607,8 @@
                                                     </div>
                                                     <div>
                                                         <button class="button button-outline-secondary" type="submit">Add to cart</button>
-                                                        <button class="button button-outline-secondary far fa-heart u-s-m-l-6"></button>
-                                                        <button class="button button-outline-secondary far fa-envelope u-s-m-l-6"></button>
+                                                        <!--<button class="button button-outline-secondary far fa-heart u-s-m-l-6"></button>-->
+                                                        <!--<button class="button button-outline-secondary far fa-envelope u-s-m-l-6"></button>-->
                                                     </div>
                                                 </div>
                                             </form>
@@ -669,7 +669,7 @@
                                                     <p>Hosted by:</p>
                                                     <div class="host-box-cont">
                                                         <div class="img-box">
-                                                            <img src="imgs/host-1.png" alt="host-img">
+                                                            <img src="{{asset('front/images/banners/user_image.png')}}" alt="host-img">
                                                         </div>
                                                         <div class="meta-box">
                                                             <span>{{isset($getUser->name) ? $getUser->name : ''}}</span>

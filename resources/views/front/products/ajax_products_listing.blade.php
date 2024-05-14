@@ -2,9 +2,9 @@
 <div class="row product-container grid-style">
     <!-- <div class="ly-car-show-map"> -->
     @forelse ($categoryProducts as $product)
-        <div class="col-lg-4">
+        <div class="col-lg-12">
             <div class="fr-latest-grid">
-                <div class="ly-car-card ly-car-card-grid ly-grid-2">
+                <div class="ly-car-card ly-car-card-list  ly-grid-2">
                     <div class="car-img-box">
                         @if (!empty($product['product_image']))
                             <a href="{{ url('product/' . $product['id']) }}"><img src="{{ asset('front/images/product_images/small/' . $product['product_image']) }}" alt="list-img"></a>

@@ -2,8 +2,10 @@
 @section('content')
 <style>
      #mw_map {
-          height: 400px;
-          display: none;
+          height: 900px;
+           padding-left: 15px;
+           margin-top: 40px;
+           background-color: #f0f0f0;
         }
 /* Custom CSS for toggle switch */
 .switch {
@@ -69,6 +71,10 @@ form#priceForm {
     z-index: 1;
     position: relative;
 }
+#filterProducts {
+        border-right: 1px solid #ddd;
+        padding-right: 15px;
+    }
 
 
 
@@ -109,6 +115,11 @@ form#priceForm {
     margin-bottom: 25px;
     text-align: right;
 }
+.ly-car-card-list .car-img-box {
+    width: 50%;
+    height: 160px;
+    min-width: 290px;
+}
 
 
 </style>
@@ -116,65 +127,51 @@ form#priceForm {
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                     <form class="" action="{{url('search-products',['cat'=> null])}}" method="get" id="priceForm">
-                             
-                            <div class="row">
-                                
-                                <div class="col-xl-4 col-mb-4 col-lg-4">
-                               
-                                    <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name"  value="{{ request()->input('product_name') }}" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
-                              
-                                </div>
-                              <div class="col-xl-4 col-mb-4 col-lg-4">
+                     <form action="{{ url('search-products', ['cat' => null]) }}" method="get" id="priceForm">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <!-- Product Name Input -->
+                            <div class="p-2 flex-grow-1">
+                                <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name" value="{{ request()->input('product_name') }}" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>
+                            </div>
+                            
+                            <!-- Category Select -->
+                            <div class="p-2 flex-grow-1">
                                 <select name="category_id" id="category_id" class="form-control text-dark">
                                     <option value="">Select Category</option>
                                     @foreach ($fetchAllCategories as $section)
                                         <option value="{{ $section['id'] }}" label="{{ $section['category_name'] }}">
                                             @if (!empty($section['sub_categories']))
                                                 @foreach ($section['sub_categories'] as $subcategory)
-                                                    <option value="{{ $subcategory['id'] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option> 
+                                                    <option value="{{ $subcategory['id'] }}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;{{ $subcategory['category_name'] }}</option>
                                                 @endforeach
                                             @endif
                                         </option>
                                     @endforeach
                                 </select>
-                                
-                                </div>
-                                
-                               
-                               <div class="col-xl-4 col-mb-4 col-lg-4">
-  <select class="form-select" id="discount" name="discount">
-    <option value="">Select Discount Range</option> <!-- First option with no value -->
-    @php
-        $prices = array('0-10', '11-20', '21-30', '31-40', '41-50', '51-60');
-    @endphp
-    @foreach ($prices as $key => $price)
-        <option value="{{ $price }}" @if ($Sprice == $price) selected @endif>{{ $price }}%</option>
-    @endforeach
-</select>
-</div>
-                               <div class="col-xl-2 col-mb-2 col-lg-2">
-                                   </div>
-                               <!--<div class="col-xl-4 col-mb-4 col-lg-4">-->
-                                
-                               <!-- <input type="range" id="price_range" name="price_range" min="0" max="1000000" value="50">-->
-                                
-                               <!-- </div>-->
-                               
-                               
-                                
-
-                                 <div class="col-xl-4 col-mb-4 col-lg-4">
-                                     <input type="submit" name="Search" class="ly-button-3 "></input>
-                          @if (!empty($_GET))
-    <button type="reset" class="ly-button-3" onclick="clearRecord()">Clear</button>
-@endif
-                                     </div>
-                                     <div class="col-xl-2 col-mb-2 col-lg-2">
-                                   </div>
-                                 
-                               </div>
-                            </form>
+                            </div>
+                            
+                            <!-- Discount Range Select -->
+                            <div class="p-2 flex-grow-1">
+                                <select class="form-select" id="discount" name="discount">
+                                    <option value="">Select Discount Range</option>
+                                    @php
+                                        $prices = array('0-10', '11-20', '21-30', '31-40', '41-50', '51-60');
+                                    @endphp
+                                    @foreach ($prices as $key => $price)
+                                        <option value="{{ $price }}" @if ($Sprice == $price) selected @endif>{{ $price }}%</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <!-- Search Button -->
+                            <div class="p-2" style="margin-bottom: 15px">
+                                <input type="submit" name="Search" class="ly-button-3" value="Search"></input>
+                                @if (!empty($_GET))
+                                    <button type="reset" class="ly-button-3" onclick="clearRecord()">Clear</button>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -182,71 +179,41 @@ form#priceForm {
     <section class="ly-listing-projects-section">
         <div class="page-shop u-s-p-t-80">
             <div class="container">
-                <div class="row">
-                    
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                            <!-- @if (!isset($_REQUEST['search']))
-                                <form name="sortProducts" id="sortProducts"> 
-                                    <input type="hidden" name="url" id="url" value="{{ $url }}">
-
-                                    <div class="toolbar-sorter">
-                                        <div class="select-box-wrapper">
-                                            <label class="sr-only" for="sort-by">Sort By</label>
-                                            <select name="sort" id="sort" class="select-box">
-                                                <option value="" selected>Select</option>
-                                                <option value="product_latest" @if(isset($_GET['sort']) && $_GET['sort'] == 'product_latest') selected @endif>Sort By: Latest</option>
-                                                <option value="price_lowest"   @if(isset($_GET['sort']) && $_GET['sort'] == 'price_lowest')   selected @endif>Sort By: Lowest Price</option>
-                                                <option value="price_highest"  @if(isset($_GET['sort']) && $_GET['sort'] == 'price_highest')  selected @endif>Sort By: Highest Price</option>
-                                                <option value="name_a_z"       @if(isset($_GET['sort']) && $_GET['sort'] == 'name_a_z')       selected @endif>Sort By: Name A - Z</option>
-                                                <option value="name_z_a"       @if(isset($_GET['sort']) && $_GET['sort'] == 'name_z_a')       selected @endif>Sort By: Name Z - A</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif -->
-                        </div>
-                        <form class="" action="{{url('search-products',['cat'=> null])}}" method="get" id="priceForm">
-                            <div class="row align-items-center">
-                                <div class="col-xl-4 col-mb-4 col-lg-4" id="addressSearch" style="display:none">
-                                    <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address" value="{{$address != null ? $address : ''}}">
-                                    <input type="hidden" name="lat" id="mw_latt" value="40.7128">
-                                    <input type="hidden" name="long" id="mw_long" value="-74.0060"> 
-                                </div>
-                                <div class="col-xl-2 col-mb-2 col-lg-2" id="radiusSearch" style="display:none">
-                                    <input type="number" name="radius" id="mw_radius" class="form-control" placeholder="Radius in KM" value="{{$radius != null ? $radius : ''}}">
-                                </div>
-                                <div class="col-xl-2 col-mb-2 col-lg-2" id="submitSearch" style="display:none">
-                                    <button type="submit" class="ly-button-3 ">Search</button>
-                                </div>
-                                <div class="col-xl-4 col-mb-4 col-lg-4">
-                                    <!-- This column is used to create space between the button and the other inputs -->
-                                </div>
-                                <div class="map_toggle">
-                                    <span id="map_toggle_text"> Show Map </span>
-                                    <label class="switch">
-                                        <input type="checkbox" id="toggleContent" {{ $showMap == false ? 'checked' : ''}}>
-                                        <span class="slider"></span>
-                                    </label>
-                                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8" id="filterProducts">
+                        @include('front.products.ajax_products_listing')
+                    </div>
+                    <div class="col-lg-4">
+                        <form action="{{ url('search-products', ['cat' => null]) }}" method="get" id="priceForm">
+                            <div class="form-group">
+                                <label for="mw_address">Address</label>
+                                <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address" value="{{ $address != null ? $address : '' }}">
+                                <input type="hidden" name="lat" id="mw_latt" value="40.7128">
+                                <input type="hidden" name="long" id="mw_long" value="-74.0060">
+                            </div>
+                            <div class="form-group">
+                                <label for="mw_radius">Radius in KM</label>
+                                <input type="number" name="radius" id="mw_radius" class="form-control" placeholder="Radius in KM" value="{{ $radius != null ? $radius : '' }}">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="ly-button-3 btn btn-primary w-100">Search</button>
                             </div>
                         </form>
                         <div id="mw_map"></div>
-                        <div class="filter_products" id="filterProducts">
-                            @include('front.products.ajax_products_listing')
-                        </div>
-                        @if (!isset($_REQUEST['search']))
-                            @if (isset($_GET['sort']))
+                    </div>
+                    @if (!isset($_REQUEST['search']))
+                        @if (isset($_GET['sort']))
+                            <div class="col-12">
+                                {{ $categoryProducts->appends(['sort' => $_GET['sort']])->links() }}
+                            </div>
+                        @elseif($categoryProducts instanceof \Illuminate\Pagination\LengthAwarePaginator)
                                 <div>
-                                    {{ $categoryProducts->appends(['sort' => $_GET['sort']])->links() }}
+                                    {{ $categoryProducts->links() }}
                                 </div>
-                            @else
-                                <div>
-                                   
-                                </div>
-                            @endif
                         @endif
-                        <div>&nbsp;</div>
-                        <div>{{ $categoryDetails != null ? $categoryDetails['categoryDetails']['description'] : ''}}</div>
+                    @endif
+                    <div class="col-12 my-3">
+                        {{ $categoryDetails != null ? $categoryDetails['categoryDetails']['description'] : '' }}
                     </div>
                 </div>
             </div>
@@ -307,7 +274,7 @@ form#priceForm {
 
         var markers = [];
         var getListingLocations = {!! json_encode($categoryProducts) !!};
-        console.log(getListingLocations);
+
 
         var addMarker = function (location, content) {
             var marker = new google.maps.Marker({
@@ -335,11 +302,23 @@ form#priceForm {
 
             markers.push(marker);
         };
+        if (getListingLocations && getListingLocations.data && getListingLocations.data.length > 0) {
+            for (var d = 0, dl = getListingLocations.data.length; d < dl; d++) {
+                addMarker(new google.maps.LatLng(getListingLocations.data[d].latitude, getListingLocations.data[d].longitude), getListingLocations.data[d].product_name);
+                var content = getListingLocations.data[d].product_name;
+            }
+        } else {
+            for (var key in getListingLocations) {
+                if (getListingLocations.hasOwnProperty(key)) {
+                    var listing = getListingLocations[key];
+                    console.log(listing.latitude); // Access latitude property
+                    console.log(listing.longitude); // Access longitude property
 
-        for (var d = 0, dl = getListingLocations.data.length; d < dl; d++) {
-            console.log(getListingLocations.data[d].latitude)
-            addMarker(new google.maps.LatLng(getListingLocations.data[d].latitude, getListingLocations.data[d].longitude), getListingLocations.data[d].product_name);
-            var content = getListingLocations.data[d].product_name;
+                    // Add marker using latitude and longitude
+                    addMarker(new google.maps.LatLng(listing.latitude, listing.longitude), listing.product_name);
+                    var content = listing.product_name;
+                }
+            }
         }
         var markerClusterOptions = {
             gridSize: 40,
@@ -357,42 +336,8 @@ form#priceForm {
         
         // google.maps.event.addDomListener(window, 'load', initialize);
 </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var toggleContent = document.getElementById("toggleContent");
-            var filterProducts = document.getElementById("filterProducts");
-            var submitProducts = document.getElementById("submitSearch");
-            var radiusProducts = document.getElementById("radiusSearch");
-            var addressProducts = document.getElementById("addressSearch");
-            var filterLocation = document.getElementById("mw_map");
-            var showMap = localStorage.getItem("showMap");
-
-            // Function to toggle the display of elements based on the checked state
-            function toggleElements() {
-                if (toggleContent.checked) {
-                    radiusProducts.style.display = "none";
-                    submitProducts.style.display = "none";
-                    addressProducts.style.display = "none";
-                    filterProducts.style.display = "block";
-                    filterLocation.style.display = "none";
-                } else {
-                    submitProducts.style.display = "block";
-                    radiusProducts.style.display = "block";
-                    addressProducts.style.display = "block";
-                    filterProducts.style.display = "none";
-                    filterLocation.style.display = "block";
-                }
-            }
-
-            // Toggle the display initially based on the checked state
-            toggleElements();
-
-            // Listen for changes in the checkbox state
-            toggleContent.addEventListener("change", function() {
-                toggleElements();
-                localStorage.setItem("showMap", toggleContent.checked);
-            });
-        });
+<script>
+        
         function clearRecord(){
             document.getElementById("product_name").value ="";
             document.getElementById("category_id").value ="";
