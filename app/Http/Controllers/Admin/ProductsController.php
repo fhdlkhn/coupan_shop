@@ -191,6 +191,11 @@ class ProductsController extends Controller
             $product->section_id  = $categoryDetails['section_id'];
             $product->category_id = $data['category_id'];
             $product->address = $data['address'];
+            $product->split_payment_select = $data['split-payment-select'];
+            $product->divident_description = $data['divident-description'];
+            $product->extras_description = $data['extras-description'];
+            $product->split_amount	 = $data['split_amount'];
+            $product->target_audiesnce	 = $data['target_audiesnce'];
             $product->latitude = $data['lat'];
             $product->longitude = $data['long'];
             $product->brand_id    = $data['brand_id']  ?? NULL;
