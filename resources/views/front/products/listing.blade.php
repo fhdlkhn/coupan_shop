@@ -180,24 +180,27 @@ form#priceForm {
         <div class="page-shop u-s-p-t-80">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-8" id="filterProducts">
+                    <div class="col-lg-6" id="filterProducts">
                         @include('front.products.ajax_products_listing')
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <form action="{{ url('search-products', ['cat' => null]) }}" method="get" id="priceForm">
-                            <div class="form-group">
-                                <label for="mw_address">Address</label>
-                                <input type="text" name="address" id="mw_address" class="form-control" placeholder="Address" value="{{ $address != null ? $address : '' }}">
-                                <input type="hidden" name="lat" id="mw_latt" value="40.7128">
-                                <input type="hidden" name="long" id="mw_long" value="-74.0060">
+                            <div class="form-row row">
+                                <div class="form-group col-md-6">
+                                    <label for="mw_address">Address</label>
+                                    <input type="text" name="address" id="mw_address" class="form-control pac-target-input" placeholder="Address" value="" autocomplete="off">
+                                    <input type="hidden" name="lat" id="mw_latt" value="40.7128">
+                                    <input type="hidden" name="long" id="mw_long" value="-74.0060">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="mw_radius">Radius in KM</label>
+                                    <input type="number" name="radius" id="mw_radius" class="form-control" placeholder="Radius in KM" value="">
+                                </div>
+                                
                             </div>
                             <div class="form-group">
-                                <label for="mw_radius">Radius in KM</label>
-                                <input type="number" name="radius" id="mw_radius" class="form-control" placeholder="Radius in KM" value="{{ $radius != null ? $radius : '' }}">
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="ly-button-3 btn btn-primary w-100">Search</button>
-                            </div>
+                                    <button type="submit" class="ly-button-3 btn btn-primary w-100">Search</button>
+                                </div>
                         </form>
                         <div id="mw_map"></div>
                     </div>

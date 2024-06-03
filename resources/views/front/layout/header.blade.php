@@ -209,13 +209,24 @@ $sections = \App\Models\Section::sections();
                     <div class="line-menu line-half last-line"></div>
                 </div>
                 <!--Navigation menu-->
+            <form action="{{ route('save.currency') }}" method="POST">
+                @csrf
+                <select name="user_currency" onchange="this.form.submit()">
+                    <option value="" disabled selected>Select Currency</option>
+                    <option value="USD" {{ Session::get('currency') == 'USD' ? 'selected' : '' }}>USD</option>
+                    <option value="EUR" {{ Session::get('currency') == 'EUR' ? 'selected' : '' }}>EURO</option>
+                    <option value="INR" {{ Session::get('currency') == 'INR' ? 'selected' : '' }}>INR</option>
+                </select>
+            </form>
                 <nav class="sb-menu menu-caret submenu-top-border submenu-scale">
                     <ul>
+                        @if((!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check())) || (\Illuminate\Support\Facades\Auth::guard('admin')->check()))
+                            <li class="">
+                                <a href="{{ url('admin/add-edit-product') }}">Start Selling</a>
+                            </li>
+                        @endif
                         <li class="">
-                            <a href="#">Start Selling</a>
-                        </li>
-                        <li class="">
-                            <a href="#">How it works</a>
+                            <a href="{{route('how.it.works')}}">How it works</a>
                         </li>
                         <li class="">
                             <a href="{{route('search.product')}}">Shop</a>
@@ -223,6 +234,10 @@ $sections = \App\Models\Section::sections();
                         <li class="">
                             <a href="{{route('listing.verification')}}">Listing Verification</a>
                         </li>
+                        
+                            
+                            <!-- <a href="{{route('listing.verification')}}">Listing Verification</a> -->
+                        
                         <li class="ly-list">
                             @if(!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check()))
                             <a href="{{route('user.login')}}" class="ly-login">
@@ -264,7 +279,7 @@ $sections = \App\Models\Section::sections();
                                             </li>
                                             @endif
                                             <li>
-                                                <a href="#">
+                                                <a href="{{route('payout.index')}}">
                                                     <span class="value">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M.906 10.68a1 1 0 0 0 1 1h10.188a1 1 0 0 0 1-1V8.84a1.907 1.907 0 0 1 0-3.68V3.32a1 1 0 0 0-1-1H1.906a1 1 0 0 0-1 1v1.836a1.907 1.907 0 0 1 0 3.688zM9.11 2.328v1.64m0 2.212v1.64m0 2.22v1.64"/></svg>
                                                         Wallet
@@ -367,7 +382,9 @@ $sections = \App\Models\Section::sections();
     @if(\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->is_role_set == '0')
     <?php $checkRole = 1;
     $pass = session('data');?>
-     @include('front.layout.user_type')
+        @if(!session('role_selected'))
+        @include('front.layout.user_type')
+        @endif
     @else
     <?php $checkRole = 0;
     $pass = null?>

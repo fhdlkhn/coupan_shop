@@ -1,6 +1,7 @@
 @extends('front.layout.layout')
 @section('content')
     <section class="ly-page-top-section">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <div class="container">
             @if (Session::has('error_message')) <!-- Check AdminController.php, updateAdminPassword() method -->
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -27,7 +28,8 @@
                             <div class="col-lg-7">
                                 <div class="ly-confirm-pay-content">
                                     <h2 class="title">Confirm and pay</h2>
-                                    <form action="{{ route('stripe.post') }}" method="post"  class="require-validation" data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}" id="payment-form">
+                                    <button id="checkout-button">Checkout</button>
+                                    <!-- <form action="{{ route('stripe.post') }}" method="post"  class="require-validation" data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}" id="payment-form">
                                         @csrf
                                         <div class="pay-with">
                                             <h6>Credit Card</h6>
@@ -92,7 +94,7 @@
                                             </div>
                                         </div>
                                         <button class="ly-button-3" type="submit">Pay Now ${{ $total_price - \Illuminate\Support\Facades\Session::get('couponAmount') }}</button>
-                                    </form>
+                                    </form> -->
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -129,7 +131,7 @@
                                                                     <span class="order-span-quantity">x {{ $item['quantity'] }}</span>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="order-h6">${{ $getDiscountAttributePrice['final_price'] * $item['quantity'] }}</h6> {{-- price of all products (after discount (if any)) (= price (after discoutn) * no. of products) --}}
+                                                                    <h6 class="order-h6">{{Session::get('currency')}} {{ round(($getDiscountAttributePrice['final_price'] * $item['quantity']) * $getCurrencyRate,2) }}</h6>
                                                                 </td>
                                                             </tr>
                                                             @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']) @endphp
@@ -140,7 +142,9 @@
                                                             </td>
                                                             <td>
                                                                 <h3 class="order-h3">
-                                                                    <strong class="grand_total">${{ $total_price - \Illuminate\Support\Facades\Session::get('couponAmount') }}</strong> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
+                                                                    <strong class="grand_total"> {{Session::get('currency')}} {{ round($total_price * $getCurrencyRate,2) }}</strong> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
+                                                                    @php $updated_total_price = round($total_price * $getCurrencyRate,2); 
+                                                                    $selectedCurrency = Session::get('currency');@endphp
                                                                 </h3>
                                                             </td>
                                                         </tr>
@@ -157,25 +161,9 @@
             </div>
         </div>
     </section>
-    <!-- ly-footer-end -->
-
-    <!-- ly-copyright-section-start -->
-    <div class="ly-copyright-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="meta-box">
-                        <p>© Copyright Company 2023. All rights reserved.</p>
-                        <p><span>Cookie preferences</span><span>Do not sell or share my personal information</span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ly-copyright-section-end -->
-    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>    
-<script type="text/javascript">
+<!-- <script type="text/javascript">
   
 $(function() {    
     var $form = $(".require-validation");
@@ -231,5 +219,37 @@ $(function() {
     }
      
 });
+</script> -->
+<script type="text/javascript">
+    var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+    var TotalAmount = {!! $updated_total_price !!};
+    var selectedCurrency = {!! json_encode($selectedCurrency) !!};
+
+    document.getElementById('checkout-button').addEventListener('click', async function () {
+        var data = {
+            'amount': TotalAmount,
+        };
+        try {
+            let response = await fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            let sessionId = await response.json();
+            let result = await stripe.redirectToCheckout({ sessionId: sessionId.id });
+
+            if (result.error) {
+                alert(result.error.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 </script>
 @endsection

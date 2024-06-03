@@ -540,7 +540,7 @@
                                         @endphp
                                         <div class="ly-reserve-sidebar">
                                             <!-- <h3 class="stay-price">${{ $getDiscountPrice }}</h3> -->
-                                            <h3 class="stay-price">Price: {{$productDetails['product_price']}} $</h3>
+                                            <h3 class="stay-price">Price: {{round($productDetails['product_price'],2)}} {{Session::get('currency')}}</h3>
                                             <!-- <span class="txt">5 Nights in Pasir putih resort</span>
                                             <small class="from-to-date">Feb 8, 2023 - Feb 13, 2023</small> -->
                                             <!-- <form action="" class="reserve-action-box">
@@ -606,7 +606,7 @@
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <button class="button button-outline-secondary" type="submit">Add to cart</button>
+                                                        <button class="button button-outline-secondary" type="submit">Add to Cart</button>
                                                         <!--<button class="button button-outline-secondary far fa-heart u-s-m-l-6"></button>-->
                                                         <!--<button class="button button-outline-secondary far fa-envelope u-s-m-l-6"></button>-->
                                                     </div>

@@ -113,13 +113,18 @@
                                                 <input required type="number" class="form-control" id="product_code" placeholder="Enter Tax Id" name="product_code" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" @if (!empty($product['product_code'])) value="{{ $product['product_code'] }}" @else value="{{ old('product_code') }}" @endif> 
                                             </div>
                                             <div class="car_detail">
-                                                <label for="product_type">Listing Type</label>
-                                                <input required type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> 
+                                                <label for="product_type">Discount Type</label>
+                                                <select required  class="form-control" id="product_type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type">
+                                                    <option value="">Select Discount Type</option>
+                                                    <option value="membership"  {{ $product['product_type'] == 'membership' ? 'selected' : '' }}>Membership</option>
+                                                    <option value="coupan" {{ $product['product_type'] == 'coupan' ? 'selected' : '' }}>Coupan</option>
+                                                </select>
+                                                <!--<input required type="text" class="form-control" id="product_type" placeholder="Enter Listing Type" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_type" @if (!empty($product['product_type'])) value="{{ $product['product_type'] }}" @else value="{{ old('product_type') }}" @endif> -->
                                             </div>
                                             
                                             <div class="car_detail">
-                                                <label for="gross_sale">What’s your annual savings?</label>
-                                                <input required type="text" class="form-control" id="gross_sale" placeholder="Enter Monthly Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
+                                                <label for="gross_sale">Annual Savings?</label>
+                                                <input required type="text" class="form-control" id="gross_sale" placeholder="Enter Annual Saving" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="gross_sale" @if (!empty($product['gross_sale'])) value="{{ $product['gross_sale'] }}" @else value="{{ old('gross_sale') }}" @endif>
                                             </div>
                                             <div class="car_detail" >
                                                 <label for="avg_customer">Membership Valid Through?</label>
@@ -132,34 +137,86 @@
                                                 </select>
                                             </div>
                                             <div class="car_detail">
-                                                <label for="is_featured">Featured Item (Yes/No)</label>
-                                                <input  type="checkbox" name="is_featured" id="is_featured" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>
+                                                <label for="extras">Extras</label>
+                                                <input type="checkbox" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="extras" id="extras" @if (!empty($product['extras_description'])) checked @endif onclick="toggleTextarea()">
                                             </div>
+                                            
+                                            <div id="textarea-container" class="textarea-hidden" style="display: {{$product['split_payment_select'] != null ? 'block' : 'none'}}">
+                                                <label for="extras-description">Description of Extras</label>
+                                                <textarea id="extras-description" name="extras-description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['extras_description'] }}</textarea>
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="split_payments">Split Payments</label>
+                                                <input type="checkbox" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="split_payments" id="split_payments" @if (!empty($product['split_payment_select'])) checked @endif onclick="toggleSplitPayment()">
+                                            </div>
+                                            <div id="split-payment-container" style="display: {{$product['split_payment_select'] != null ? 'block' : 'none'}}">
+                                                <div class="textarea-hidden">
+                                                    <label for="split-payment-select">Select Plans</label>
+                                                    <select id="split-payment-select" name="split-payment-select" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                        <option value="">Choose Months</option>
+                                                        <option value="12" @if (!empty($product['split_payment_select']) && $product['split_payment_select'] == 12) selected @endif>12</option>
+                                                        <option value="24" @if (!empty($product['split_payment_select']) && $product['split_payment_select'] == 24) selected @endif>24</option>
+                                                        <option value="36" @if (!empty($product['split_payment_select']) && $product['split_payment_select'] == 36) selected @endif>36</option>
+                                                        <option value="48" @if (!empty($product['split_payment_select']) && $product['split_payment_select'] == 48) selected @endif>48</option>
+                                                        <option value="60" @if (!empty($product['split_payment_select']) && $product['split_payment_select'] == 60) selected @endif>60</option>
+                                                
+                                                    </select>
+                                                </div>
+                                                <div class="car_detail">
+                                                    <label for="split_amount">Split Amount</label>
+                                                    <input type="number" class="form-control" placeholder="Split Amount"style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="split_amount" id="split_amount" @if (!empty($product['split_amount'])) value="{{$product['split_amount']}}" @else value="" @endif>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <!--<div class="car_detail">-->
+                                            <!--    <label for="is_featured">Featured Item (Yes/No)</label>-->
+                                            <!--    <input  type="checkbox" name="is_featured" id="is_featured" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" value="Yes" @if (!empty($product['is_featured']) && $product['is_featured'] == 'Yes') checked @endif>-->
+                                            <!--</div>-->
 
                                         </div>
                                         <div class="col-6">
 
                                             <div class="car_detail">
-                                                <label for="product_name">Listing Name</label>
-                                                <input type="text" class="form-control" id="product_name" placeholder="Enter Product Name" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
+                                                <label for="product_name">Title</label>
+                                                <input type="text" class="form-control" id="product_name" placeholder="Enter Listing Name" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_name" @if (!empty($product['product_name'])) value="{{ $product['product_name'] }}" @else value="{{ old('product_name') }}" @endif>  
                                             </div>
                                             <div class="car_detail">
-                                                <label for="product_price">Listing Price</label>
+                                                <label for="product_price">Price</label>
                                                 <input type="text" class="form-control" id="product_price" placeholder="Enter Listing Price"  style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_price" @if (!empty($product['product_price'])) value="{{ $product['product_price'] }}" @else value="{{ old('product_price') }}" @endif> 
                                             </div>
                                             <div class="car_detail">
-                                                <label for="product_units">No of Units of BOD</label>
+                                                <label for="product_units">Unit / Qty</label>
                                                 <input type="text" class="form-control" id="product_units" placeholder="Enter Listing Units" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_units" @if (!empty($product['product_units'])) value="{{ $product['product_units'] }}" @else value="{{ old('product_units') }}" @endif>
                                             </div>
 
                                             <div class="car_detail">
-                                                <label for="product_discount">Listing Discount</label>
-                                                <input type="number" class="form-control" id="product_discount" placeholder="Enter Total Savings" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
+                                                <label for="product_discount">Discount</label>
+                                                <input type="number" class="form-control" id="product_discount" placeholder="Enter Discount" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="product_discount" @if (!empty($product['product_discount'])) value="{{ $product['product_discount'] }}" @else value="{{ old('product_discount') }}" @endif>
                                             </div>
                                            
                                             <div class="car_detail" id="validity">
-                                                <label for="validity">Validity</label>
+                                                <label for="validity">Valid Date</label>
                                                 <input type="date" class="form-control"  placeholder="Enter Product Discount" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="validity" @if (!empty($product['validity'])) value="{{ $product['validity'] }}" @else value="{{ old('validity') }}" @endif>
+                                            </div>
+                                            <div class="car_detail">
+                                                <label for="divident">Dividends or Profit Sharing</label>
+                                                <input type="checkbox" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" name="divident" id="divident" @if (!empty($product['divident_description'])) checked @endif onclick="toggleDividentTextarea()">
+                                            </div>
+                                           
+                                            <div id="divedent-textarea-container" class="textarea-hidden" style="display: {{$product['divident_description'] != null ? 'block' : 'none'}}">
+                                                <label for="divident-description">Description of Dividends or Profit Sharing</label>
+                                                <textarea id="divident-description" name="divident-description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['divident_description'] }}</textarea>
+                                            </div>
+
+                                            <div class="textarea-hidden">
+                                                    <label for="target_audiesnce">Targeted Audience</label>
+                                                    <select id="split-payment-select" name="target_audiesnce" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                        <option value="">Choose Location</option>
+                                                        <option value="internation" @if (!empty($product['target_audiesnce']) && $product['target_audiesnce'] == 'internation') selected @endif>International</option>
+                                                        <option value="local" @if (!empty($product['target_audiesnce']) && $product['target_audiesnce'] == 'local') selected @endif>Local</option>
+                                                        <option value="both" @if (!empty($product['target_audiesnce']) && $product['target_audiesnce'] == 'both') selected @endif>Both</option>
+                                                    </select>
                                             </div>
                                             
 
@@ -167,7 +224,7 @@
 
                                         <div class="col-12">
                                             <div class="car_detail">
-                                                <label for="description">Listing Description</label>
+                                                <label for="description">Description</label>
                                                 <textarea required name="description" id="description" class="form-control" style="border-radius: 12px; border: 2px solid #E6E8EC !important;" rows="3">{{ $product['description'] }}</textarea>
                                             </div>
                                         </div>
@@ -192,15 +249,10 @@
                             </div>
 
                             <div class="col-sm-4" style="float:right;">
-
                                 <div class="snet-listing-preview-box">
                                     <h5>Preview</h5>
-                                    <div class="ly-car-card ly-car-card-grid">
-                                        <div class="car-img-box">
-                                            <a href="#"><img src="{{ !empty($product['product_image']) ? asset('front/images/product_images/small/'.$product['product_image']) : 'https://placehold.co/395x240?text=Preview+Image' }}" alt="list-img"></a>
-                                            <span class="card-tag">superhost</span>
-                                        </div>
-                                      
+                                    <div id="first_image_preview">
+                                        <a href="#"><img src="https://placehold.co/395x240?text=Preview+Image" alt="list-img" class="img-responsive image img-thumbnail"></a>
                                     </div>
                                 </div>
                             </div>
@@ -222,6 +274,35 @@
             </div>
         </div>
     </section>
+    <script tye="text/javascript">
+        function toggleTextarea() {
+            var checkbox = document.getElementById('extras');
+            var textareaContainer = document.getElementById('textarea-container');
+            if (checkbox.checked) {
+                textareaContainer.style.display = 'block';
+            } else {
+                textareaContainer.style.display = 'none';
+            }
+        }
+        function toggleSplitPayment(){
+            var checkbox = document.getElementById('split_payments');
+            var textareaContainer = document.getElementById('split-payment-container');
+            if (checkbox.checked) {
+                textareaContainer.style.display = 'block';
+            } else {
+                textareaContainer.style.display = 'none';
+            }
+        }
+        function toggleDividentTextarea() {
+            var checkbox = document.getElementById('divident');
+            var textareaContainer = document.getElementById('divedent-textarea-container');
+            if (checkbox.checked) {
+                textareaContainer.style.display = 'block';
+            } else {
+                textareaContainer.style.display = 'none';
+            }
+        }
+    </script>
     
     
 
@@ -276,7 +357,6 @@
     });
     
     var places_input = document.getElementById('mw_address');
-    console.log(places_input);
     var autocomplete = new google.maps.places.Autocomplete(places_input);
     autocomplete.bindTo('bounds', map);
     
@@ -316,8 +396,7 @@
 
        $(document).ready(function() {
     var fileArr = [];
-
-    // Function to add images to the preview
+    
     function addImagesToPreview(files) {
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
@@ -325,21 +404,33 @@
                 return false;
             } else {
                 fileArr.push(file);
+
+                // If this is the first file and there's no previous image, set it as the preview image
+                if (fileArr.length === 1) {
+                    $('#first_image_preview img').attr('src', URL.createObjectURL(file));
+                }
+
                 $('#image_preview').append("<div class='img-div'><img src='" + URL.createObjectURL(file) + "' class='img-responsive image img-thumbnail' title='" + file.name + "'><div class='middle'><button class='btn btn-danger delete-btn'><i class='fa fa-trash'></i></button></div></div>");
             }
         }
     }
 
-    // Handle file input change event
+    // Show the first existing image in the preview section if updating the listing
+    const existingImages = {!! json_encode($getAllIMages) !!};
+    if (existingImages.length > 0) {
+        $('#first_image_preview img').attr('src', '{{ asset('front/images/product_images/small') }}/' + existingImages[0]);
+    }
+
+    existingImages.forEach(function(filename) {
+        $('#image_preview').append("<div class='img-div'><img src='{{ asset('front/images/product_images/small') }}/" + filename + "' class='img-responsive image img-thumbnail' title='" + filename + "'><div class='middle'><button class='btn btn-danger delete-btn'><i class='fa fa-trash'></i></button></div></div>");
+    });
+
     $("#images").change(function(event) {
         var total_file = event.target.files;
         if (!total_file.length) return;
-
-        // Add new images to preview
         addImagesToPreview(total_file);
     });
 
-    // Handle delete button click event
     $('#image_preview').on('click', '.delete-btn', function(event) {
         event.preventDefault(); // Prevent default behavior
 
@@ -353,20 +444,20 @@
         fileArr = fileArr.filter(function(file) {
             return file.name !== fileName;
         });
+
+        // If the first image was deleted, update the preview to show the next available image
+        if (fileArr.length > 0) {
+            $('#first_image_preview img').attr('src', URL.createObjectURL(fileArr[0]));
+        } else {
+            // If no images are left, reset the preview to default
+            $('#first_image_preview img').attr('src', 'https://placehold.co/395x240?text=Preview+Image');
+        }
     });
 
-    // Trigger file input click when dropzone is clicked
     $('.dropzone_new').on('click', function() {
         $('#images').click();
     });
-
-    // Append existing images to the preview
-    const imageUrls = {!! json_encode($getAllIMages) !!};
-    imageUrls.forEach(function(filename) {
-        $('#image_preview').append("<div class='img-div'><img src='{{ asset('front/images/product_images/small') }}/" + filename + "' class='img-responsive image img-thumbnail' title='" + filename + "'><div class='middle'><button class='btn btn-danger delete-btn'><i class='fa fa-trash'></i></button></div></div>");
-    });
 });
-
 
     </script>
 @endsection

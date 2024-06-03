@@ -135,7 +135,8 @@ class ProductsController extends Controller
             else{
                 $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(5);
             }
-            // return $categoryProducts;
+            
+            $selectedCurrencyRate = $this->getExchnagedRate();
             $getAllProducts = $categoryProducts;
             // Pagination (after the Sorting Filter)
             // $categoryProducts = $categoryProducts->orderBy('products.id', 'Desc')->paginate(30); // Moved the pagination after checking for the sorting filter <form>
@@ -145,7 +146,7 @@ class ProductsController extends Controller
             $meta_title       = '';
             $meta_description = '';
             $meta_keywords    = '';
-            return view('front.products.listing')->with(compact('radius','address','showMap','getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
+            return view('front.products.listing')->with(compact('selectedCurrencyRate','radius','address','showMap','getAllProducts','Sprice','fetchAllCategories','categoryDetails', 'categoryProducts', 'url', 'meta_title', 'meta_description', 'meta_keywords'));
         }
         
     }
@@ -169,63 +170,134 @@ class ProductsController extends Controller
 
             return $distance; // in kilometers
         }
+ public function createCheckoutSession(Request $request)
+    {
+        $getCartItems = Cart::getCartItems();    
+        if (count($getCartItems) == 0) {
+            $message = 'Shopping Cart is empty! Please add listing to your Cart to checkout';
 
+            return redirect('cart')->with('error_message', $message); // redirect user to the cart.blade.php page, and show an error message in cart.blade.php
+        }
+        $currency = strtolower(Session::get('currency', 'usd'));
+        $amount = $request->input('amount');
+        if (!is_numeric($amount) || $amount <= 0) {
+            return response()->json(['error' => 'Invalid amount specified'], 400);
+        }
+        $unitAmount = $amount * 100;
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        try {
+             $session = Stripe\Checkout\Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => $currency,
+                        'product_data' => [
+                            'name' => 'Total Amount',
+                        ],
+                        'unit_amount' => $unitAmount,
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'success_url' => route('new.thank.you') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('checkout'),
+            ]);
+            return response()->json(['id' => $session->id]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+    public function webhook(Request $request)
+    {
+        // Handle the webhook logic here
+        // Retrieve the event by verifying the signature
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload, $sig_header, $endpoint_secret
+            );
+        } catch(\UnexpectedValueException $e) {
+            // Invalid payload
+            return response()->json(['error' => 'Invalid payload'], 400);
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        // Handle the checkout.session.completed event
+        if ($event->type == 'checkout.session.completed') {
+            $session = $event->data->object;
+
+            // Fulfill the purchase
+            // e.g., update database, send email, etc.
+        }
+
+        return response()->json(['status' => 'success']);
+    }
 
 
     // Render Single Product Detail Page in front/products/detail.blade.php    
-    public function detail($id) { // Required Parameters: https://laravel.com/docs/9.x/routing#required-parameters
+    public function detail($id) { 
         $productDetails = Product::with([
-            'section', 'category', 'brand', 'attributes' => function($query) { // Constraining Eager Loads: https://laravel.com/docs/9.x/eloquent-relationships#constraining-eager-loads    // Subquery Where Clauses: https://laravel.com/docs/9.x/queries#subquery-where-clauses    // Advanced Subqueries: https://laravel.com/docs/9.x/eloquent#advanced-subqueries    // 'section', 'category', 'brand', 'attributes', 'images', 'vendor' are the relationship method names in Product.php model which are being Eager Loaded (Eager Loading)
-                $query->where('stock', '>', 0)->where('status', 1); // the 'attributes' relationship method in Product.php model     // Constraining Eager Loads to get the `products_attributes` of `stock` more than Zero 0 ONLY and `status` is 1 (active/enabled)
+            'section', 'category', 'brand', 'attributes' => function($query) { 
+                $query->where('stock', '>', 0)->where('status', 1); 
             }, 'images', 'vendor'
-        ])->find($id)->toArray(); // Eager Loading (using with() method): https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // Eager Loading Multiple Relationships: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading-multiple-relationships
+        ])->find($id)->toArray(); 
+
+        // convert price
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://v6.exchangerate-api.com/v6/79ba39c6dbcca4ca0c72c610/latest/USD',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $getConversion = json_decode($response,true);
+        $getCurrencies = $getConversion['conversion_rates'];
+
+        $getCurrentValue = Session::get('currency');
+        if($getCurrentValue == null){
+            $getCurrentValue = 'USD';
+        }
+        $productDetails['product_price'] = $productDetails['product_price'] * $getCurrencies[$getCurrentValue];
+
+
 // return $productDetails;
-        $categoryDetails = Category::categoryDetails(null, $productDetails['category']['url']); // to get the Breadcrumb links (which is HTML) to show them in front/products/detail.blade.php
-        
-
-        // Get similar products (or related products) (functionality) by getting other products from THE SAME CATEGORY    
-        $similarProducts = Product::with('brand')->where('category_id', $productDetails['category']['id'])->where('id', '!=', $id)->limit(4)->inRandomOrder()->get()->toArray(); // where('id', '!=', $id)    means get all similar products (of the same category) EXCEPT (exclude) the currently viewed product (to not be repeated (to prevent repetition))    // limit(4)->inRandomOrder()    means show only 4 similar products but IN RANDOM ORDER
-
-
-        // Recently Viewed Products (Items) functionality (we created `recently_viewed_products` table but we won't need to create a Model for it, because we won't do much work with it)
-        // The idea of the Recently Viewed Products functionality is whenever a user views a product (i.e. opens detail.blade.php page via the detail() method here), we insert the viewed product id and the user's session id in the `recently_viewed_products` database table. At the same time, we retrieve/get/fetch the previously inserted recently viewed products (from `recently_viewed_products` table) to display them in detail.blade.php
-        // Very Important Note: You'll need here Task Scheduling (Cron jobs) to clear the `recently_viewed_products` table from time to time because it will get very big and will make your database slow over time    // Task Scheduling (Laravel's Cron jobs): https://laravel.com/docs/9.x/scheduling
-        // Set Session for the Recently Viewed Products
-        if (empty(Session::get('session_id'))) { // if the session is empty (user is not logged in), create a random session id (for the 'Guest' user)    // https://laravel.com/docs/9.x/authentication#ecosystem-overview    // Determining If An Item Exists In The Session: https://laravel.com/docs/9.x/session#determining-if-an-item-exists-in-the-session
+        $categoryDetails = Category::categoryDetails(null, $productDetails['category']['url']);    
+        $similarProducts = Product::with('brand')->where('category_id', $productDetails['category']['id'])->where('id', '!=', $id)->limit(4)->inRandomOrder()->get()->toArray();
+        if (empty(Session::get('session_id'))) { 
             $session_id = md5(uniqid(rand(), true));
-        } else { // if the session exists (user is logged in)    // https://laravel.com/docs/9.x/authentication#ecosystem-overview
+        } else {
             $session_id = Session::get('session_id');
         }
-
-        // Store the $session_id in the Session
-        Session::put('session_id', $session_id); // (!! this shouble be inside the last if statement case that the user is NOT logged in ONLY !!) $session_id comes from one of the two cases of the last if statement    // Storing Data: https://laravel.com/docs/9.x/session#storing-data
-
-        // If they don't already exist, INSERT the currently viewed product `product_id` and `session_id` in `recently_viewed_products` table (ONE TIME ONLY)
-        $countRecentlyViewedProducts = DB::table('recently_viewed_products')->where([ // Note: Here we use Laravel 'DB' facade because we didn't create a Model for the `recently_viewed_products` table, because we don't need it because we won't do much work with it. So we'll just ONLY DIRECTLY interact with the `recently_viewed_products` table using Laravel 'DB' facade
+        Session::put('session_id', $session_id); 
+        $countRecentlyViewedProducts = DB::table('recently_viewed_products')->where([ 
             'product_id' => $id,
-            'session_id' => $session_id // comes from the two cases of the last if statement
-        ])->count(); // get the count or the number of that currently Viewed Product through the same Product (through `product_id`) and Session (through `session_id`). This should not be more than ONE TIME ONLY!
-
-        if ($countRecentlyViewedProducts == 0) { // if that currently Viewed Product doesn't already exist in the `recently_viewed_products` table, INSERT it in
-            DB::table('recently_viewed_products')->INSERT([ // Note: Here we use Laravel 'DB' facade because we didn't create a Model for the `recently_viewed_products` table, because we don't need it because we won't do much work with it. So we'll just ONLY DIRECTLY interact with the `recently_viewed_products` table using Laravel 'DB' facade
+            'session_id' => $session_id 
+        ])->count(); 
+        if ($countRecentlyViewedProducts == 0) { 
+            DB::table('recently_viewed_products')->INSERT([ 
                 'product_id' => $id,
-                'session_id' => $session_id // $session_id comes from one of the two cases of the last if statement
+                'session_id' => $session_id 
             ]);
         }
-
-        // Get Recently Viewed Products (Items) IDs
-        $recentProductsIds = DB::table('recently_viewed_products')->select('product_id')->where('product_id', '!=', $id)->where('session_id', $session_id)->inRandomOrder()->get()->take(4)->pluck('product_id'); // take() is identical to limit(): https://laravel.com/docs/9.x/queries#limit-and-offset    // where('product_id', '!=', $id)    means exclude (EXCEPT) the currently viewed product (to not be repeated (to prevent repetition))    // Note: Here we use Laravel 'DB' facade because we didn't create a Model for the `recently_viewed_products` table, because we don't need it because we won't do much work with it. So we'll just ONLY DIRECTLY interact with the `recently_viewed_products` table using Laravel 'DB' facade
-
-        // Get Recently Viewed Products (Items)
-        $recentlyViewedProducts = Product::with('brand')->whereIn('id', $recentProductsIds)->get()->toArray(); // https://laravel.com/docs/9.x/collections#method-wherein AND https://laravel.com/docs/9.x/queries#additional-where-clauses
-
-
-
-        // Managing Product Colors (in front/products/detail.blade.php)    
-        // Get Group Code Products `group_code` column in `products` table (get the `group_code` of the product, if exists (if any))
+        $recentProductsIds = DB::table('recently_viewed_products')->select('product_id')->where('product_id', '!=', $id)->where('session_id', $session_id)->inRandomOrder()->get()->take(4)->pluck('product_id');
+        $recentlyViewedProducts = Product::with('brand')->whereIn('id', $recentProductsIds)->get()->toArray(); 
         $groupProducts = array();
-        if (!empty($productDetails['group_code'])) { // if the product has a `group_code`
-            // Get all other products who also have the same `group_code`
+        if (!empty($productDetails['group_code'])) { 
             $groupProducts = Product::select('id', 'product_image')->where('id', '!=', $id)->where([ // where('id', '!=', $id)    means exclude (EXCEPT) the currently viewed product (to not be repeated (to prevent repetition))
                 'group_code' => $productDetails['group_code'],
                 'status'     => 1
@@ -425,12 +497,39 @@ class ProductsController extends Controller
             return redirect()->back()->with('success_messages', 'Product has been added in Cart!');
         }
     }
+    public function getExchnagedRate(){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://v6.exchangerate-api.com/v6/79ba39c6dbcca4ca0c72c610/latest/USD',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $getConversion = json_decode($response,true);
+        $getCurrencies = $getConversion['conversion_rates'];
+
+        $getCurrentValue = Session::get('currency');
+        if($getCurrentValue == null){
+            $getCurrentValue = 'USD';
+        }
+        return $getCurrencies[$getCurrentValue];
+    }
 
     // Render Cart page (front/products/cart.blade.php)    
     public function cart() {
         
         // Get the Cart Items of a cerain user (using their `user_id` if they're authenticated/logged in or their `session_id` if they're not authenticated/not logged in (guest))    
         $getCartItems = Cart::getCartItems();
+        $getCurrencyRate = $this->getExchnagedRate();
 // return $getCartItems;
 
         // Static SEO (HTML meta tags): Check the HTML <meta> tags and <title> tag in front/layout/layout.blade.php    
@@ -438,7 +537,7 @@ class ProductsController extends Controller
         $meta_keywords    = 'shopping cart, multi vendor';
 
 
-        return view('front.products.cart')->with(compact('getCartItems', 'meta_title', /* 'meta_description', */ 'meta_keywords'));
+        return view('front.products.cart')->with(compact('getCurrencyRate','getCartItems', 'meta_title', /* 'meta_description', */ 'meta_keywords'));
     }
 
     // Update Cart Item Quantity AJAX call in front/products/cart_items.blade.php. Check front/js/custom.js
@@ -732,8 +831,8 @@ class ProductsController extends Controller
 
     public function checkout(Request $request) {
         $countries = Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
-        $getCartItems = Cart::getCartItems();
-        $getCartItems = Cart::getCartItems();
+        // $getCartItems = Cart::getCartItems();
+        // $getCartItems = Cart::getCartItems();
 
         // If the Cart is empty (If there're no Cart Items), don't allow opening/accessing the Checkout page (checkout.blade.php)    
         $getCartItems = Cart::getCartItems();   
@@ -749,6 +848,7 @@ class ProductsController extends Controller
         // Calculate the total price    
         $total_price  = 0;
         $total_weight = 0;
+        $getCurrencyRate = $this->getExchnagedRate();
 
         foreach ($getCartItems as $item) {
             $attrPrice = Product::getDiscountAttributePrice($item['product_id'], null);
@@ -758,6 +858,7 @@ class ProductsController extends Controller
             $product_weight = $item['product']['product_weight'];
             $total_weight = $total_weight + $product_weight;
         }
+        // $total_price = $total_price * $getCurrencyRate;
         $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
         foreach ($deliveryAddresses as $key => $value) {
             $shippingCharges = ShippingCharge::getShippingCharges($total_weight, $value['country']);
@@ -971,13 +1072,213 @@ class ProductsController extends Controller
         }
 
 
-        return view('front.products.checkout')->with(compact('deliveryAddresses', 'countries', 'getCartItems', 'total_price'));
+        return view('front.products.checkout')->with(compact('getCurrencyRate','deliveryAddresses', 'countries', 'getCartItems', 'total_price'));
     }
+    public function newThanks(Request $request) {
+        $getCartItems = Cart::getCartItems(); 
+        // Calculate the total price    
+        $total_price  = 0;
+        $total_weight = 0;
+        $getSelectedCurrency = Session::get('currency');
+        foreach ($getCartItems as $item) {
+            $attrPrice = Product::getDiscountAttributePrice($item['product_id'], null);
+            $total_price = round((floatval($total_price) + (floatval($attrPrice['final_price']) * intval($item['quantity']))) * floatval($getSelectedCurrency), 2);
+
+            
+            $product_weight = $item['product']['product_weight'];
+            $total_weight = $total_weight + $product_weight;
+        }
+        $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
+        foreach ($deliveryAddresses as $key => $value) {
+            $shippingCharges = ShippingCharge::getShippingCharges($total_weight, $value['country']);
+            $deliveryAddresses[$key]['shipping_charges'] = $shippingCharges;
+
+            $deliveryAddresses[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $value['pincode'])->count();   
+            $deliveryAddresses[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $value['pincode'])->count(); 
+        }
+        foreach ($getCartItems as $item) {
+            $product_status = Product::getProductStatus($item['product_id'],null);
+            if ($product_status == 0) { // if the product is disabled (`status` = 0)
+                $message = $item['product']['product_name'] . ' with ' . $item['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
+                return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+            }
+        }
+        $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
+        if ($getProductStock == 0) { // if the product's `stock` is 0 zero
+            $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
+            return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+        }
+        $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id'], null);
+        if ($getCategoryStatus == 0) { // if the Category is disabled (`status` = 0)
+            $message = $item['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
+            return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
+        }  
+        $payment_method = 'COD';
+        $order_status   = 'New';
+
+        DB::beginTransaction();
+            $total_price = 0;
+            foreach ($getCartItems as $item) {
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null);
+                $total_price = round((floatval($total_price) + (floatval($attrPrice['final_price']) * intval($item['quantity']))) * floatval($getSelectedCurrency), 2);
+            }
+            $shipping_charges = 0;
+            $grand_total = $total_price ;
+            Session::put('grand_total', $grand_total);
+            $order = new Order; 
+            // Assign the $order data to be INSERT-ed INTO the `orders` table
+            $order->user_id          = Auth::user()->id; 
+            $order->email            = Auth::user()->email;
+            $order->shipping_charges = NULL;
+            $order->coupon_code      = NULL;   // it was set inside applyCoupon() method
+            $order->coupon_amount    = NULL; // it was set inside applyCoupon() method
+            $order->order_status     = $order_status;
+            $order->payment_method   = $payment_method;
+            $order->payment_gateway  = 'COD';
+            $order->grand_total      = $grand_total;
+
+            $order->save();
+
+            //insert data into wallet
+            $getAdmin = Admin::where('type','superadmin')->first()['id'];
+            if(UserWallet::where('user_id',$getAdmin)->where('is_vendor','1')->where('is_admin','1')->exists()){
+                $getwallet = UserWallet::where('user_id',$getAdmin)->first();
+                $updatedAmount = $grand_total + $getwallet->amount;
+                $getwallet->amount = $updatedAmount;
+            }
+            else{
+                $getwallet = new UserWallet();
+                $getwallet->amount = $grand_total;
+                $getwallet->is_vendor = '1';
+                $getwallet->is_admin = '1';
+                $getwallet->user_id = $getAdmin;
+            }
+            $getwallet->save();
+            $order_id = $order->id;
+            foreach ($getCartItems as $item) {
+                $cartItem = new OrdersProduct;
+                $cartItem->order_id = $order_id;
+                $cartItem->user_id  = Auth::user()->id;
+                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $item['product_id'])->first()->toArray();
+                $cartItem->admin_id        = $getProductDetails['admin_id'];
+                $cartItem->vendor_id       = $getProductDetails['vendor_id'];
+
+                $cartItem->product_id      = $item['product_id'];
+                $cartItem->product_code    = $getProductDetails['product_code'];
+                $cartItem->product_name    = $getProductDetails['product_name'];
+                $cartItem->product_color   = $getProductDetails['product_color'];
+                $cartItem->product_size    = $item['size'];
+
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null); 
+                $cartItem->product_price   = (float)$getDiscountAttributePrice['final_price'] * $getSelectedCurrency;
 
 
+                
+                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units'];
+                if ($item['quantity'] > $getProductStock) { 
+                    $message = $getProductDetails['product_name'] . '  stock is not available/enough for your order. Please reduce its quantity and try again!';
 
-    // Rendering Thanks page (after placing an order)    
-    public function thanks() {
+                    return redirect('/cart')->with('error_message', $message); 
+                }
+
+
+                $cartItem->product_qty     = $item['quantity'];
+                $cartItem->remaining_qty     = $item['quantity'];
+
+                $cartItem->save();
+
+
+                
+                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; 
+                $newStock = (int)$getProductStock - $item['quantity'];
+                Product::where([ 
+                    'id' => $item['product_id'],
+                ])->update(['product_units' => $newStock]);
+                //update respective user wallet
+
+                $getProduct = Product::where('id',$item['product_id'])->first();
+                if($getProduct->is_resell == '1'){
+                    //user account
+                    $getUserDetails = User::where('id',$getProduct->vendor_id)->first();
+                    $getAfterCommision = $getDiscountAttributePrice['final_price'] - (($getDiscountAttributePrice['final_price'] * 5) / 100);
+                    $updatedAmount = $getAfterCommision;
+                    if(UserWallet::where('user_id',$getUserDetails->id)->exists()){
+                        $getwallet = UserWallet::where('user_id',$getUserDetails->id)->first();
+                        $getwallet->amount = $updatedAmount + $getwallet->amount;;
+                    }
+                    else{
+                        $getwallet = new UserWallet();
+                        $getwallet->amount = $updatedAmount;
+                        $getwallet->is_vendor = '0';
+                        $getwallet->user_id = $getUserDetails->id;
+                    }
+                    $getwallet->save();
+                }
+                else{
+                    // vendor side
+                    $getUserDetails = $getProduct->vendor_id;
+                    $getAfterCommision = $getDiscountAttributePrice['final_price'] - (($getDiscountAttributePrice['final_price'] * 5) / 100);
+                    $updatedAmount = $getAfterCommision;
+                    if(UserWallet::where('user_id',$getUserDetails)->exists()){
+                        $getwallet = UserWallet::where('user_id',$getUserDetails)->first();
+                        $getwallet->amount = $updatedAmount + $getwallet->amount;;
+                    }
+                    else{
+                        $getwallet = new UserWallet();
+                        $getwallet->amount = $updatedAmount;
+                        $getwallet->is_vendor = '1';
+                        $getwallet->is_admin = '0';
+                        $getwallet->user_id = $getUserDetails;
+                    }
+                    $getwallet->save();
+                }
+            }
+            // Store the `order_id` in Session so that we can use it in front/products/thanks.blade.php, thanks() method, paypal() method in Front/PayPalController.php and pay() method in Front/IyzipayController.php
+            Session::put('order_id', $order_id); // Storing Data: https://laravel.com/docs/9.x/session#storing-data
+
+
+            DB::commit(); 
+            $orderDetails = Order::with('orders_products')->where('id', $order_id)->first()->toArray(); // Eager Loading: https://laravel.com/docs/9.x/eloquent-relationships#eager-loading    // 'orders_products' is the relationship method name in Order.php model
+
+            if ($payment_method == 'COD') { // if the `payment_gateway` selected by the user is 'COD' (in front/products/checkout.blade.php), we send the placing the order confirmation email and SMS immediately
+                // Sending the Order confirmation email
+                $email = Auth::user()->email; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+
+                // The email message data/variables that will be passed in to the email view
+                $messageData = [
+                    'email'        => $email,
+                    'name'         => Auth::user()->name, // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+                    'order_id'     => $order_id,
+                    'orderDetails' => $orderDetails
+                ];
+
+                \Illuminate\Support\Facades\Mail::send('emails.order', $messageData, function ($message) use ($email) { // Sending Mail: https://laravel.com/docs/9.x/mail#sending-mail    // 'emails.order' is the order.blade.php file inside the 'resources/views/emails' folder that will be sent as an email    // We pass in all the variables that order.blade.php will use    // https://www.php.net/manual/en/functions.anonymous.php
+                    $message->to($email)->subject('Order Placed - MultiVendorEcommerceApplication.com.eg');
+                });
+
+                /*  
+                $message = 'Dear Customer, your order ' . $order_id . ' has been placed successfully with MultiVendorEcommerceApplication.com.eg. We will inform you once your order is shipped';
+                // $mobile = $data['mobile']; // the user's mobile that they entered while submitting the registration form
+                $mobile = Auth::user()->moblie; // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
+                \App\Models\Sms::sendSms($message, $mobile); // Send the SMS
+                */
+
+
+                // PayPal payment gateway integration in Laravel
+            }
+
+
+        if (Session::has('order_id')) { 
+            Cart::where('user_id', Auth::user()->id)->delete();
+
+            return view('front.products.thanks');
+        } else { 
+            return redirect('cart'); 
+        }
+    }  
+    public function thanks(Request $request) {
+        $session_id = $request->query('session_id');
+
         if (Session::has('order_id')) { // if there's an order has been placed, empty the Cart (remove the order (the cart items/products) from `carts`table)    // 'user_id' was stored in Session inside checkout() method in Front/ProductsController.php
             // We empty the Cart after placing the order
             Cart::where('user_id', Auth::user()->id)->delete(); // Retrieving The Authenticated User: https://laravel.com/docs/9.x/authentication#retrieving-the-authenticated-user
@@ -1127,13 +1428,12 @@ class ProductsController extends Controller
             $order->QRdata = "Buyer Name: " . $order->buyer_name . "\n" . 
                                 "Product Name: " .  isset($getproduct) ? $getproduct->product_name : '' . "\n" . 
                                 "Product Code: " . $getproduct->product_code;
-             $order->is_resell = true;                   
+             $order->is_resell = true;                  
             if($order->remaining_qty <= 0){
                 $order->is_resell = false;
             }
             
         }
-        // return $products;
         // $products = Product::whereIn('id',$getProducts)->get();
         // foreach($products as $product){
         //     $product->buyer_name = \Illuminate\Support\Facades\Auth::user()->name;

@@ -404,7 +404,7 @@ class AdminController extends Controller
                 ]);
 
 
-                return redirect()->back()->with('success_message', 'Vendor details updated successfully!');
+                return redirect('admin/update-vendor-details/business')->with('success_message', 'Vendor details updated successfully!');
             }
 
 
@@ -504,7 +504,7 @@ class AdminController extends Controller
                 }
 
 
-                return redirect()->back()->with('success_message', 'Vendor details updated successfully!');
+                return redirect('admin/update-vendor-details/bank')->with('success_message', 'Vendor details updated successfully!');
             }
 
 

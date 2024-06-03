@@ -46,16 +46,16 @@
                             @if ($getDiscountAttributePrice['discount'] > 0) {{-- If there's a discount on the price, show the price before (the original price) and after (the new price) the discount --}}
                                 <div class="price-template">
                                     <div class="item-new-price">
-                                        ${{ $getDiscountAttributePrice['final_price'] }}
+                                        ${{ round($getDiscountAttributePrice['final_price'] * $getCurrencyRate,2) }}
                                     </div>
                                     <div class="item-old-price" style="margin-left: -40px">
-                                        ${{ $getDiscountAttributePrice['product_price'] }}
+                                        ${{ round($getDiscountAttributePrice['product_price'] * $getCurrencyRate, 2) }}
                                     </div>
                                 </div>
                             @else {{-- if there's no discount on the price, show the original price --}}
                                 <div class="price-template">
                                     <div class="item-new-price">
-                                        ${{ $getDiscountAttributePrice['final_price'] }}
+                                        ${{ round($getDiscountAttributePrice['final_price'] * $getCurrencyRate,2) }}
                                     </div>
                                 </div>
                             @endif
@@ -123,7 +123,7 @@
                         <h3 class="calc-h3 u-s-m-b-0">Sub Total</h3> {{-- Total Price before any Coupon discounts --}}
                     </td>
                     <td>
-                        <span class="calc-text">${{ $total_price }}</span>
+                        <span class="calc-text">${{ round($total_price * $getCurrencyRate,2) }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -146,7 +146,7 @@
                         <h3 class="calc-h3 u-s-m-b-0">Grand Total</h3> {{-- Total Price after Coupon discounts (if any) --}}
                     </td>
                     <td>
-                        <span class="calc-text grand_total">${{ $total_price - \Illuminate\Support\Facades\Session::get('couponAmount') }}</span> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
+                        <span class="calc-text grand_total">${{ round($total_price * $getCurrencyRate,2) }}</span> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
                     </td>
                 </tr>
             </tbody>

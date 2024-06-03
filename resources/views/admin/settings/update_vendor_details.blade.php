@@ -117,7 +117,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="vendor_pincode">Pincode</label>
+                                        <label for="vendor_pincode">Password</label>
                                         <input type="text" class="form-control" id="vendor_pincode" placeholder="Enter Pincode" name="vendor_pincode" value="{{ $vendorDetails['pincode'] }}"> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">
@@ -238,7 +238,7 @@
                                         <input type="text" class="form-control" id="shop_website" placeholder="Enter Business Website" name="shop_website"  @if (isset($vendorDetails['shop_website'])) value="{{ $vendorDetails['shop_website'] }}" @endif>
                                     </div>
                                     <div class="form-group">
-                                        <label for="business_license_number">Business License Number</label>
+                                        <label for="business_license_number">Employer Identification Number</label>
                                         <input type="text" class="form-control" id="business_license_number" placeholder="Enter Business License Number" name="business_license_number"  @if (isset($vendorDetails['business_license_number'])) value="{{ $vendorDetails['business_license_number'] }}" @endif> {{-- $vendorDetails was passed from AdminController --}}
                                     </div>
                                     <div class="form-group">

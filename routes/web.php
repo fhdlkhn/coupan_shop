@@ -199,7 +199,35 @@ Route::get('orders/invoice/download/{id}', 'App\Http\Controllers\Admin\OrderCont
 // Second: FRONT section routes:
 Route::namespace('App\Http\Controllers\Front')->group(function() {
     Route::get('/', 'IndexController@index')->name('index');
+     Route::get('/clear-cache', function () {
+        Artisan::call('optimize:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+    });
+    Route::post('contact-submit', 'IndexController@contactUsSubmit')->name('contact.submit');
+   Route::get('how-it-works', function () {
+        return view('front.how_it_works');
+    })->name('how.it.works');
+    Route::get('faqs', function () {
+        return view('front.faqs');
+    })->name('front.faqs');
+    Route::get('terms-and-conditions', function () {
+        return view('front.terms-condition');
+    })->name('front.terms.and.conditions');
+    
+    Route::get('about-us', function () {
+        return view('front.about-us');
+    })->name('front.about.us');
+    
+     Route::get('contact-us', function () {
+        return view('front.contact-us');
+    })->name('front.contact');
+    
+    
     Route::get('auth/google', 'VendorController@redirectToGoogle');
+    Route::post('save_currency', 'IndexController@saveUserCurrency')->name('save.currency');
     Route::get('auth/google/callback', 'VendorController@handleGoogleCallback');
     Route::get('auth/facebook', 'VendorController@redirectToFacebook');
     Route::get('auth/facebook/callback', 'VendorController@handleFacebookCallback');
@@ -305,7 +333,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::post('/apply-coupon', 'ProductsController@applyCoupon'); // Important Note: We added this route here as a protected route inside the 'auth' middleware group because ONLY logged in/authenticated users are allowed to redeem Coupons!
 
         // Checkout page (using match() method for the 'GET' request for rendering the front/products/checkout.blade.php page or the 'POST' request for the HTML Form submission in the same page (for submitting the user's Delivery Address and Payment Method))
-        Route::match(['GET', 'POST'], '/checkout', 'ProductsController@checkout');
+        Route::match(['GET', 'POST'], '/checkout', 'ProductsController@checkout')->name('checkout');
 
         // Edit Delivery Addresses (Page refresh and fill in the <input> fields with the authenticated/logged in user Delivery Addresses from the `delivery_addresses` database table when clicking on the Edit button) in front/products/delivery_addresses.blade.php (which is 'include'-ed in front/products/checkout.blade.php) via AJAX, check front/js/custom.js
         Route::post('get-delivery-address', 'AddressController@getDeliveryAddress');
@@ -317,7 +345,8 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::post('remove-delivery-address', 'AddressController@removeDeliveryAddress');
 
         // Rendering Thanks page (after placing an order)
-        Route::get('thanks', 'ProductsController@thanks');
+        Route::get('thanks', 'ProductsController@thanks')->name('thank.you');
+        Route::get('thanks', 'ProductsController@newThanks')->name('new.thank.you');
 
         // Render User 'My Orders' page
         Route::get('user/orders/{id?}', 'OrderController@orders');
@@ -330,6 +359,8 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::post('update/user_products', 'ProductsController@updateResellProduct')->name('update.user.products');
         Route::get('user/resell_orders', 'ProductsController@orduserResellOrdersers')->name('user.resell.orders');
         Route::post('stripe', 'ProductsController@stripePost')->name('stripe.post');
+        Route::post('create-checkout-session', 'ProductsController@createCheckoutSession')->name('create-checkout-session');
+        Route::post('webhook', 'ProductsController@webhook')->name('webhook');
         // Route::post('add/user_products/{id?}', 'OrderController@addUserProducts')->name('add.user.products'); // If the slug {id?} (Optional Parameters) is passed in, this means go to the front/orders/order_details.blade.php page, and if not, this means go to the front/orders/orders.blade.php page
 
 
