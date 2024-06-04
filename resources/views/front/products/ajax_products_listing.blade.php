@@ -27,8 +27,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="car-price-rating-box">
-                            <h6 class="total-price">{{Session::get('currency')}} {{round($product['product_price'] * $selectedCurrencyRate, 2)}} total</h6>
+                        <div class="car-price-rating-box">  
+                            <h6 class="total-price">{{Session::get('currency') != null ? Session::get('currency') : 'USD'}} {{round($product['product_price'] * $selectedCurrencyRate, 2)}} total</h6>
                             <div class="rating-box">
                                 <span class="iconify" data-icon="lets-icons:star-fill"></span>
                                 <strong>4.9</strong>

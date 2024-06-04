@@ -131,7 +131,7 @@
                                                                     <span class="order-span-quantity">x {{ $item['quantity'] }}</span>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="order-h6">{{Session::get('currency')}} {{ round(($getDiscountAttributePrice['final_price'] * $item['quantity']) * $getCurrencyRate,2) }}</h6>
+                                                                    <h6 class="order-h6">{{Session::get('currency') != null ? Session::get('currency') : 'USD'}} {{ round(($getDiscountAttributePrice['final_price'] * $item['quantity']) * $getCurrencyRate,2) }}</h6>
                                                                 </td>
                                                             </tr>
                                                             @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']) @endphp
@@ -142,7 +142,7 @@
                                                             </td>
                                                             <td>
                                                                 <h3 class="order-h3">
-                                                                    <strong class="grand_total"> {{Session::get('currency')}} {{ round($total_price * $getCurrencyRate,2) }}</strong> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
+                                                                    <strong class="grand_total"> {{Session::get('currency') != null ? Session::get('currency') : 'USD'}} {{ round($total_price * $getCurrencyRate,2) }}</strong> {{-- We create the 'grand_total' CSS class to use it as a handle for AJAX inside    $('#applyCoupon').submit();    function in front/js/custom.js --}} {{-- We stored the 'couponAmount' a Session Variable inside the applyCoupon() method in Front/ProductsController.php --}}
                                                                     @php $updated_total_price = round($total_price * $getCurrencyRate,2); 
                                                                     $selectedCurrency = Session::get('currency');@endphp
                                                                 </h3>

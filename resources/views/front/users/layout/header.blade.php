@@ -1,4 +1,38 @@
 <!-- partial:partials/_navbar.html -->
+<style>
+    nav.navbar.col-lg-12.col-12.fixed-top.d-flex.flex-row {
+    height: auto;
+    padding: 11px 15px 11px 24px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(9px);
+}
+
+
+ul.menu-links {
+    display: block;
+    padding-bottom: 0;
+    margin: auto;
+}
+
+ul.menu-links li {
+    display: inline;
+}
+
+
+ul.menu-links li a {
+    font-size: 18px;
+    font-weight: 400;
+    padding: 0 15px;
+    color: #000;
+    height: 50px;
+    line-height: 50px;
+    text-transform: capitalize;
+    text-decoration: none;
+}
+
+</style>
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
     <a href="{{ url('/') }}">
@@ -11,7 +45,7 @@
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
         <span class="icon-menu"></span>
         </button>
-        <ul>
+        <ul class="menu-links">
             <!-- @if((!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check())) || (\Illuminate\Support\Facades\Auth::guard('admin')->check()))
                 <li class="">
                     <a href="{{ url('admin/add-edit-product') }}">Start Selling</a>
@@ -52,11 +86,11 @@
                     </a>
                 </div>
             </li>
-            <li class="nav-item nav-settings d-none d-lg-flex">
+            <!-- <li class="nav-item nav-settings d-none d-lg-flex">
                 <a class="nav-link" href="#">
                 <i class="icon-ellipsis"></i>
                 </a>
-            </li>
+            </li> -->
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
         <span class="icon-menu"></span>
