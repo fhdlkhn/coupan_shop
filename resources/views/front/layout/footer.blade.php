@@ -117,7 +117,7 @@ a.footer-logo img {
                     </div>
                      </div>
                      <div class="meta-box">
-                        <p>© Copyright Company 2023. All rights reserved.</p>
+                        <p>© Copyright BOD Exchange 2024. All rights reserved.</p>
                     </div>
              
                

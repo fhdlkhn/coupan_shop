@@ -517,19 +517,19 @@
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12">
                                         <div class="easyzoom easyzoom--overlay easyzoom--with-thumbnails"> {{-- EasyZoom plugin --}}
-                                            <a      href="{{ asset('front/images/product_images/large/' . $productDetails['product_image']) }}">
-                                                <img src="{{ asset('front/images/product_images/large/' . $productDetails['product_image']) }}" alt="" width="500" height="500" />
+                                            <a      href="{{ $productDetails['product_image'] !=null ? asset('front/images/product_images/large/' . $productDetails['product_image']) : asset('front/images/product_images/large/no-image.png')}}">
+                                                <img src="{{ $productDetails['product_image'] !=null ? asset('front/images/product_images/large/' . $productDetails['product_image']) : asset('front/images/product_images/large/no-image.png')}}" alt="" width="500" height="500" />
                                             </a>
                                         </div>
                                         <div class="thumbnails" style="margin-top: 30px"> {{-- EasyZoom plugin --}}
-                                            <a      href="{{ asset('front/images/product_images/large/' . $productDetails['product_image']) }}" data-standard="{{ asset('front/images/product_images/small/' . $productDetails['product_image']) }}">
-                                                <img src="{{ asset('front/images/product_images/small/' . $productDetails['product_image']) }}" width="120" height="120" alt="" />
+                                            <a      href="{{ $productDetails['product_image'] !=null ? asset('front/images/product_images/large/' . $productDetails['product_image']) : asset('front/images/product_images/large/no-image.png')}}" data-standard="{{ asset('front/images/product_images/small/' . $productDetails['product_image']) }}">
+                                                <img src="{{ $productDetails['product_image'] !=null ? asset('front/images/product_images/large/' . $productDetails['product_image']) : asset('front/images/product_images/large/no-image.png')}}" width="120" height="120" alt="" />
                                             </a>
                                             {{-- Show the product Alternative images (`image` in `products_images` table) --}}
                                             @foreach ($productDetails['images'] as $image)
                                                 {{-- EasyZoom plugin --}}
-                                                <a      href="{{ asset('front/images/product_images/large/' . $image['image']) }}" data-standard="{{ asset('front/images/product_images/small/' . $image['image']) }}">
-                                                    <img src="{{ asset('front/images/product_images/small/' . $image['image']) }}" width="120" height="120" alt="" />
+                                                <a      href="{{ $image['image'] != null ? asset('front/images/product_images/large/' . $image['image']) : asset('front/images/product_images/large/no-image.png')}}" data-standard="{{ asset('front/images/product_images/small/' . $image['image']) }}">
+                                                    <img src="{{ $image['image'] != null ? asset('front/images/product_images/small/' . $image['image']) : asset('front/images/product_images/small/no-image.png')}}" width="120" height="120" alt="" />
                                                 </a>
                                             @endforeach
                                         </div>

@@ -4,6 +4,23 @@ $sections = \App\Models\Section::sections();
 // dd($sections);
 
 ?>
+<style>
+    .currency-select {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+    }
+    .currency-select:focus {
+        outline: none;
+        border-color: #007BFF;
+    }
+</style>
 <!-- Header -->
 <header>
     <!-- Top-Header -->
@@ -209,15 +226,7 @@ $sections = \App\Models\Section::sections();
                     <div class="line-menu line-half last-line"></div>
                 </div>
                 <!--Navigation menu-->
-            <form action="{{ route('save.currency') }}" method="POST">
-                @csrf
-                <select name="user_currency" onchange="this.form.submit()">
-                    <option value="" disabled selected>Select Currency</option>
-                    <option value="USD" {{ Session::get('currency') == 'USD' ? 'selected' : '' }}>USD</option>
-                    <option value="EUR" {{ Session::get('currency') == 'EUR' ? 'selected' : '' }}>EURO</option>
-                    <option value="INR" {{ Session::get('currency') == 'INR' ? 'selected' : '' }}>INR</option>
-                </select>
-            </form>
+            
                 <nav class="sb-menu menu-caret submenu-top-border submenu-scale">
                     <ul>
                         @if((!(\Illuminate\Support\Facades\Auth::check()) && !(\Illuminate\Support\Facades\Auth::guard('admin')->check())) || (\Illuminate\Support\Facades\Auth::guard('admin')->check()))
@@ -253,15 +262,15 @@ $sections = \App\Models\Section::sections();
                                     <div class="selected">
                                         <a href="#">
                                             <div class="img-box">
-                                            <img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/client-1.png') }}" alt="location-img">
+                                            <img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/default-user.png') }}" alt="location-img">
                                             </div>
                                             <div class="meta-box">
                                                 @if(\Illuminate\Support\Facades\Auth::guard('admin')->check())
                                                 <h6>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->name}}</h6>
-                                                <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small>
+                                                <!-- <small>{{\Illuminate\Support\Facades\Auth::guard('admin')->user()->email}}</small> -->
                                                 @else
                                                 <h6>{{\Illuminate\Support\Facades\Auth::user()->name}}</h6>
-                                                <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small>
+                                                <!-- <small>{{\Illuminate\Support\Facades\Auth::user()->email}}</small> -->
                                                 @endif
                                             </div>
                                         </a>
@@ -350,7 +359,7 @@ $sections = \App\Models\Section::sections();
                                         </ol>
                                         <div class="user-profile-info">
                                             <div class="img-box">
-                                                <a href="#"><img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/client-1.png') }}" alt="user-img"></a>
+                                                <a href="#"><img src="{{ (\Illuminate\Support\Facades\Auth::guard('admin')->check() && \Illuminate\Support\Facades\Auth::guard('admin')->user()->image !=null) ? asset('admin/images/photos/'.\Illuminate\Support\Facades\Auth::guard('admin')->user()->image) : asset('admin/images/photos/default-user.png') }}" alt="user-img"></a>
                                             </div>
                                    
                                             <div class="meta-box">
@@ -373,8 +382,22 @@ $sections = \App\Models\Section::sections();
                                 </div>
                             @endif
                         </li>
+                        <li class="ly-list">
+                            <div class=" currency-wrapper">
+                                <form class="currency-form" method="post" action="{{ route('save.currency') }}">
+                                    @csrf
+                                    <select class="currency-select" name="currency" onchange="this.form.submit()">
+                                        <option value="" disabled selected>Select Currency</option>
+                                        <option value="USD" {{ Session::get('currency') == 'USD' ? 'selected' : '' }}>USD</option>
+                                        <option value="EUR" {{ Session::get('currency') == 'EUR' ? 'selected' : '' }}>EURO</option>
+                                        <option value="INR" {{ Session::get('currency') == 'INR' ? 'selected' : '' }}>INR</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </li>
                     </ul>
                 </nav>
+                        
             </div>
         </div>
     </div>

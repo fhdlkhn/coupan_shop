@@ -6,8 +6,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <h1>Your listing</h1>
-                    <p>Join top UK hosts who make an average of £6,492 every year for each car they list on Turo*</p>
+                    <h1>My Listings</h1>
+                    <p>Join top hosts and showcase your listings to a wide audience.</p>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ly-car-show-map">
-                        <h2>My Listing projects</h2>
+                        <h2>My Listings</h2>
                         <div class="row">
                             @foreach ($products as $product)
                                 <div class="col-lg-4">
