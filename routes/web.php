@@ -30,6 +30,8 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
     Route::group(['middleware' => ['admin']], function() { // using our 'admin' guard (which we created in auth.php)
         Route::get('dashboard', 'AdminController@dashboard')->name('admin.dashboard'); // Admin login
         Route::get('wallets', 'AdminController@getAllWallets')->name('get.wallet'); // Admin login
+        Route::get('stripe-settings', 'AdminController@stripeSettings')->name('stripe.admin.settings'); // Admin login
+        Route::post('add-commission', 'AdminController@addCommission')->name('add.stripe.commission'); // Admin login
         Route::post('update-user-wallet', 'AdminController@updateUserWallets')->name('update.user.wallet'); // Admin login
         Route::get('logout', 'AdminController@logout'); // Admin logout
         Route::match(['get', 'post'], 'update-admin-password', 'AdminController@updateAdminPassword'); // GET request to view the update password <form>, and a POST request to submit the update password <form>
@@ -170,6 +172,9 @@ Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function
 
         // Delete a Rating via AJAX in admin/ratings/ratings.blade.php, check admin/js/custom.js
         Route::get('delete-rating/{id}', 'RatingController@deleteRating'); 
+        Route::get('/create-stripe-connect', 'ProductsController@createStripeConnect')->name('create.stripe.account');
+        Route::post('/create-connect', 'ProductsController@createConnect')->name('create.stripe.connect.account');
+
     });
 
 });
@@ -346,7 +351,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
 
         // Rendering Thanks page (after placing an order)
         Route::get('thanks', 'ProductsController@thanks')->name('thank.you');
-        Route::get('thanks', 'ProductsController@newThanks')->name('new.thank.you');
+        Route::get('thank-you', 'ProductsController@newThanks')->name('new.thank.you');
 
         // Render User 'My Orders' page
         Route::get('user/orders/{id?}', 'OrderController@orders');
@@ -358,9 +363,20 @@ Route::namespace('App\Http\Controllers\Front')->group(function() {
         Route::get('edit/user_products/{id?}/{order_id?}', 'ProductsController@userResellEdit')->name('edit.user.products');
         Route::post('update/user_products', 'ProductsController@updateResellProduct')->name('update.user.products');
         Route::get('user/resell_orders', 'ProductsController@orduserResellOrdersers')->name('user.resell.orders');
+        // Route::get('/connect', [StripeController::class, 'connect'])->name('stripe.connect');
+        // Route::get('/callback', [StripeController::class, 'callback'])->name('stripe.callback');
+        Route::get('/connect', 'ProductsController@connect')->name('stripe.connect');
+        Route::get('/callback', 'ProductsController@callback')->name('stripe.callback');
         Route::post('stripe', 'ProductsController@stripePost')->name('stripe.post');
         Route::post('create-checkout-session', 'ProductsController@createCheckoutSession')->name('create-checkout-session');
         Route::post('webhook', 'ProductsController@webhook')->name('webhook');
+
+        Route::get('stripe-connect', function () {
+        return view('front.stripe-connect');
+    })->name('user.stripe.connect');
+        Route::get('/create-stripe-connect', 'ProductsController@createStripeConnect')->name('create.stripe.connect');
+        Route::post('/create-connect', 'ProductsController@createConnect')->name('create.user.connect.account');
+        Route::post('/create-connect-link', 'ProductsController@createConnectLink')->name('account.link');
         // Route::post('add/user_products/{id?}', 'OrderController@addUserProducts')->name('add.user.products'); // If the slug {id?} (Optional Parameters) is passed in, this means go to the front/orders/order_details.blade.php page, and if not, this means go to the front/orders/orders.blade.php page
 
 
