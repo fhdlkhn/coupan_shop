@@ -13,9 +13,11 @@ use App\Models\DeliveryAddress;
 use App\Models\Product;
 use App\Models\ProductsImage;
 use App\Models\UserWallet;
+use GuzzleHttp\Client;
 use App\Models\Admin;
 use App\Models\ProductsAttribute;
 use App\Models\Rating;
+use App\Models\Setting;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -23,6 +25,7 @@ use App\Models\ProductsFilter;
 use App\Models\Vendor;
 use App\Models\User;
 use Stripe;
+use Stripe\StripeClient;
 use App\Models\Country;
 use App\Models\ShippingCharge;
 use App\Models\OrdersProduct;
@@ -172,8 +175,8 @@ class ProductsController extends Controller
         }
  public function createCheckoutSession(Request $request)
     {
-        $getCartItems = Cart::getCartItems();    
-        if (count($getCartItems) == 0) {
+        $getCartItems = Cart::getCartItems(); 
+        if (empty($getCartItems)) {
             $message = 'Shopping Cart is empty! Please add listing to your Cart to checkout';
 
             return redirect('cart')->with('error_message', $message); // redirect user to the cart.blade.php page, and show an error message in cart.blade.php
@@ -182,30 +185,99 @@ class ProductsController extends Controller
         $amount = $request->input('amount');
         if (!is_numeric($amount) || $amount <= 0) {
             return response()->json(['error' => 'Invalid amount specified'], 400);
-        }
-        $unitAmount = $amount * 100;
+        } 
+        
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-        try {
-             $session = Stripe\Checkout\Session::create([
-                'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'price_data' => [
-                        'currency' => $currency,
-                        'product_data' => [
-                            'name' => 'Total Amount',
-                        ],
-                        'unit_amount' => $unitAmount,
+        $unitAmount = $amount * 100;
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+
+        //get the comission from the admin
+        $comission = Setting::where('name','commission')->first();
+        $getComission = $comission->value;
+        $getAmountAfterComission = ($getComission/100) * $unitAmount;
+        $amountAfterComission = $unitAmount - $getAmountAfterComission;
+
+        $product = $stripe->products->create([
+            'name' => 'Listing Fee',
+            'default_price_data' => [
+                'unit_amount' => $amountAfterComission,
+                'currency' => 'usd',
+            ],
+            'expand' => ['default_price'],
+        ]);
+        
+        //get the stripe account id
+        $getUser = Product::where('id',$getCartItems->product_id)->first();
+        if($getUser->is_resell == '1'){
+            //take the id from the user
+            $getLIstingUser = User::where('id',$getUser->vendor_id)->first()['stripe_account_id'];
+        }
+        else{
+            // take the id from the vendor
+            $getLIstingUser = Vendor::where('id',$getUser->vendor_id)->first()['stripe_account_id'];
+        }
+        if($getLIstingUser == null){
+            //send amount to the admin
+            $session = \Stripe\Checkout\Session::create([
+                'line_items' => [
+                    [
+                        'price' => $product->default_price->id,
+                        'quantity' => $getCartItems->quantity,
                     ],
-                    'quantity' => 1,
-                ]],
+                ],
                 'mode' => 'payment',
-                'success_url' => route('new.thank.you') . '?session_id={CHECKOUT_SESSION_ID}',
+                'success_url' => route('new.thank.you') ,
                 'cancel_url' => route('checkout'),
             ]);
-            return response()->json(['id' => $session->id]);
+            return response()->json(['id' => $session->success_url]);
+        }
+        else{
+            //send it to vendor
+            try  {
+                $account = \Stripe\Account::update(
+                    $getLIstingUser,
+                    [
+                        'capabilities' => [
+                            'transfers' => ['requested' => true],
+                            'card_payments' => ['requested' => true],
+                            'crypto_transfers' => ['requested' => true],
+                            'legacy_payments' => ['requested' => true],
+                        ],
+                    ]
+                );
+                $session = Stripe\Checkout\Session::create([
+                    // 'payment_method_types' => ['card'],
+                    // 'line_items' => [[
+                    //     'price_data' => [
+                    //         'currency' => $currency,
+                    //         'product_data' => [
+                    //             'name' => 'Total Amount',
+                    //         ],
+                    //         'unit_amount' => $unitAmount,
+                    //     ],
+                    //     'quantity' => 1,
+                    // ]],
+                    'line_items' => [
+                    [
+                        'price' => $product->default_price->id,
+                        'quantity' => $getCartItems->quantity,
+                    ],
+                    ],
+                    'payment_intent_data' => [
+                        'application_fee_amount' => $getAmountAfterComission,
+                        'transfer_data' => [
+                            'destination' => $getLIstingUser
+                        ],
+                    ],
+                    'mode' => 'payment',
+                    'success_url' => route('new.thank.you'),
+                    'cancel_url' => route('checkout'),
+                ]);
+                return response()->json(['id' => $session->id]);
 
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
         }
     }
     public function webhook(Request $request)
@@ -497,6 +569,123 @@ class ProductsController extends Controller
             return redirect()->back()->with('success_messages', 'Product has been added in Cart!');
         }
     }
+    public function connect()
+    {
+        $url = "https://connect.stripe.com/oauth/authorize?response_type=code&client_id=" . env('STRIPE_CLIENT_ID') . "&scope=read_write";
+        return redirect($url);
+    }
+    public function callback(Request $request)
+    {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $code = $request->code;
+
+        $response = Stripe\OAuth::token([
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+        ]);
+
+        // Save the connected account ID in your database
+        $stripeUserId = $response->stripe_user_id;
+
+        // Handle storing the account ID and other details as needed.
+        // Example: User::where('id', Auth::id())->update(['stripe_account_id' => $stripeUserId]);
+
+        return redirect('/dashboard')->with('success', 'Stripe account connected successfully');
+    }
+    public function createStripeConnect(){
+        Session::put('page', 'stripe');
+        return view('front.users.products.create-stripe');
+    }
+    public function createConnect(Request $request){
+        $userEMail = Auth::user()->email;
+        $stripe = new \Stripe\StripeClient([
+        "api_key" => env('STRIPE_SECRET'),
+        ]);
+        // return $userEMail;
+
+        $client = new Client();
+
+        $response = $client->post('https://api.stripe.com/v1/accounts', [
+            'headers' => [
+                'Authorization' => 'Bearer sk_test_51Oi205KjzMnkYmNBjDHDcTkMZupd2w4wKVLVoNEbuID2dR3b6IepMFNjEcHny3AuLqu7pdDiCWEXnd2zZxnN1qzc00SGCDGIG4',
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+            'form_params' => [
+                'country' => 'US',
+                'email' => $userEMail,
+                'capabilities[card_payments][requested]' => 'true',
+                'capabilities[transfers][requested]' => 'true',
+                'controller' => [
+                    'fees' => [
+                        'payer' => 'application',
+                    ],
+                    // 'capabilities' => [
+                    //     'transfers' => ['requested' => true],
+                    // ],
+                    'losses' => [
+                        'payments' => 'application',
+                    ],
+                    'stripe_dashboard' => [
+                        'type' => 'express',
+                    ],
+                ],
+            ],
+        ]);
+
+        $body = $response->getBody();
+        $data = json_decode($body, true);
+        if(!empty($data['id'])){
+            $account_link = $stripe->accountLinks->create([
+                'account' => $data['id'],
+                'refresh_url' => url('/'), //'https://example.com/reauth',
+                'return_url' => url('/'), //'https://example.com/return',
+                'type' => 'account_onboarding',
+            ]);
+            //get user to save the stripe id
+            if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->type == 'vendor'){
+                $getUser = Vendor::where('email',$userEMail)->first();
+            $getUser->stripe_account_id =  $data['id'];
+            $getUser->save();
+            }
+            else{
+                $getUser = User::where('email',$userEMail)->first();
+                $getUser->stripe_account_id =  $data['id'];
+                $getUser->save();
+            }
+             return redirect($account_link->url);
+        }
+
+        return redirect()->back()->with('success_message', 'The stripe connect id has been created');
+    
+    
+    }
+    public function createConnectLink(Request $request){
+         $stripe = new \Stripe\StripeClient([
+        // This is your test secret API key.
+        "api_key" => env('STRIPE_SECRET'),
+        ]);
+        try {
+            $json = file_get_contents('php://input');
+            $data = json_decode($json);
+            $connectedAccountId = $data->account;
+
+            $account_link = $stripe->accountLinks->create([
+                'account' => $connectedAccountId,
+                'return_url' => sprintf("http://localhost:4242/return/%s", $connectedAccountId),
+                'refresh_url' => sprintf("http://localhost:4242/refresh/%s", $connectedAccountId),
+                'type' => 'account_onboarding',
+            ]);
+
+            echo json_encode(array(
+                'url' => $account_link->url
+            ));
+            } catch (Exception $e) {
+            error_log("An error occurred when calling the Stripe API to create an account link: {$e->getMessage()}");
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+            }
+    }
     public function getExchnagedRate(){
         $curl = curl_init();
 
@@ -529,6 +718,11 @@ class ProductsController extends Controller
         
         // Get the Cart Items of a cerain user (using their `user_id` if they're authenticated/logged in or their `session_id` if they're not authenticated/not logged in (guest))    
         $getCartItems = Cart::getCartItems();
+        if (empty($getCartItems)) {
+            $message = 'Shopping Cart is empty! Please add listing to your Cart to checkout';
+
+            return redirect()->back()->with('error', $message); // redirect user to the cart.blade.php page, and show an error message in cart.blade.php
+        }
         $getCurrencyRate = $this->getExchnagedRate();
 // return $getCartItems;
 
@@ -835,10 +1029,9 @@ class ProductsController extends Controller
         // $getCartItems = Cart::getCartItems();
 
         // If the Cart is empty (If there're no Cart Items), don't allow opening/accessing the Checkout page (checkout.blade.php)    
-        $getCartItems = Cart::getCartItems();   
-
+        $getCartItems = Cart::getCartItems(); 
         // If the Cart is empty (If there're no Cart Items), don't allow opening/accessing the Checkout page (checkout.blade.php)    
-        if (count($getCartItems) == 0) {
+        if (empty($getCartItems)) {
             $message = 'Shopping Cart is empty! Please add listing to your Cart to checkout';
 
             return redirect('cart')->with('error_message', $message); // redirect user to the cart.blade.php page, and show an error message in cart.blade.php
@@ -850,14 +1043,14 @@ class ProductsController extends Controller
         $total_weight = 0;
         $getCurrencyRate = $this->getExchnagedRate();
 
-        foreach ($getCartItems as $item) {
-            $attrPrice = Product::getDiscountAttributePrice($item['product_id'], null);
-            $total_price = $total_price + ($attrPrice['final_price'] * $item['quantity']);
+        // foreach ($getCartItems as $item) {
+            $attrPrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null);
+            $total_price = $total_price + ($attrPrice['final_price'] * $getCartItems['quantity']);
 
             
-            $product_weight = $item['product']['product_weight'];
+            $product_weight = $getCartItems['product']['product_weight'];
             $total_weight = $total_weight + $product_weight;
-        }
+        // }
         // $total_price = $total_price * $getCurrencyRate;
         $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
         foreach ($deliveryAddresses as $key => $value) {
@@ -872,21 +1065,21 @@ class ProductsController extends Controller
         
         if ($request->isMethod('post')) { // if the <form> in front/products/checkout.blade.php is submitted (the HTML Form that the user submits to submit their Delivery Address and Payment Method)
             $data = $request->all();
-            foreach ($getCartItems as $item) {
-                $product_status = Product::getProductStatus($item['product_id'],null);
+            // foreach ($getCartItems as $item) {
+                $product_status = Product::getProductStatus($getCartItems['product_id'],null);
                 if ($product_status == 0) { // if the product is disabled (`status` = 0)
-                    $message = $item['product']['product_name'] . ' with ' . $item['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
+                    $message = $getCartItems['product']['product_name'] . ' with ' . $getCartItems['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
                     return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
                 }
-            }
-            $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
+            // }
+            $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
             if ($getProductStock == 0) { // if the product's `stock` is 0 zero
-                $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
+                $message = $getCartItems['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
                 return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
             }
-            $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id'], null);
+            $getCategoryStatus = Category::getCategoryStatus($getCartItems['product']['category_id'], null);
             if ($getCategoryStatus == 0) { // if the Category is disabled (`status` = 0)
-                $message = $item['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
+                $message = $getCartItems['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
                 return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
             }
             if (empty($data['accept'])) { // if the user doesn't select a Delivery Address
@@ -904,10 +1097,10 @@ class ProductsController extends Controller
             // }
             DB::beginTransaction();
             $total_price = 0;
-            foreach ($getCartItems as $item) {
-                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null);
-                $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']);
-            }
+            // foreach ($getCartItems as $item) {
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null);
+                $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $getCartItems['quantity']);
+            // }
             $shipping_charges = 0;
             $grand_total = $total_price ;
             Session::put('grand_total', $grand_total);
@@ -941,47 +1134,47 @@ class ProductsController extends Controller
             }
             $getwallet->save();
             $order_id = $order->id;
-            foreach ($getCartItems as $item) {
+            // foreach ($getCartItems as $item) {
                 $cartItem = new OrdersProduct;
                 $cartItem->order_id = $order_id;
                 $cartItem->user_id  = Auth::user()->id;
-                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $item['product_id'])->first()->toArray();
+                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $getCartItems['product_id'])->first()->toArray();
                 $cartItem->admin_id        = $getProductDetails['admin_id'];
                 $cartItem->vendor_id       = $getProductDetails['vendor_id'];
 
-                $cartItem->product_id      = $item['product_id'];
+                $cartItem->product_id      = $getCartItems['product_id'];
                 $cartItem->product_code    = $getProductDetails['product_code'];
                 $cartItem->product_name    = $getProductDetails['product_name'];
                 $cartItem->product_color   = $getProductDetails['product_color'];
-                $cartItem->product_size    = $item['size'];
+                $cartItem->product_size    = $getCartItems['size'];
 
-                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null); // from the `products_attributes` table, not the `products` table
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null); // from the `products_attributes` table, not the `products` table
                 $cartItem->product_price   = $getDiscountAttributePrice['final_price'];
 
 
                 
-                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units'];
-                if ($item['quantity'] > $getProductStock) { // if the ordered quantity is greater than the existing stock, cancel the order/opertation
+                $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units'];
+                if ($getCartItems['quantity'] > $getProductStock) { // if the ordered quantity is greater than the existing stock, cancel the order/opertation
                     $message = $getProductDetails['product_name'] . '  stock is not available/enough for your order. Please reduce its quantity and try again!';
 
                     return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
                 }
 
 
-                $cartItem->product_qty     = $item['quantity'];
+                $cartItem->product_qty     = $getCartItems['quantity'];
 
                 $cartItem->save(); // INSERT data INTO the `orders_products` table
 
 
                 
-                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // Get the `stock` of that product `product_id` with that specific `size` from `products_attributes` table
-                $newStock = $getProductStock - $item['quantity'];
+                $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units']; // Get the `stock` of that product `product_id` with that specific `size` from `products_attributes` table
+                $newStock = $getProductStock - $getCartItems['quantity'];
                 Product::where([ // Update the new `quantity` in the `products_attributes` table
-                    'id' => $item['product_id'],
+                    'id' => $getCartItems['product_id'],
                 ])->update(['product_units' => $newStock]);
                 //update respective user wallet
 
-                $getProduct = Product::where('id',$item['product_id'])->first();
+                $getProduct = Product::where('id',$getCartItems['product_id'])->first();
                 if($getProduct->is_resell == '1'){
                     //user account
                     $getUserDetails = User::where('id',$getProduct->vendor_id)->first();
@@ -1017,7 +1210,7 @@ class ProductsController extends Controller
                     }
                     $getwallet->save();
                 }
-            }
+            // }
 
 
             // Store the `order_id` in Session so that we can use it in front/products/thanks.blade.php, thanks() method, paypal() method in Front/PayPalController.php and pay() method in Front/IyzipayController.php
@@ -1080,14 +1273,13 @@ class ProductsController extends Controller
         $total_price  = 0;
         $total_weight = 0;
         $getSelectedCurrency = Session::get('currency');
-        foreach ($getCartItems as $item) {
-            $attrPrice = Product::getDiscountAttributePrice($item['product_id'], null);
-            $total_price = round((floatval($total_price) + (floatval($attrPrice['final_price']) * intval($item['quantity']))) * floatval($getSelectedCurrency), 2);
-
+        // foreach ($getCartItems as $item) {
+            $attrPrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null);
+            $total_price = round(floatval($attrPrice['final_price']) * intval($getCartItems['quantity']), 2);
             
-            $product_weight = $item['product']['product_weight'];
+            $product_weight = $getCartItems['product']['product_weight'];
             $total_weight = $total_weight + $product_weight;
-        }
+        // }
         $deliveryAddresses = DeliveryAddress::deliveryAddresses(); 
         foreach ($deliveryAddresses as $key => $value) {
             $shippingCharges = ShippingCharge::getShippingCharges($total_weight, $value['country']);
@@ -1096,32 +1288,31 @@ class ProductsController extends Controller
             $deliveryAddresses[$key]['codpincodeCount'] = DB::table('cod_pincodes')->where('pincode', $value['pincode'])->count();   
             $deliveryAddresses[$key]['prepaidpincodeCount'] = DB::table('prepaid_pincodes')->where('pincode', $value['pincode'])->count(); 
         }
-        foreach ($getCartItems as $item) {
-            $product_status = Product::getProductStatus($item['product_id'],null);
+        // foreach ($getCartItems as $item) {
+            $product_status = Product::getProductStatus($getCartItems['product_id'],null);
             if ($product_status == 0) { // if the product is disabled (`status` = 0)
-                $message = $item['product']['product_name'] . ' with ' . $item['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
+                $message = $getCartItems['product']['product_name'] . ' with ' . $getCartItems['size'] . ' size is not available. Please remove it from the Cart and choose another product.';
                 return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
             }
-        }
-        $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
+        // }
+        $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units']; // A product (`product_id`) with a certain `size`
         if ($getProductStock == 0) { // if the product's `stock` is 0 zero
-            $message = $item['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
+            $message = $getCartItems['product']['product_name'] . ' is not available. Please remove it from the Cart and choose another product.';
             return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
         }
-        $getCategoryStatus = Category::getCategoryStatus($item['product']['category_id'], null);
+        $getCategoryStatus = Category::getCategoryStatus($getCartItems['product']['category_id'], null);
         if ($getCategoryStatus == 0) { // if the Category is disabled (`status` = 0)
             $message = $item['product']['product_name'] . ' with ' . ' is not available. Please remove it from the Cart and choose another product.';
             return redirect('/cart')->with('error_message', $message); // Redirect to the Cart page with an error message
         }  
         $payment_method = 'COD';
         $order_status   = 'New';
-
         DB::beginTransaction();
-            $total_price = 0;
-            foreach ($getCartItems as $item) {
-                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null);
-                $total_price = round((floatval($total_price) + (floatval($attrPrice['final_price']) * intval($item['quantity']))) * floatval($getSelectedCurrency), 2);
-            }
+            
+            // foreach ($getCartItems as $item) {
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null);
+                $total_price = round(floatval($attrPrice['final_price']) * intval($getCartItems['quantity']), 2);
+            // }
             $shipping_charges = 0;
             $grand_total = $total_price ;
             Session::put('grand_total', $grand_total);
@@ -1155,48 +1346,48 @@ class ProductsController extends Controller
             }
             $getwallet->save();
             $order_id = $order->id;
-            foreach ($getCartItems as $item) {
+            // foreach ($getCartItems as $item) {
                 $cartItem = new OrdersProduct;
                 $cartItem->order_id = $order_id;
                 $cartItem->user_id  = Auth::user()->id;
-                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $item['product_id'])->first()->toArray();
+                $getProductDetails = Product::select('product_code', 'product_name', 'product_color', 'admin_id', 'vendor_id')->where('id', $getCartItems['product_id'])->first()->toArray();
                 $cartItem->admin_id        = $getProductDetails['admin_id'];
                 $cartItem->vendor_id       = $getProductDetails['vendor_id'];
 
-                $cartItem->product_id      = $item['product_id'];
+                $cartItem->product_id      = $getCartItems['product_id'];
                 $cartItem->product_code    = $getProductDetails['product_code'];
                 $cartItem->product_name    = $getProductDetails['product_name'];
                 $cartItem->product_color   = $getProductDetails['product_color'];
-                $cartItem->product_size    = $item['size'];
+                $cartItem->product_size    = $getCartItems['size'];
 
-                $getDiscountAttributePrice = Product::getDiscountAttributePrice($item['product_id'], null); 
+                $getDiscountAttributePrice = Product::getDiscountAttributePrice($getCartItems['product_id'], null); 
                 $cartItem->product_price   = (float)$getDiscountAttributePrice['final_price'] * $getSelectedCurrency;
 
 
                 
-                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units'];
-                if ($item['quantity'] > $getProductStock) { 
+                $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units'];
+                if ($getCartItems['quantity'] > $getProductStock) { 
                     $message = $getProductDetails['product_name'] . '  stock is not available/enough for your order. Please reduce its quantity and try again!';
 
                     return redirect('/cart')->with('error_message', $message); 
                 }
 
 
-                $cartItem->product_qty     = $item['quantity'];
-                $cartItem->remaining_qty     = $item['quantity'];
+                $cartItem->product_qty     = $getCartItems['quantity'];
+                $cartItem->remaining_qty     = $getCartItems['quantity'];
 
                 $cartItem->save();
 
 
                 
-                $getProductStock = Product::where('id',$item['product_id'])->first()['product_units']; 
-                $newStock = (int)$getProductStock - $item['quantity'];
+                $getProductStock = Product::where('id',$getCartItems['product_id'])->first()['product_units']; 
+                $newStock = (int)$getProductStock - $getCartItems['quantity'];
                 Product::where([ 
-                    'id' => $item['product_id'],
+                    'id' => $getCartItems['product_id'],
                 ])->update(['product_units' => $newStock]);
                 //update respective user wallet
 
-                $getProduct = Product::where('id',$item['product_id'])->first();
+                $getProduct = Product::where('id',$getCartItems['product_id'])->first();
                 if($getProduct->is_resell == '1'){
                     //user account
                     $getUserDetails = User::where('id',$getProduct->vendor_id)->first();
@@ -1232,7 +1423,7 @@ class ProductsController extends Controller
                     }
                     $getwallet->save();
                 }
-            }
+            // }
             // Store the `order_id` in Session so that we can use it in front/products/thanks.blade.php, thanks() method, paypal() method in Front/PayPalController.php and pay() method in Front/IyzipayController.php
             Session::put('order_id', $order_id); // Storing Data: https://laravel.com/docs/9.x/session#storing-data
 

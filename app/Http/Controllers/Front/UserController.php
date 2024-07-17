@@ -305,7 +305,7 @@ class UserController extends Controller
 
     // Render User User Account page with 'GET' request (front/users/user_account.blade.php), or the HTML Form submission in the same page with 'POST' request using AJAX (to update user details). Check front/js/custom.js    
     public function userAccount(Request $request) {
-        if ($request->ajax()) { // if the 'POST' request is coming from an AJAX call (update user details)
+        if ($request->method() == 'POST') { // if the 'POST' request is coming from an AJAX call (update user details)
             $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
 
 
@@ -365,9 +365,15 @@ class UserController extends Controller
             // if it's a 'GET' request, render front/users/user_account.blade.php
             // Fetch all of the world countries from the database table `countries`
             $countries = \App\Models\Country::where('status', 1)->get()->toArray(); // get the countries which have status = 1 (to ignore the blacklisted countries, in case)
-
+            //checkif the account id is generated or not
+            $getAccount = Auth::user()->stripe_account_id;
+            if(empty($getAccount) || $getAccount == ''){
+                return view('front.users.products.reseller_account')->with(compact('countries'))->with('error_message','Please configure your stripe settings');
+            }
+            else{
 
             return view('front.users.products.reseller_account')->with(compact('countries'));
+            }
             // return view('front.users.user_account')->with(compact('countries'));
         }
     }

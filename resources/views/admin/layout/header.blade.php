@@ -60,6 +60,7 @@ ul.menu-links li a {
                 <a href="{{route('listing.verification')}}">Listing Verification</a>
             </li>
         </ul>
+        
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="{{ url('admin/update-admin-details') }}" data-toggle="dropdown" id="profileDropdown">
@@ -94,5 +95,6 @@ ul.menu-links li a {
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
         <span class="icon-menu"></span>
         </button>
+        
     </div>
 </nav>

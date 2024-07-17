@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use GuzzleHttp\Client;
+use Stripe;
+use Stripe\StripeClient;
+use App\Models\Vendor;
 use App\Models\Product;
 use App\Models\ProductsImage;
 use App\Models\ProductsFilter;
@@ -50,6 +54,57 @@ class ProductsController extends Controller
 
 
         return view('admin.products.products')->with(compact('products')); // render products.blade.php page, and pass $products variable to the view
+    }
+    public function createStripeConnect(){
+        Session::put('page', 'stripe');
+        return view('admin.products.create-stripe');
+    }
+    public function createConnect(Request $request){
+        $userEMail = Auth::guard('admin')->user()->email;
+
+        $client = new Client();
+
+        $response = $client->post('https://api.stripe.com/v1/accounts', [
+            'headers' => [
+                'Authorization' => 'Bearer sk_test_51Oi205KjzMnkYmNBjDHDcTkMZupd2w4wKVLVoNEbuID2dR3b6IepMFNjEcHny3AuLqu7pdDiCWEXnd2zZxnN1qzc00SGCDGIG4',
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+            'form_params' => [
+                'country' => 'US',
+                'email' => $userEMail,
+                'controller' => [
+                    'fees' => [
+                        'payer' => 'application',
+                    ],
+                    'losses' => [
+                        'payments' => 'application',
+                    ],
+                    'stripe_dashboard' => [
+                        'type' => 'express',
+                    ],
+                ],
+            ],
+        ]);
+
+        $body = $response->getBody();
+        $data = json_decode($body, true);
+        if(!empty($data['id'])){
+            //get user to save the stripe id
+            if(Auth::guard('admin')->check() && Auth::guard('admin')->user()->type == 'vendor'){
+                $getUser = Vendor::where('email',$userEMail)->first();
+            $getUser->stripe_account_id =  $data['id'];
+            $getUser->save();
+            }
+            else{
+                $getUser = User::where('email',$userEMail)->first();
+                $getUser->stripe_account_id =  $data['id'];
+                $getUser->save();
+            }
+        }
+
+        return redirect()->back()->with('success_message', 'The stripe connect id has been created');
+    
+    
     }
     
     public function updateProductStatus(Request $request) { // Update Product Status using AJAX in products.blade.php

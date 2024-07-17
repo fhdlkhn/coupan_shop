@@ -116,26 +116,26 @@
                                                     </thead>
                                                     <tbody>
                                                         @php $total_price = 0 @endphp
-                                                        @foreach ($getCartItems as $item) {{-- $getCartItems is passed in from cart() method in Front/ProductsController.php --}}
+                                                        
                                                             @php
-                                                                $getDiscountAttributePrice = \App\Models\Product::getDiscountAttributePrice($item['product_id'], $item['size']); // from the `products_attributes` table, not the `products` table
+                                                             $productId[] = $getCartItems['product']['id'];
+                                                                $getDiscountAttributePrice = \App\Models\Product::getDiscountAttributePrice($getCartItems['product_id'], $getCartItems['size']); // from the `products_attributes` table, not the `products` table
                                                             @endphp
                                                             <tr>
                                                                 <td>
-                                                                    <a href="{{ url('product/' . $item['product_id']) }}">
-                                                                        <img width="50px" src="{{ asset('front/images/product_images/small/' . $item['product']['product_image']) }}" alt="Product">
-                                                                        <h6 class="order-h6">{{ $item['product']['product_name'] }}
+                                                                    <a href="{{ url('product/' . $getCartItems['product_id']) }}">
+                                                                        <img width="50px" src="{{ asset('front/images/product_images/small/' . $getCartItems['product']['product_image']) }}" alt="Product">
+                                                                        <h6 class="order-h6">{{ $getCartItems['product']['product_name'] }}
                                                                         <br>
-                                                                        {{ $item['size'] }}/{{ $item['product']['product_color'] }}</h6>
+                                                                        {{ $getCartItems['size'] }}/{{ $getCartItems['product']['product_color'] }}</h6>
                                                                     </a>
-                                                                    <span class="order-span-quantity">x {{ $item['quantity'] }}</span>
+                                                                    <span class="order-span-quantity">x {{ $getCartItems['quantity'] }}</span>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="order-h6">{{Session::get('currency') != null ? Session::get('currency') : 'USD'}} {{ round(($getDiscountAttributePrice['final_price'] * $item['quantity']) * $getCurrencyRate,2) }}</h6>
+                                                                    <h6 class="order-h6">{{Session::get('currency') != null ? Session::get('currency') : 'USD'}} {{ round(($getDiscountAttributePrice['final_price'] * $getCartItems['quantity']) * $getCurrencyRate,2) }}</h6>
                                                                 </td>
                                                             </tr>
-                                                            @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']) @endphp
-                                                        @endforeach
+                                                            @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $getCartItems['quantity']) @endphp
                                                         <tr>
                                                             <td>
                                                                 <h3 class="order-h3">Grand Total</h3>
@@ -223,11 +223,13 @@ $(function() {
 <script type="text/javascript">
     var stripe = Stripe('{{ env('STRIPE_KEY') }}');
     var TotalAmount = {!! $updated_total_price !!};
+    var productIds = {!! json_encode($productId) !!};
     var selectedCurrency = {!! json_encode($selectedCurrency) !!};
 
     document.getElementById('checkout-button').addEventListener('click', async function () {
         var data = {
             'amount': TotalAmount,
+            'productIds' : productIds,
         };
         try {
             let response = await fetch('/create-checkout-session', {
@@ -238,14 +240,22 @@ $(function() {
                 },
                 body: JSON.stringify(data)
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            let sessionId = await response.json();
-            let result = await stripe.redirectToCheckout({ sessionId: sessionId.id });
+            let responseData = await response.json();
 
-            if (result.error) {
-                alert(result.error.message);
+        // Check if the response contains an error
+        if (responseData.error) {
+            alert(responseData.error);
+        }
+
+        // Check if the response contains the URL
+            if (responseData.id && responseData.id.startsWith('http')) {
+                // Redirect to the URL
+                window.location.href = responseData.id;
+            } else {
+                let result = await stripe.redirectToCheckout({ sessionId: responseData.id });
+                if (result.error) {
+                    alert(result.error.message);
+                }
             }
         } catch (error) {
             console.error('Error:', error);

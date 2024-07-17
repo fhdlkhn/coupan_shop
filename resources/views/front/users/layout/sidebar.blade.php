@@ -30,18 +30,6 @@
             </li>
 
             {{-- If the authenticated/logged-in user is 'vendor', show ONLY the orders of the products added by that specific 'vendor' (In constrast to the case where the authenticated/logged-in user is 'admin', we show ALL orders) --}} 
-            <!-- <li class="nav-item">
-                <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" data-toggle="collapse" href="#ui-orders" aria-expanded="false" aria-controls="ui-orders">
-                    <i class="icon-layout menu-icon"></i>
-                    <span class="menu-title">Orders Management</span>
-                    <i class="menu-arrow"></i>
-                </a>
-                <div class="collapse" id="ui-orders">
-                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #052CA3 !important">
-                        <li class="nav-item"> <a  style="background: #fff !important; color: #052CA3 !important" class="nav-link" href="{{ route('user.resell.orders') }}">Orders</a></li>
-                    </ul>
-                </div>
-            </li> -->
             <li class="nav-item">
                 <a @if (Session::get('page') == 'orders') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('user.resell.orders') }}">
                 <i class="icon-layout menu-icon"></i>
@@ -65,6 +53,12 @@
                         <li class="nav-item"> <a @if (Session::get('page') == 'received_dispute') style="background: #052CA3 !important; color: #FFF !important" @else style="background: #fff !important; color: #052CA3 !important" @endif class="nav-link" href="{{ route('received.dispute') }}">Received Disputes</a></li>
                     </ul>
                 </div>
+            </li>
+            <li class="nav-item">
+                <a @if (Session::get('page') == 'stripe') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('create.stripe.connect') }}">
+                <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">Stripe Settings</span>
+                </a>
             </li>
     </ul>
 </nav>

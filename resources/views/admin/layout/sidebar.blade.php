@@ -70,6 +70,12 @@
                     <span class="menu-title">Dispute</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a @if (Session::get('page') == 'stripe') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('create.stripe.account') }}">
+                <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">Stripe Settings</span>
+                </a>
+            </li>
 
         @else {{-- In case the authenticated user (the logged-in user) (using the 'admin' Authentication Guard in auth.php) type is 'superadmin', or 'admin', or 'subadmin' --}}
             <li class="nav-item">
@@ -214,6 +220,13 @@
                     <span class="menu-title">Dispute</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a @if (Session::get('page') == 'stripe_settings') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('stripe.admin.settings') }}">
+                <i class="icon-layout menu-icon"></i>
+                    <span class="menu-title">Stripe Settings</span>
+                </a>
+            </li>
+            
 
         @endif
 

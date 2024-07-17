@@ -19,21 +19,18 @@
             {{-- We'll place this $total_price inside the foreach loop to calculate the total price of all products in Cart. Check the end of the next foreach loop before @endforeach --}}
             @php $total_price = 0 @endphp
 
-            @foreach ($getCartItems as $item) {{-- $getCartItems is passed in from cart() method in Front/ProductsController.php --}}
                 @php
-                    $getDiscountAttributePrice = \App\Models\Product::getDiscountAttributePrice($item['product_id'], null); // from the `products_attributes` table, not the `products` table
-                    // dd($getDiscountAttributePrice);
+                    $getDiscountAttributePrice = \App\Models\Product::getDiscountAttributePrice($getCartItems['product_id'], null); // from the `products_attributes` table, not the `products` table
                 @endphp
 
                 <tr>
                     <td>
                         <div class="cart-anchor-image">
-                            <a href="{{ url('product/' . $item['product_id']) }}">
-                                <img src="{{ asset('front/images/product_images/small/' . $item['product']['product_image']) }}" alt="Product">
+                            <a href="{{ url('product/' . $getCartItems['product_id']) }}">
+                                <img src="{{ asset('front/images/product_images/small/' . $getCartItems['product']['product_image']) }}" alt="Product">
                                 <h6>
-                                    {{ $item['product']['product_name'] }} ({{ $item['product']['product_code'] }}) - {{ $item['size'] }}
+                                    {{ $getCartItems['product']['product_name'] }} ({{ $getCartItems['product']['product_code'] }}) - {{ $getCartItems['size'] }}
                                     <br>
-                                    <!-- Color: {{ $item['product']['product_color'] }} -->
                                 </h6>
                             </a>
                         </div>
@@ -67,29 +64,28 @@
                     <td>
                         <div class="cart-quantity">
                             <div class="quantity">
-                                <input type="text" class="quantity-text-field" value="{{ $item['quantity'] }}">
-                                <a data-max="1000" class="plus-a  updateCartItem" data-cartid="{{ $item['id'] }}" data-qty="{{ $item['quantity'] }}">&#43;</a> {{-- The Plus sign:  Increase items by 1 --}} {{-- .updateCartItem CSS class and the Custom HTML attributes data-cartid & data-qty are used to make the AJAX call in front/js/custom.js --}}
-                                <a data-min="1"    class="minus-a updateCartItem" data-cartid="{{ $item['id'] }}" data-qty="{{ $item['quantity'] }}">&#45;</a> {{-- The Minus sign: Decrease items by 1 --}} {{-- .updateCartItem CSS class and the Custom HTML attributes data-cartid & data-qty are used to make the AJAX call in front/js/custom.js --}}
+                                <input type="text" class="quantity-text-field" value="{{ $getCartItems['quantity'] }}">
+                                <a data-max="1000" class="plus-a  updateCartItem" data-cartid="{{ $getCartItems['id'] }}" data-qty="{{ $getCartItems['quantity'] }}">&#43;</a> {{-- The Plus sign:  Increase items by 1 --}} {{-- .updateCartItem CSS class and the Custom HTML attributes data-cartid & data-qty are used to make the AJAX call in front/js/custom.js --}}
+                                <a data-min="1"    class="minus-a updateCartItem" data-cartid="{{ $getCartItems['id'] }}" data-qty="{{ $getCartItems['quantity'] }}">&#45;</a> {{-- The Minus sign: Decrease items by 1 --}} {{-- .updateCartItem CSS class and the Custom HTML attributes data-cartid & data-qty are used to make the AJAX call in front/js/custom.js --}}
                             </div>
                         </div>
                     </td>
                     <td>
                         <div class="cart-price">
-                            ${{ $getDiscountAttributePrice['final_price'] * $item['quantity'] }} {{-- price of all products (after discount (if any)) (= price (after discoutn) * no. of products) --}}
+                            ${{ $getDiscountAttributePrice['final_price'] * $getCartItems['quantity'] }} {{-- price of all products (after discount (if any)) (= price (after discoutn) * no. of products) --}}
                         </div>
                     </td>
                     <td>
                         <div class="action-wrapper">
                             {{-- <button class="button button-outline-secondary fas fa-sync"></button> --}}
-                            <button class="button button-outline-secondary fas fa-trash deleteCartItem" data-cartid="{{ $item['id'] }}"></button>{{-- .deleteCartItem CSS class and the Custom HTML attribute data-cartid is used to make the AJAX call in front/js/custom.js --}} 
+                            <button class="button button-outline-secondary fas fa-trash deleteCartItem" data-cartid="{{ $getCartItems['id'] }}"></button>{{-- .deleteCartItem CSS class and the Custom HTML attribute data-cartid is used to make the AJAX call in front/js/custom.js --}} 
                         </div>
                     </td>
                 </tr>
 
 
                 {{-- This is placed here INSIDE the foreach loop to calculate the total price of all products in Cart --}}
-                @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $item['quantity']) @endphp
-            @endforeach
+                @php $total_price = $total_price + ($getDiscountAttributePrice['final_price'] * $getCartItems['quantity']) @endphp
 
 
 

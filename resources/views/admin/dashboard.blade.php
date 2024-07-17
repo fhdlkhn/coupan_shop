@@ -15,6 +15,7 @@
             </div>
         </div>
         <div class="row">
+            
             <!-- <div class="col-md-6 grid-margin transparent">
 
 
@@ -98,6 +99,22 @@
             <div class="col-md-12 grid-margin">
             <section >
                 <div class="container">
+                    @if (Session::has('success_message')) <!-- Check userRegister() method in Front/UserController.php -->
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Success:</strong> {{ Session::get('success_message') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
+                                @if (Session::has('error_message')) <!-- Check userRegister() method in Front/UserController.php -->
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Error:</strong> {{ Session::get('error_message') }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                @endif
 
                     <h4 class="section_heading">Your Listings</h4>
                     <table id="products" class="table table-bordered"> {{-- using the id here for the DataTable --}}

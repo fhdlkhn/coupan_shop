@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'google_id',
+        'stripe_account_id',
         'facebook_id'
     ];
 

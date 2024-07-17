@@ -21,6 +21,7 @@ use App\Models\Order;
 use App\Models\Coupon;
 use App\Models\Brand;
 use App\Models\User;
+use App\Models\Setting;
 use App\Models\Vendor;
 use App\Models\VendorsBusinessDetail;
 use App\Models\VendorsBankDetail;
@@ -53,6 +54,17 @@ class AdminController extends Controller
 
 
         return view('admin/dashboard')->with(compact('newProducts','sectionsCount', 'categoriesCount', 'productsCount', 'ordersCount', 'couponsCount', 'brandsCount', 'usersCount')); // is the same as:    return view('admin.dashboard');
+    }
+    public function stripeSettings(){
+        $getStripe = Setting::where('name','commission')->first();
+        $getValue = $getStripe->value;
+        return view('admin.admins.admin-stripe-setting',compact('getValue'));
+    }
+    public function addCommission(Request $request){
+        $getStripe = Setting::where('name','commission')->first();
+        $getStripe->value = $request->commission;
+        $getStripe->save();
+        return redirect()->back()->with('success_message','Commission added succesfully!');
     }
     public function save_role(Request $request){
         // return $request->all();
@@ -167,9 +179,16 @@ class AdminController extends Controller
                             'email'    =>  $data['email'],   
                             'password' => $data['password']  
                         ])){
+                            $getAccount = Auth::user()->stripe_account_id;
+                            if(empty($getAccount) || $getAccount == ''){
                     //     return redirect('user/account');user/account
-                    return redirect()->route('user.account')->with(['success_message' => 'User Logged In Successfully','show_modal' => 0,'data' => Auth::user(),'vendor' => 0]);
-                        }
+                                return redirect()->route('user.account')->with(['success_message' => 'User Logged In Successfully','error_message' => 'Please Configure your Stripe Settings','show_modal' => 0,'data' => Auth::user(),'vendor' => 0]);
+                        
+                            }
+                            else{
+                                return redirect()->route('user.account')->with(['success_message' => 'User Logged In Successfully','show_modal' => 0,'data' => Auth::user(),'vendor' => 0]);
+                            }
+                            }
                     }
                     else{
                             if(Auth::attempt([ 
@@ -189,9 +208,16 @@ class AdminController extends Controller
                     'email' =>$request->email,
                     'password' => $request->password
                 ])){
-                    return redirect()->route('admin.dashboard')->with(['success_message' => 'User Logged In Successfully','show_modal' => 0,'data' => Auth::user(),'vendor' => 1]);
+                    $getAccount = Vendor::where('email',$request->email)->first();
+
+                            if(empty($getAccount->stripe_account_id) || $getAccount->stripe_account_id == ''){
+                                
+                    return redirect()->route('admin.dashboard')->with(['success_message' => 'User Logged In Successfully','error_message' => 'Please Configure your Stripe Settings','show_modal' => 0,'data' => Auth::user(),'vendor' => 1]);
                     // return redirect()->back()->with(['success_message'=>'User Logged In Successfully','show_modal'=> 0,'data'=>Auth::user(),'vendor'=>1]);
-                }
+                            }
+                            else{
+                                 return redirect()->route('admin.dashboard')->with(['success_message' => 'User Logged In Successfully','show_modal' => 0,'data' => Auth::user(),'vendor' => 1]);
+                            }}
                 else { 
                     return redirect()->back()->with(
                         'error', 'Invalid Email or Password'
