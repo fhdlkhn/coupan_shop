@@ -96,8 +96,8 @@
                             </div>
                         </div> -->
                         <div class="button-area">
-                            <a href="{{ url('/') }}" class="continue">Continue Shopping</a>
-                            <a href="{{ url('/checkout') }}" class="checkout">Proceed to Checkout</a>
+                            <a href="{{ url('/') }}" class="continue ly-button-3">Continue Shopping</a>
+                            <a href="{{ url('/checkout') }}" class="checkout ly-button-3" style="background: #515ff9 !important;">Proceed to Checkout</a>
                         </div>
                     </div>
                     <!-- Coupon /- -->

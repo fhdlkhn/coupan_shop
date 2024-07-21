@@ -72,7 +72,7 @@ class AdminController extends Controller
             //get the user
             if(Auth::check()){
                 User::where('email',Auth::user()->email)->update(['is_role_set'=> '1']);
-                return redirect('user/account')->with('success_message', "Role added successfully");
+                return redirect('user/account')->with('success_message', "Account created successfully");
             }
             else{
                 $getUser = User::where('email',$request->email)->update(['is_role_set'=> '1']);
@@ -81,7 +81,7 @@ class AdminController extends Controller
                     'password' => $request->password 
                 ]);
             }
-            return redirect('user/account')->with('success_message', "Role added successfully");
+            return redirect('user/account')->with('success_message', "Account created successfully");
         }
         if ($request->button == 'vendor'){
             //get the user
@@ -113,7 +113,7 @@ class AdminController extends Controller
                 $admin->google_id      = $getUser->google_id;
                 // $admin->mobile    = $data['phoneCode'] . $data['mobile'];
                 $admin->email     = $getUser->email;
-                $admin->password  = bcrypt($request->password);
+                $admin->password  = $getUser->password;
                 $admin->status    = 1; 
                     $admin->confirm = 'Yes';
                 
@@ -128,9 +128,9 @@ class AdminController extends Controller
                 //         'password' => $admin->password 
                 // ]);
                
-                Auth::guard('admin')->attempt(['email' => $getUser->email, 'password' => $request->password]);
+                Auth::guard('admin')->attempt(['email' => $getUser->email, 'password' => $getUser->password]);
                 User::where('email',$getUser->email)->delete();
-                return redirect('/admin/update-vendor-details/personal');
+                return redirect()->route('admin.dashboard')->with('success_message', "Account created successfully");;
         }
     }
 

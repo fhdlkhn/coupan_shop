@@ -240,25 +240,28 @@ $(function() {
                 },
                 body: JSON.stringify(data)
             });
-            let responseData = await response.json();
 
-        // Check if the response contains an error
-        if (responseData.error) {
-            alert(responseData.error);
+            if (!response.ok) {
+                let errorResponse = await response.json();
+                throw new Error(errorResponse.error);
         }
 
-        // Check if the response contains the URL
-            if (responseData.id && responseData.id.startsWith('http')) {
-                // Redirect to the URL
-                window.location.href = responseData.id;
-            } else {
-                let result = await stripe.redirectToCheckout({ sessionId: responseData.id });
-                if (result.error) {
-                    alert(result.error.message);
-                }
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        let responseData = await response.json();
+
+        if (responseData.id) {
+            let result = await stripe.redirectToCheckout({ sessionId: responseData.id });
+            if (result.error) {
+                alert(result.error.message);
             }
+        } else {
+            throw new Error('Session ID not found in the response');
+        }
         } catch (error) {
-            console.error('Error:', error);
+           alert('Error: ' + error.message);
         }
     });
 </script>

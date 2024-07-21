@@ -222,18 +222,20 @@ class ProductsController extends Controller
                 'line_items' => [
                     [
                         'price' => $product->default_price->id,
-                        'quantity' => $getCartItems->quantity,
+                        'quantity' => '1',
                     ],
                 ],
                 'mode' => 'payment',
-                'success_url' => route('new.thank.you') ,
+                'success_url' => route('new.thank.you') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('checkout'),
             ]);
-            return response()->json(['id' => $session->success_url]);
+            $successUrl = route('new.thank.you') . '?session_id=' . $session->id;
+            return response()->json(['id' => $session->id, 'success_url' => $successUrl]);
         }
         else{
             //send it to vendor
             try  {
+                // return ['hello',$stripe->accounts->retrieve($getLIstingUser, [])];
                 $account = \Stripe\Account::update(
                     $getLIstingUser,
                     [
@@ -270,7 +272,7 @@ class ProductsController extends Controller
                         ],
                     ],
                     'mode' => 'payment',
-                    'success_url' => route('new.thank.you'),
+                    'success_url' => route('new.thank.you') . '?session_id={CHECKOUT_SESSION_ID}',
                     'cancel_url' => route('checkout'),
                 ]);
                 return response()->json(['id' => $session->id]);
@@ -743,7 +745,8 @@ class ProductsController extends Controller
             // Correcting an issue with Coupon Codes when adding an item to the Cart which already has items in it (added before)
             // We need to remove/empty (forget) the 'couponAmount' and 'couponCode' Session Variables (reset the whole process of Applying the Coupon) whenever a user applies a new coupon, or updates Cart items (changes items quantity for example) or deletes items from the Cart or even Adds new items in the Cart    
             Session::forget('couponAmount'); // Deleting Data: https://laravel.com/docs/9.x/session#deleting-data
-            Session::forget('couponCode');   // Deleting Data: https://laravel.com/docs/9.x/session#deleting-data
+            Session::forget('couponCode');
+            $getCurrencyRate = $this->getExchnagedRate();// Deleting Data: https://laravel.com/docs/9.x/session#deleting-data
         
 
 
@@ -766,7 +769,7 @@ class ProductsController extends Controller
                     'status'     => false,
                     'message'    => 'Product Stock is not available',
                     // We'll use that array key 'view' as a JavaScript 'response' property to render the view (    $('#appendCartItems').html(resp.view);    ). Check front/js/custom.js
-                    'view'       => (String) \Illuminate\Support\Facades\View::make('front.products.cart_items')->with(compact('getCartItems')), // View Responses: https://laravel.com/docs/9.x/responses#view-responses    
+                    'view'       => (String) \Illuminate\Support\Facades\View::make('front.products.cart_items')->with(compact('getCartItems','getCurrencyRate')), // View Responses: https://laravel.com/docs/9.x/responses#view-responses    
 
                     // We added this view later (Mini Cart Widget) (separate file)
                     'headerview' => (String) \Illuminate\Support\Facades\View::make('front.layout.header_cart_items')->with(compact('getCartItems')) // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // Creating & Rendering Views: https://laravel.com/docs/9.x/views#creating-and-rendering-views    // Passing Data To Views: https://laravel.com/docs/9.x/views#passing-data-to-views
@@ -818,8 +821,8 @@ class ProductsController extends Controller
                 'status'         => true,
                 'totalCartItems' => $totalCartItems, // totalCartItems() function is in our custom Helpers/Helper.php file that we have registered in 'composer.json' file    // We created the CSS class 'totalCartItems' in front/layout/header.blade.php to use it in front/js/custom.js to update the total cart items via AJAX, because in pages that we originally use AJAX to update the cart items (such as when we delete a cart item in http://127.0.0.1:8000/cart using AJAX), the number doesn't change in the header automatically because AJAX is already used and no page reload/refresh has occurred
                 // We'll use that array key 'view' as a JavaScript 'response' property to render the view (    $('#appendCartItems').html(resp.view);    ). Check front/js/custom.js
-                'view'           => (String) \Illuminate\Support\Facades\View::make('front.products.cart_items')->with(compact('getCartItems')), // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // Creating & Rendering Views: https://laravel.com/docs/9.x/views#creating-and-rendering-views    // Passing Data To Views: https://laravel.com/docs/9.x/views#passing-data-to-views
-                'headerview' => (String) \Illuminate\Support\Facades\View::make('front.layout.header_cart_items')->with(compact('getCartItems')) // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // Creating & Rendering Views: https://laravel.com/docs/9.x/views#creating-and-rendering-views    // Passing Data To Views: https://laravel.com/docs/9.x/views#passing-data-to-views
+                'view'           => (String) \Illuminate\Support\Facades\View::make('front.products.cart_items')->with(compact('getCartItems','getCurrencyRate')), // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // Creating & Rendering Views: https://laravel.com/docs/9.x/views#creating-and-rendering-views    // Passing Data To Views: https://laravel.com/docs/9.x/views#passing-data-to-views
+                'headerview' => (String) \Illuminate\Support\Facades\View::make('front.layout.header_cart_items')->with(compact('getCartItems','getCurrencyRate')) // View Responses: https://laravel.com/docs/9.x/responses#view-responses    // Creating & Rendering Views: https://laravel.com/docs/9.x/views#creating-and-rendering-views    // Passing Data To Views: https://laravel.com/docs/9.x/views#passing-data-to-views
             ]);
         }
     }

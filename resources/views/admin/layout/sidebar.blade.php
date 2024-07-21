@@ -58,12 +58,12 @@
                     <span class="menu-title">Orders Management</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a @if (Session::get('page') == 'payout') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('payout.index') }}">
                 <i class="icon-layout menu-icon"></i>
                     <span class="menu-title">Payout Management</span>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a @if (Session::get('page') == 'received_dispute') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('received.dispute') }}">
                 <i class="icon-layout menu-icon"></i>
@@ -202,12 +202,12 @@
                     </ul>
                 </div>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a @if (Session::get('page') == 'payout') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('payout.index') }}">
                 <i class="icon-layout menu-icon"></i>
                     <span class="menu-title">Payout Management</span>
                 </a>
-            </li>
+            </li> -->
              <li class="nav-item">
                 <a @if (Session::get('page') == 'wallet') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('get.wallet') }}">
                 <i class="icon-layout menu-icon"></i>

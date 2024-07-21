@@ -36,12 +36,12 @@
                     <span class="menu-title">Orders Management</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a @if (Session::get('page') == 'payout') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('payout.index') }}">
                 <i class="icon-layout menu-icon"></i>
                     <span class="menu-title">Payout Requests</span>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a @if (Session::get('page') == 'dispute') style="background: #052CA3 !important; color: #FFF !important" @endif class="nav-link" href="{{ route('get.dispute') }}">
                 <i class="icon-layout menu-icon"></i>

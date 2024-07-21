@@ -6,6 +6,18 @@
     .qrcode-container {
     white-space: nowrap;
 }
+.btn.btn-theme {
+  color: rgb(252, 252, 253);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  padding: 5px 10px !important;
+  border: 0px;
+  border-radius: 90px;
+  background: rgb(59, 113, 254);
+  margin-bottom: 15px;
+}
     </style>
     <div class="main-panel">
         <div class="content-wrapper">
@@ -28,7 +40,7 @@
                                 <table id="products" class="table table-bordered"> {{-- using the id here for the DataTable --}}
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>SR#</th>
                                             <th>Listing Image</th>
                                             <th>Listing Name</th>
                                             <th>Listing Code</th>
@@ -38,18 +50,18 @@
                                             <!-- <th>Added by</th> {{-- Through the relationship --}} -->
                                             <!-- <th>Status</th> -->
                                             <th>Action</th>
-                                            <th>Action</th>
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($products as $product)
+                                        @foreach ($products as $key=>$product)
                                             <tr>
-                                                <td>{{ $product['id'] }}</td>
+                                                <td>{{ $key + 1 }}</td>
                                                  <td>
-                                                    @if (!empty($product['product_image']))
-                                                        <img style=" border-radius: 7%; width:120px; height:100px" src="{{ asset('front/images/product_images/small/' . $product['product_image']) }}"> {{-- Show the 'small' image size from the 'small' folder --}}
+                                                    @if (!empty($product['product']['product_image']))
+                                                        <img style=" border-radius: 7%; width:120px; height:100px" src="{{ asset('front/images/product_images/large/' . $product['product']['product_image']) }}">
                                                     @else
-                                                        <img style="border-radius: 7%; width:120px; height:100px" src="{{ asset('front/images/product_images/small/no-image.png') }}"> {{-- Show the 'no-image' Dummy Image: If you have for example a table with an 'images' column (that can exist or not exist), use a 'Dummy Image' in case there's no image. Example: https://dummyimage.com/  --}}
+                                                        <img style="border-radius: 7%; width:120px; height:100px" src="{{ asset('front/images/product_images/small/no-image.png') }}"> 
                                                     @endif
                                                 </td>
                                                 <td>{{ $product['product_name'] }}</td>
@@ -79,11 +91,9 @@
                                                     
                                                     @csrf
                                                     <button type="submit" class="btn btn-theme" style="display:{{$product['is_resell'] == false ? 'none' : 'block'}}">Resell</button>
-                                                </form></td>
-                                                <td>
-                                                    <button type="submit" class="btn btn-theme" onclick="createDispute({{$product['product']['id']}})">Create Dispute</button>
+                                                </form>
+                                                <button type="submit" class="btn btn-theme" onclick="createDispute({{$product['product']['id']}})">Create Dispute</button>
                                                 </td>
-                                                
                                             </tr>
                                         @endforeach
                                     </tbody>
