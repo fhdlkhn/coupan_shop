@@ -118,7 +118,7 @@
                                             <label for="split-payment-select">Select Plans</label>
                                             <select id="split-payment-select" name="split-payment-select" disabled
                                                 class="form-control"
-                                                style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                style="border-radius: 12px; border: 0px solid #E6E8EC !important;">
                                                 <option value="">Choose Months</option>
                                                 <option value="12" @if (!empty($product['split_payment_select']) &&
                                                     $product['split_payment_select']==12) selected @endif>12</option>
@@ -184,7 +184,7 @@
                                                 <label for="category_id">Select Category</label>
                                                 <select name="category_id" id="category_id"
                                                     class="form-control text-dark" disabled
-                                                    style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                    style="border-radius: 12px; border: 0px solid #E6E8EC !important;">
                                                     <option value="">Select Category</option>
                                                     @foreach ($categories as $section)
                                                     <optgroup label="{{ $section['name'] }}">
@@ -213,7 +213,7 @@
                                             <div class="car_detail">
                                                 <label for="product_type">Discount Type</label>
                                                 <select disabled class="form-control" id="product_type"
-                                                    style="border-radius: 12px; border: 2px solid #E6E8EC !important;"
+                                                    style="border-radius: 12px; border: 0px solid #E6E8EC !important;"
                                                     name="product_type">
                                                     <option value="">Select Discount Type</option>
                                                     <option value="membership"
@@ -238,7 +238,7 @@
                                                 <label for="avg_customer">Membership Valid Through?</label>
                                                 <select disabled name="avg_customer" id="avg_customer"
                                                     class="form-control text-dark"
-                                                    style="border-radius: 12px; border: 2px solid #E6E8EC !important; margin-top:-5px;"
+                                                    style="border-radius: 12px; border: 0px solid #E6E8EC !important; margin-top:-5px;"
                                                     onchange="disablePermanent(this.value)">
                                                     <option value="" selected disabled style="margin-bottom:-10px;">
                                                         Select Membership (Years)</option>
@@ -304,7 +304,7 @@
                                                 <label for="target_audiesnce">Targeted Audience</label>
                                                 <select disabled id="split-payment-select" name="target_audiesnce"
                                                     class="form-control"
-                                                    style="border-radius: 12px; border: 2px solid #E6E8EC !important;">
+                                                    style="border-radius: 12px; border: 0px solid #E6E8EC !important;">
                                                     <option value="">Choose Location</option>
                                                     <option value="international"
                                                         @if(!empty($product['target_audiesnce']) &&
@@ -430,11 +430,9 @@ google.maps.event.addListener(autocomplete, 'place_changed', function() {
 });
 </script>
 <script type="text/javascript">
-const imageUrls = {
-    !!json_encode($getProductImages) !!
-};
-console.log(imageUrls);
-const imagePreviewDiv = document.getElementById('image_preview');
+    var imageUrls = {!! json_encode($getProductImages) !!};
+    console.log(imageUrls);
+    const imagePreviewDiv = document.getElementById('image_preview');
 
 imageUrls.forEach(filename => {
     const imgElement = document.createElement('img');

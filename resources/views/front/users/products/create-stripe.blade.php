@@ -39,7 +39,7 @@
                                 <form method="POST" action="{{route('create.user.connect.account')}}">
                                     @csrf
                                     <input type="email" name="stripe_email" value="{{\Illuminate\Support\Facades\Auth::user()->email}}" disabled>
-                                    <input type="submit" value="Create Account">
+                                    <input type="submit" value="Connect Account">
                                 </form>
                             </div>
                         </div>

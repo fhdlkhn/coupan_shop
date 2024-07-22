@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Order;
+use App\Models\ProductsImage;
 use App\Models\Product;
 use App\Models\OrdersProduct;
 
@@ -59,6 +60,19 @@ class OrderController extends Controller
         $getProduct->longitude = $getProduct->longitude;
         $AddProductToUser = $getProduct->replicate();
         $AddProductToUser->save();
+
+        //replicate the product images as well
+
+        $getProductImages = ProductsImage::where('product_id',$getOrder->product_id)->get();
+        if(!empty($getProductImages) && $getProductImages != 'null'){
+            foreach($getProductImages as $image){
+                $saveNewProductImage = new ProductsImage();
+                $saveNewProductImage->product_id = $AddProductToUser->id;
+                $saveNewProductImage->image = $image->image;
+                $saveNewProductImage->status = '1';
+                $saveNewProductImage->save();
+            }
+        }
         if($AddProductToUser){
             return redirect()->route('edit.user.products', ['id' => $AddProductToUser->id,'order_id' => $getOrder->id])->with('success_message', 'Product has been added');
         }
