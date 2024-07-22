@@ -305,8 +305,8 @@ class UserController extends Controller
 
     // Render User User Account page with 'GET' request (front/users/user_account.blade.php), or the HTML Form submission in the same page with 'POST' request using AJAX (to update user details). Check front/js/custom.js    
     public function userAccount(Request $request) {
-        if ($request->method() == 'POST') { // if the 'POST' request is coming from an AJAX call (update user details)
-            $data = $request->all(); // Getting the name/value pairs array that are sent from the AJAX request (AJAX call)
+        if ($request->ajax()) { 
+            $data = $request->all();
 
 
             // Validation    // Manually Creating Validators: https://laravel.com/docs/9.x/validation#manually-creating-validators    

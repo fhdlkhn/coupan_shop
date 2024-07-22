@@ -1,14 +1,14 @@
 @extends('front.users.layout.layout')
 @section('content')
 <style>
-    form#accountForm input {
+    form#accountForms input {
     width: 100% !important;
     border: 2px solid #E6E8EC !important;
     border-radius: 12px !important;
     padding: 12px 16px !important;
     background: #fff !important;
 }
-form#accountForm select {
+form#accountForms select {
     width: 100% !important;
     border: 2px solid #E6E8EC !important;
     border-radius: 12px !important;
@@ -105,7 +105,7 @@ button.button.button-primary.w-100 {
                                             {{-- Update details Success Message using jQuery. Check    $('#accountForm').submit();    in front/js/custom.js --}} 
                                             {{-- <p id="account-success" style="color: green"></p> --}}
                                             <p id="account-success"></p>
-                                            <form id="accountForm" action="javascript:;" method="post"> {{-- We need to deactivate the 'action' HTML attribute (using    'javascript:;'    ) as we'r going to submit using an AJAX call. Check front/js/custom.js --}}
+                                            <form id="accountForms" action="javascript:;" method="post"> {{-- We need to deactivate the 'action' HTML attribute (using    'javascript:;'    ) as we'r going to submit using an AJAX call. Check front/js/custom.js --}}
                                                 @csrf {{-- Preventing CSRF Requests: https://laravel.com/docs/9.x/csrf#preventing-csrf-requests --}}
 
 
@@ -181,7 +181,7 @@ button.button.button-primary.w-100 {
                                                     <p id="account-mobile"></p> {{-- this will be used by jQuery to show the Validation Error Messages (Laravel's Validation Error Messages) from the AJAX call response from the server (backend) --}} {{-- The pattern must be like: register-x (e.g. register-mobile, register-email, ... in order for the jQuery loop to work. And x must be identical to the 'name' HTML attributes (e.g. the <input> with the    name='mobile'    HTML attribute must have a <p> with an id HTML attribute    id="register-mobile"    ) so that when the vaildation errors array is sent as a response from backend/server (check $validator->messages()    inside    the method inside the controller) to the AJAX request, they could conveniently/easily be handled by the jQuery $.each() loop. Check front/js/custom.js) --}}
                                                 </div>
                                                 <div class="m-b-45">
-                                                    <button class="button button-outline-secondary w-100">Update</button>
+                                                    <input type="submit" class="button button-outline-secondary w-100" value="Update"></input>
                                                 </div>
                                             </form>
                                         </div>
@@ -232,7 +232,7 @@ button.button.button-primary.w-100 {
                                                     <p id="password-confirm_password"></p> {{-- this will be used by jQuery to show the Validation Error Messages (Laravel's Validation Error Messages) from the AJAX call response from the server (backend) --}} {{-- The pattern must be like: password-x (e.g. password-mobile, register-email, ... in order for the jQuery loop to work. And x must be identical to the 'name' HTML attributes (e.g. the <input> with the    name='mobile'    HTML attribute must have a <p> with an id HTML attribute    id="password-mobile"    ) so that when the vaildation errors array is sent as a response from backend/server (check $validator->messages()    inside    the method inside the controller) to the AJAX request, they could conveniently/easily be handled by the jQuery $.each() loop. Check front/js/custom.js) --}} {{-- The pattern must be like: password-x (e.g. password-mobile, register-email, ... in order for the jQuery loop to work. And x must be identical to the 'name' HTML attributes (e.g. the <input> with the    name='mobile'    HTML attribute must have a <p> with an id HTML attribute    id="password-mobile"    ) so that when the vaildation errors array is sent as a response from backend/server (check $validator->messages()    inside    the method inside the controller) to the AJAX request, they could conveniently/easily be handled by the jQuery $.each() loop. Check front/js/custom.js) --}}
                                                 </div>
                                                 <div class="u-s-m-b-45">
-                                                    <button class="button button-primary w-100">Update</button>
+                                                    <input type="submit" class="button button-primary w-100" value="Update"></input>
                                                 </div>
                                             </form>
                                         </div>
@@ -244,4 +244,124 @@ button.button.button-primary.w-100 {
                 </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    
+        $('#accountForms').submit(function() {
+        $('.loader').show();
+        var formdata = $(this).serialize(); 
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}, // X-CSRF-TOKEN: https://laravel.com/docs/9.x/csrf#csrf-x-csrf-token    
+            url    : '/user/account', // check this route in web.php
+            type   : 'POST',
+            data   : formdata, 
+            success: function(resp) { 
+                if (resp.type == 'error') {  
+                    $('.loader').hide();
+                    $.each(resp.errors, function(i, error) {
+
+                        $('#account-' + i).attr('style', 'color: red'); 
+                        $('#account-' + i).html(error); 
+
+                        setTimeout(function() {
+                            $('#account-' + i).css({
+                                'display': 'none'
+                            });
+                        }, 3000);
+                    });
+                } else if (resp.type == 'success') {    
+                    $('.loader').hide();
+                    $('#account-success').attr('style', 'color: green'); 
+                    $('#account-success').html(resp.message); 
+                    setTimeout(function() {
+                        $('#account-success').css({
+                            'display': 'none'
+                        });
+                    }, 3000);
+                }
+            },
+            error  : function() { 
+                alert('Error');
+            }
+        });
+    });
+        </script>
+        <script type="text/javascript">
+            $('#passwordForm').submit(function() { // When the registration <form> is submitted
+
+        // Show our Preloader/Loader/Loading Page/Preloading Screen while the <form> is submitted    
+        $('.loader').show();
+
+
+        var formdata = $(this).serialize(); // serialize() method comes in handy when submitting an HTML Form using an AJAX request / Ajax call, as it collects all the name/value pairs from the HTML Form input fields like: <input>, <textarea>, <select><option>, ... HTML elements of the <form> (instead of the heavy work of assigning an identifier/handle for every <input> and <textarea>, ... using an HTML 'id' or CSS 'class', and then getting the value for every one of them like this:    $('#username).val();    )    // serialize() jQuery method: https://www.w3schools.com/jquery/ajax_serialize.asp
+
+        // return false; // DON'T SUBMIT THE FORM!!
+
+
+
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}, // X-CSRF-TOKEN: https://laravel.com/docs/9.x/csrf#csrf-x-csrf-token    
+            url    : '/user/update-password', // check this route in web.php
+            type   : 'POST',
+            data   : formdata, // Sending name/value pairs to server with the AJAX request (AJAX call)
+            success: function(resp) { // if the AJAX request is successful
+
+
+
+                // Showing Validation Errors in the view (from the backend/server response of our AJAX request):
+                if (resp.type == 'error') { // if there're Validation Errors (login fails), show the Validation Error Messages (each of them under its respective <input> field)    // 'type' is sent as a PHP array key (in the HTTP response from the server (backend)) from inside the userAccount() method in Front/UserController.php
+                    // Hide our Preloader/Loader/Loading Page/Preloading Screen when there's an error    
+                    $('.loader').hide();
+
+
+                    // Note: in HTML in front/users/user_account.blade.php, to conveniently display the errors by jQuery loop, the pattern must be like: account-x (e.g. account-mobile, regitster-email, ... in order for the jQuery loop to work. And x must be identical to the 'name' HTML attributes (e.g. the <input> with the    name='mobile'    HTML attribute must have a <p> with an id HTML attribute    id="account-mobile"    ) so that when the vaildation errors array are sent as a response to the AJAX request, they could conveniently/easily handled by the jQuery $.each() loop)
+                    $.each(resp.errors, function(i, error) { // 'i' is the attribute (the 'name' HTML attribute) ('i' is the JavaScript object keys or the PHP array (sent from backend/server response from method inside controller) keys/indexes, and 'error' is the Validation Error ('error' is the JavaScript object values or the PHP array (sent from backend/server response from method inside controller) values    // $.each(): https://api.jquery.com/jquery.each/    // 'errors' is sent as a PHP array key (in the HTTP response from the server (backend)) from inside the userAccount() method in Front/UserController.php
+                        $('#password-' + i).attr('style', 'color: red'); // I already did this in the HTML page in the <p> tags in the HTML in front/users/user_account.blade.php (    <p id="account-name" style="color: red"></p>    )    // This is the same as:    $('#password-' + i).css('color', 'red');    // Change the CSS color of the <p> tags
+                        $('#password-' + i).html(error); // replace the <p> tags that we created inside the user registration <form> in front/users/user_account.blade.php depending on x in their 'id' HTML attributes 'account-x' (e.g. account-mobile, account-email, ...)
+
+
+                        // Make the Validation Error Messages disappear after a certain amount of time (don't stick)
+                        setTimeout(function() {
+                            $('#password-' + i).css({
+                                'display': 'none'
+                            });
+                        }, 3000);
+
+                    });
+
+                } else if (resp.type == 'incorrect') { // if the entered current password is incorrect/wrong    // 'type' is sent as a PHP array key (in the HTTP response from the server (backend)) from inside the userUpdatePassword() method in Front/UserController.php
+                    // Hide our Preloader/Loader/Loading Page/Preloading Screen when the response is 'success'    
+                    $('.loader').hide();
+
+                    $('#password-error').attr('style', 'color: red'); // I already did this in the HTML page in the <p> tags in the HTML in front/users/user_account.blade.php (    <p id="password-name" style="color: red"></p>    )    // This is the same as:    $('#password-' + i).css('color', 'red');    // Change the CSS color of the <p> tags
+                    $('#password-error').html(resp.message); // replace the <p> tags that we created inside the user registration <form> in front/users/user_account.blade.php depending on x in their 'id' HTML attributes 'password-x' (e.g. password-mobile, password-email, ...)
+
+                    // Make the Validation Error Messages disappear after a certain amount of time (don't stick)
+                    setTimeout(function() {
+                        $('#password-error').css({
+                            'display': 'none'
+                        });
+                    }, 3000);
+
+                } else if (resp.type == 'success') { // if there're no validation errors (login is successful), redirect to the Cart page    // 'type' is sent as a PHP array key (in the HTTP response from the server (backend)) from inside the userAccount() method in Front/UserController.php
+                    // Hide our Preloader/Loader/Loading Page/Preloading Screen when the response is 'success'    
+                    $('.loader').hide();
+
+                    $('#password-success').attr('style', 'color: green'); // I already did this in the HTML page in the <p> tags in the HTML in front/users/user_account.blade.php (    <p id="password-name" style="color: red"></p>    )    // This is the same as:    $('#password-' + i).css('color', 'green');    // Change the CSS color of the <p> tags
+                    $('#password-success').html(resp.message); // replace the <p> tags that we created inside the user registration <form> in front/users/user_account.blade.php depending on x in their 'id' HTML attributes 'password-x' (e.g. password-mobile, password-email, ...)
+
+                    // Make the Validation Error Messages disappear after a certain amount of time (don't stick)
+                    setTimeout(function() {
+                        $('#password-success').css({
+                            'display': 'none'
+                        });
+                    }, 3000);
+                }
+            },
+            error  : function() { // if the AJAX request is unsuccessful
+                alert('Error');
+            }
+        });
+    });
+        </script>
 @endsection
